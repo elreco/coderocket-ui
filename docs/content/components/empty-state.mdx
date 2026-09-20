@@ -1,0 +1,65 @@
+---
+title: "EmptyState"
+description: "A useful empty state with an optional next action."
+---
+
+<DocPreview slug="empty-state" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { EmptyState } from './components/ui/empty-state';
+
+<EmptyState title="No projects yet" description="Create your first project to get started." action={<Button>Create project</Button>}/>
+```
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+Dependencies: [button](/docs/components/button).
+
+## Behavior and accessibility
+
+- Provide meaningful labels for interactive controls.
+- Connect action callbacks to your application logic.
+- Verify keyboard navigation and contrast in your application.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+import type { ReactNode } from "react";
+export function EmptyState({
+  title,
+  description,
+  icon,
+  action,
+}: {
+  title: string;
+  description?: string;
+  icon?: ReactNode;
+  action?: ReactNode;
+}) {
+  return (
+    <section className="cr-empty-state">
+      {icon && (
+        <div aria-hidden="true" className="cr-empty-icon">
+          {icon}
+        </div>
+      )}
+      <h3>{title}</h3>
+      {description && <p className="cr-description">{description}</p>}
+      {action}
+    </section>
+  );
+}
+```

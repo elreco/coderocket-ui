@@ -1,0 +1,820 @@
+---
+title: "Calendar"
+description: "A Gregorian single-date or range calendar with month/year selection, disabled dates, week numbers and keyboard navigation."
+---
+
+<DocPreview slug="calendar" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { Calendar } from './components/ui/calendar';
+
+<Calendar defaultValue="2026-09-17" onValueChange={date=>console.info(date)}/>
+```
+
+## Range selection and constraints
+
+```tsx
+<Calendar
+  mode="range"
+  defaultValue={{ start: "2026-10-05", end: "2026-10-09" }}
+  numberOfMonths={2}
+  locale="fr-FR"
+  weekStartsOn={1}
+  showWeekNumbers
+  disabledDates={["2026-10-15"]}
+/>
+```
+
+Choose the start, then the end. Reverse selections are normalized into chronological order. Use `min` and `max` for inclusive boundaries and `excludeDisabled` to control whether a range can cross unavailable dates. The status explains an incomplete or invalid range. Select a month or enter a year to jump directly; `onMonthChange` observes navigation.
+
+Calendar renders the selection interface itself. DatePicker adds the trigger, editable date fields, shortcuts, clearing, form values and optional Apply/Cancel confirmation.
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+Icons use Lucide React. Install `lucide-react@1.47.0` alongside React and Base UI.
+
+Dependencies: [button](/docs/components/button).
+
+## Behavior and accessibility
+
+- Date-only ISO values are independent of time zones and display locale.
+- Arrow keys, Home/End, PageUp/PageDown and Shift+PageUp/PageDown move through days, months and years.
+- Disabled dates can be listed or supplied as a predicate; range selection can reject unavailable dates inside an interval.
+- Use `numberOfMonths={2}` for two months and showWeekNumbers for ISO week numbers.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+import {
+  useId,
+  useRef,
+  useState,
+  useEffect,
+  useEffectEvent,
+  useSyncExternalStore,
+  type KeyboardEvent,
+  type ReactNode,
+} from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "./button";
+import { cx } from "./utils";
+
+/** Values are Gregorian calendar dates, never timestamps or local-midnight instants. */
+export type DateRange = { start: string; end: string };
+export type DisabledDates = readonly string[] | ((date: string) => boolean);
+export type CalendarLabels = {
+  previousMonth: string;
+  nextMonth: string;
+  month: string;
+  year: string;
+  week: string;
+  chooseDate: string;
+  chooseRange: string;
+  chooseEnd: string;
+  unavailableRange: string;
+  today: string;
+  yesterday: string;
+  last7Days: string;
+  last30Days: string;
+  thisMonth: string;
+  lastMonth: string;
+  clear: string;
+  apply: string;
+  cancel: string;
+  close: string;
+  startDate: string;
+  endDate: string;
+  invalidDate: string;
+};
+export function calendarLabels(
+  locale = "en",
+  overrides?: Partial<CalendarLabels>,
+): CalendarLabels {
+  return {
+    ...(locale.toLowerCase().startsWith("fr")
+      ? {
+          previousMonth: "Mois précédent",
+          nextMonth: "Mois suivant",
+          month: "Mois",
+          year: "Année",
+          week: "Semaine",
+          chooseDate: "Choisir une date",
+          chooseRange: "Choisir une période",
+          chooseEnd: "Choisissez la date de fin.",
+          unavailableRange: "Cette période contient une date indisponible.",
+          today: "Aujourd’hui",
+          yesterday: "Hier",
+          last7Days: "7 derniers jours",
+          last30Days: "30 derniers jours",
+          thisMonth: "Ce mois-ci",
+          lastMonth: "Le mois dernier",
+          clear: "Effacer",
+          apply: "Appliquer",
+          cancel: "Annuler",
+          close: "Fermer le calendrier",
+          startDate: "Date de début",
+          endDate: "Date de fin",
+          invalidDate: "Choisissez une date ou une période disponible.",
+        }
+      : {
+          previousMonth: "Previous month",
+          nextMonth: "Next month",
+          month: "Month",
+          year: "Year",
+          week: "Week",
+          chooseDate: "Choose a date",
+          chooseRange: "Choose a date range",
+          chooseEnd: "Choose the end date.",
+          unavailableRange: "This range contains an unavailable date.",
+          today: "Today",
+          yesterday: "Yesterday",
+          last7Days: "Last 7 days",
+          last30Days: "Last 30 days",
+          thisMonth: "This month",
+          lastMonth: "Last month",
+          clear: "Clear",
+          apply: "Apply",
+          cancel: "Cancel",
+          close: "Close calendar",
+          startDate: "Start date",
+          endDate: "End date",
+          invalidDate: "Choose an available date or date range.",
+        }),
+    ...overrides,
+  };
+}
+export function parseCalendarDate(iso: string): Date {
+  if (
+    !/^\d{4}-\d{2}-\d{2}$/.test(iso) ||
+    iso < "0001-01-01" ||
+    iso > "9999-12-31"
+  )
+    throw new Error("Expected an ISO calendar date");
+  const date = new Date(`${iso}T12:00:00Z`);
+  if (
+    !Number.isFinite(date.valueOf()) ||
+    date.toISOString().slice(0, 10) !== iso
+  )
+    throw new Error("Invalid calendar date");
+  return date;
+}
+export function calendarISO(date: Date) {
+  return date.toISOString().slice(0, 10);
+}
+export function calendarToday() {
+  const now = new Date();
+  return `${String(now.getFullYear()).padStart(4, "0")}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+function subscribeToCalendarDay(notify: () => void) {
+  const timer = setInterval(notify, 60_000);
+  window.addEventListener("focus", notify);
+  return () => {
+    clearInterval(timer);
+    window.removeEventListener("focus", notify);
+  };
+}
+const serverCalendarDay = () => "";
+/** Local-day features appear after hydration, never from the server's timezone. */
+export function useCalendarToday() {
+  return useSyncExternalStore(
+    subscribeToCalendarDay,
+    calendarToday,
+    serverCalendarDay,
+  );
+}
+export function addCalendarDays(value: string, amount: number) {
+  const date = parseCalendarDate(value);
+  date.setUTCDate(date.getUTCDate() + amount);
+  return date.getUTCFullYear() < 1
+    ? "0001-01-01"
+    : date.getUTCFullYear() > 9999
+      ? "9999-12-31"
+      : calendarISO(date);
+}
+export function startOfCalendarMonth(value: string) {
+  return value.slice(0, 7) + "-01";
+}
+export function addCalendarMonths(value: string, amount: number) {
+  const date = parseCalendarDate(value),
+    day = date.getUTCDate();
+  date.setUTCDate(1);
+  date.setUTCMonth(date.getUTCMonth() + amount);
+  if (date.getUTCFullYear() < 1) return "0001-01-01";
+  if (date.getUTCFullYear() > 9999) return "9999-12-31";
+  const last = new Date(date);
+  last.setUTCMonth(last.getUTCMonth() + 1);
+  last.setUTCDate(0);
+  date.setUTCDate(Math.min(day, last.getUTCDate()));
+  return calendarISO(date);
+}
+export function endOfCalendarMonth(value: string) {
+  const date = parseCalendarDate(value);
+  date.setUTCMonth(date.getUTCMonth() + 1, 0);
+  return calendarISO(date);
+}
+export function isoWeekNumber(value: string) {
+  const date = parseCalendarDate(value);
+  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
+  const first = new Date(date);
+  first.setUTCMonth(0, 1);
+  return Math.ceil(((date.valueOf() - first.valueOf()) / 86400000 + 1) / 7);
+}
+export function isCalendarDateDisabled(
+  value: string,
+  options: { min?: string; max?: string; disabledDates?: DisabledDates } = {},
+) {
+  return (
+    value < (options.min ?? "0001-01-01") ||
+    value > (options.max ?? "9999-12-31") ||
+    (typeof options.disabledDates === "function"
+      ? options.disabledDates(value)
+      : (options.disabledDates?.includes(value) ?? false))
+  );
+}
+export function isCalendarRangeAvailable(
+  range: DateRange,
+  options: {
+    min?: string;
+    max?: string;
+    disabledDates?: DisabledDates;
+    excludeDisabled?: boolean;
+  } = {},
+) {
+  try {
+    parseCalendarDate(range.start);
+    parseCalendarDate(range.end);
+  } catch {
+    return false;
+  }
+  if (
+    range.start > range.end ||
+    isCalendarDateDisabled(range.start, options) ||
+    isCalendarDateDisabled(range.end, options)
+  )
+    return false;
+  if (!options.disabledDates || options.excludeDisabled === false) return true;
+  if (Array.isArray(options.disabledDates))
+    return !options.disabledDates.some(
+      (date) => date >= range.start && date <= range.end,
+    );
+  for (
+    let date = range.start;
+    date < range.end;
+    date = addCalendarDays(date, 1)
+  )
+    if (isCalendarDateDisabled(date, options)) return false;
+  return true;
+}
+export type CalendarBaseProps = {
+  label?: string;
+  min?: string;
+  max?: string;
+  locale?: string;
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;
+  disabled?: boolean;
+  disabledDates?: DisabledDates;
+  excludeDisabled?: boolean;
+  startFrom?: string;
+  numberOfMonths?: 1 | 2;
+  showWeekNumbers?: boolean;
+  weekdayFormat?: "narrow" | "short" | "long";
+  monthSelection?: boolean;
+  labels?: Partial<CalendarLabels>;
+  previousMonthLabel?: string;
+  nextMonthLabel?: string;
+  className?: string;
+  renderDay?: (date: string) => ReactNode;
+  onMonthChange?: (month: string) => void;
+  /** Reports a range awaiting its second endpoint. */
+  onSelectionPendingChange?: (pending: boolean) => void;
+};
+export type CalendarProps = CalendarBaseProps &
+  (
+    | {
+        mode?: "single";
+        value?: string | null;
+        defaultValue?: string;
+        onValueChange?: (date: string) => void;
+      }
+    | {
+        mode: "range";
+        value?: DateRange | null;
+        defaultValue?: DateRange;
+        onValueChange?: (range: DateRange | null) => void;
+      }
+  );
+
+export function Calendar(props: CalendarProps) {
+  const {
+    min = "0001-01-01",
+    max = "9999-12-31",
+    locale = "en",
+    weekStartsOn = 1,
+    disabled = false,
+    disabledDates,
+    excludeDisabled = true,
+    startFrom,
+    numberOfMonths = props.mode === "range" ? 2 : 1,
+    showWeekNumbers = false,
+    weekdayFormat = "short",
+    monthSelection = true,
+    renderDay,
+    onMonthChange,
+    className,
+  } = props;
+  const labels = calendarLabels(locale, props.labels),
+    label =
+      props.label ??
+      (props.mode === "range" ? labels.chooseRange : labels.chooseDate);
+  const [internal, setInternal] = useState<string | DateRange | null>(
+    props.defaultValue ?? null,
+  );
+  const chosen = props.value !== undefined ? props.value : internal;
+  const selected = typeof chosen === "string" ? chosen || null : null;
+  const range = chosen && typeof chosen !== "string" ? chosen : null;
+  parseCalendarDate(min);
+  parseCalendarDate(max);
+  if (min > max) throw new Error("Calendar min exceeds max");
+  if (selected) parseCalendarDate(selected);
+  if (range) {
+    parseCalendarDate(range.start);
+    parseCalendarDate(range.end);
+  }
+  if (startFrom) parseCalendarDate(startFrom);
+  const clamp = (date: string) => (date < min ? min : date > max ? max : date);
+  const today = useCalendarToday();
+  const [focused, setFocusDate] = useState<string | null>(null);
+  const focusDate =
+    focused ??
+    clamp(selected ?? range?.start ?? startFrom ?? (today || "1970-01-01"));
+  const [viewedMonth, setMonth] = useState<string | null>(null);
+  const month = viewedMonth ?? startOfCalendarMonth(focusDate);
+  const [anchor, setAnchor] = useState<string | null>(null),
+    [hovered, setHovered] = useState<string | null>(null),
+    [status, setStatus] = useState("");
+  const synchronize = useEffectEvent(() => {
+    if (!today && !selected && !range && !startFrom) return;
+    const next = clamp(selected ?? range?.start ?? focusDate);
+    setFocusDate(next);
+    setMonth(startOfCalendarMonth(next));
+    setAnchor(null);
+    setHovered(null);
+    props.onSelectionPendingChange?.(false);
+  });
+  useEffect(() => {
+    synchronize();
+  }, [selected, range?.start, range?.end, min, max, today]);
+  const grid = useRef<HTMLDivElement>(null),
+    headingId = useId();
+  if (!today && !selected && !range && !startFrom)
+    return (
+      <div
+        className={cx("cr-calendar cr-calendar-skeleton", className)}
+        role="status"
+        aria-label={label}
+        aria-busy="true"
+      >
+        <div className="cr-calendar-months">
+          {Array.from({ length: numberOfMonths }, (_, index) => (
+            <div className="cr-calendar-month" key={index} aria-hidden="true">
+              <span className="cr-calendar-skeleton-caption" />
+              <div className="cr-calendar-skeleton-days">
+                {Array.from({ length: 42 }, (_, day) => (
+                  <span key={day} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  const months = Array.from({ length: numberOfMonths }, (_, index) =>
+    startOfCalendarMonth(addCalendarMonths(month, index)),
+  ).filter((date, index, all) => all.indexOf(date) === index);
+  const unavailable = (date: string) =>
+    disabled || isCalendarDateDisabled(date, { min, max, disabledDates });
+  const fullDate = new Intl.DateTimeFormat(locale, {
+    dateStyle: "full",
+    timeZone: "UTC",
+    calendar: "gregory",
+  });
+  const monthName = new Intl.DateTimeFormat(locale, {
+    month: "long",
+    timeZone: "UTC",
+    calendar: "gregory",
+  });
+  const completeMonth = new Intl.DateTimeFormat(locale, {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+    calendar: "gregory",
+  });
+  // Exactly one date remains in the keyboard tab order, including when the preferred date is disabled.
+  const visibleDates: string[] = [];
+  for (const current of months) {
+    const date = parseCalendarDate(current),
+      offset = (date.getUTCDay() - weekStartsOn + 7) % 7;
+    for (let index = 0; index < 42; index++) {
+      const day = new Date(date);
+      day.setUTCDate(1 - offset + index);
+      if (
+        day.getUTCFullYear() >= 1 &&
+        day.getUTCFullYear() <= 9999 &&
+        (months.length === 1 || day.getUTCMonth() === date.getUTCMonth())
+      )
+        visibleDates.push(calendarISO(day));
+    }
+  }
+  const tabDate =
+    visibleDates.includes(focusDate) && !unavailable(focusDate)
+      ? focusDate
+      : visibleDates.find((date) => !unavailable(date));
+  function changeMonth(next: string, focus = false) {
+    const target = clamp(next),
+      nextMonth = startOfCalendarMonth(target);
+    setFocusDate(target);
+    setMonth(nextMonth);
+    onMonthChange?.(nextMonth);
+    if (focus)
+      requestAnimationFrame(() =>
+        grid.current
+          ?.querySelector<HTMLButtonElement>(`[data-date="${target}"]`)
+          ?.focus(),
+      );
+  }
+  function move(next: string, direction = 1) {
+    let target = clamp(next);
+    // Skip unavailable dates while bounding navigation to the configured date interval.
+    let searched = 0;
+    while (unavailable(target)) {
+      // Bound arbitrary predicates so a fully disabled calendar never freezes the UI.
+      if (++searched > 366) return;
+      const candidate = addCalendarDays(target, direction);
+      if (candidate === target || candidate < min || candidate > max) return;
+      target = candidate;
+    }
+    setFocusDate(target);
+    if (!visibleDates.includes(target)) {
+      setMonth(startOfCalendarMonth(target));
+      onMonthChange?.(startOfCalendarMonth(target));
+    }
+    requestAnimationFrame(() =>
+      grid.current
+        ?.querySelector<HTMLButtonElement>(`[data-date="${target}"]`)
+        ?.focus(),
+    );
+  }
+  function keyboard(event: KeyboardEvent<HTMLButtonElement>, date: string) {
+    let next: string | undefined,
+      direction = 1;
+    const day = (parseCalendarDate(date).getUTCDay() - weekStartsOn + 7) % 7;
+    if (event.key === "ArrowRight") next = addCalendarDays(date, 1);
+    if (event.key === "ArrowLeft") {
+      next = addCalendarDays(date, -1);
+      direction = -1;
+    }
+    if (event.key === "ArrowDown") next = addCalendarDays(date, 7);
+    if (event.key === "ArrowUp") {
+      next = addCalendarDays(date, -7);
+      direction = -1;
+    }
+    if (event.key === "Home") {
+      next = addCalendarDays(date, -day);
+      direction = 1;
+    }
+    if (event.key === "End") {
+      next = addCalendarDays(date, 6 - day);
+      direction = -1;
+    }
+    if (event.key === "PageUp" || event.key === "PageDown") {
+      direction = event.key === "PageUp" ? -1 : 1;
+      next = addCalendarMonths(date, direction * (event.shiftKey ? 12 : 1));
+    }
+    if (event.key === "Escape" && anchor) {
+      event.preventDefault();
+      event.stopPropagation();
+      setAnchor(null);
+      setHovered(null);
+      setStatus("");
+      props.onSelectionPendingChange?.(false);
+    }
+    if (next) {
+      event.preventDefault();
+      move(next, direction);
+    }
+  }
+  function choose(date: string) {
+    if (unavailable(date)) return;
+    setFocusDate(date);
+    setStatus("");
+    if (props.mode === "range") {
+      if (!anchor) {
+        setAnchor(date);
+        props.onSelectionPendingChange?.(true);
+        setHovered(null);
+        setStatus(labels.chooseEnd);
+        return;
+      }
+      const next = {
+        start: date < anchor ? date : anchor,
+        end: date < anchor ? anchor : date,
+      };
+      if (
+        !isCalendarRangeAvailable(next, {
+          min,
+          max,
+          disabledDates,
+          excludeDisabled,
+        })
+      ) {
+        setStatus(labels.unavailableRange);
+        return;
+      }
+      if (props.value === undefined) setInternal(next);
+      props.onValueChange?.(next);
+      props.onSelectionPendingChange?.(false);
+      setAnchor(null);
+      setHovered(null);
+    } else {
+      if (props.value === undefined) setInternal(date);
+      props.onValueChange?.(date);
+    }
+  }
+  const previewEnd = hovered ?? focusDate,
+    preview = anchor
+      ? {
+          start: anchor < previewEnd ? anchor : previewEnd,
+          end: anchor < previewEnd ? previewEnd : anchor,
+        }
+      : null;
+  const displayedRange = preview ?? range;
+  const minYear = Number(min.slice(0, 4)),
+    maxYear = Number(max.slice(0, 4));
+  return (
+    <div
+      className={cx("cr-calendar", className)}
+      data-months={months.length}
+      ref={grid}
+    >
+      <div className="cr-calendar-navigation">
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={props.previousMonthLabel ?? labels.previousMonth}
+          disabled={disabled || month <= startOfCalendarMonth(min)}
+          onClick={() => changeMonth(addCalendarMonths(month, -1))}
+        >
+          <ChevronLeft size={16} aria-hidden="true" />
+        </Button>
+        <span id={headingId} className="cr-sr-only" aria-live="polite">
+          {months
+            .map((date) => completeMonth.format(parseCalendarDate(date)))
+            .join(" – ")}
+        </span>
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label={props.nextMonthLabel ?? labels.nextMonth}
+          disabled={disabled || months.at(-1)! >= startOfCalendarMonth(max)}
+          onClick={() => changeMonth(addCalendarMonths(month, 1))}
+        >
+          <ChevronRight size={16} aria-hidden="true" />
+        </Button>
+      </div>
+      <div className="cr-calendar-months">
+        {months.map((current, monthIndex) => {
+          const date = parseCalendarDate(current),
+            offset = (date.getUTCDay() - weekStartsOn + 7) % 7;
+          const monthId = `${headingId}-${monthIndex}`;
+          return (
+            <section className="cr-calendar-month" key={monthIndex}>
+              <div className="cr-calendar-caption">
+                <span className="cr-sr-only" id={monthId}>
+                  {completeMonth.format(date)}
+                </span>
+                {monthSelection ? (
+                  <>
+                    <select
+                      aria-label={`${labels.month}${months.length > 1 ? ` ${monthIndex + 1}` : ""}`}
+                      value={date.getUTCMonth()}
+                      disabled={disabled}
+                      onChange={(event) => {
+                        const next = new Date(date);
+                        next.setUTCMonth(Number(event.target.value));
+                        changeMonth(
+                          addCalendarMonths(calendarISO(next), -monthIndex),
+                        );
+                      }}
+                    >
+                      {Array.from({ length: 12 }, (_, index) => {
+                        const option = new Date(date);
+                        option.setUTCMonth(index);
+                        const text = calendarISO(option);
+                        return (
+                          <option
+                            key={index}
+                            value={index}
+                            disabled={
+                              endOfCalendarMonth(text) < min || text > max
+                            }
+                          >
+                            {monthName.format(option)}
+                          </option>
+                        );
+                      })}
+                    </select>
+                    <input
+                      type="number"
+                      inputMode="numeric"
+                      aria-label={`${labels.year}${months.length > 1 ? ` ${monthIndex + 1}` : ""}`}
+                      defaultValue={date.getUTCFullYear()}
+                      key={date.getUTCFullYear()}
+                      min={minYear}
+                      max={maxYear}
+                      disabled={disabled}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          event.currentTarget.blur();
+                        }
+                      }}
+                      onBlur={(event) => {
+                        const year = Number(event.currentTarget.value);
+                        if (
+                          !Number.isInteger(year) ||
+                          year < minYear ||
+                          year > maxYear
+                        ) {
+                          event.currentTarget.value = String(
+                            date.getUTCFullYear(),
+                          );
+                          return;
+                        }
+                        const next = new Date(date);
+                        next.setUTCFullYear(year);
+                        changeMonth(
+                          addCalendarMonths(calendarISO(next), -monthIndex),
+                        );
+                      }}
+                    />
+                  </>
+                ) : (
+                  <strong>{completeMonth.format(date)}</strong>
+                )}
+              </div>
+              <div
+                role="grid"
+                aria-label={label}
+                aria-describedby={monthId}
+                aria-multiselectable={props.mode === "range" || undefined}
+              >
+                <div
+                  role="row"
+                  className="cr-calendar-week"
+                  data-week-numbers={showWeekNumbers || undefined}
+                >
+                  {showWeekNumbers && (
+                    <span role="columnheader" aria-label={labels.week}>
+                      #
+                    </span>
+                  )}
+                  {Array.from({ length: 7 }, (_, index) => {
+                    const day = parseCalendarDate(
+                      addCalendarDays("2024-01-07", (index + weekStartsOn) % 7),
+                    );
+                    return (
+                      <span
+                        key={index}
+                        role="columnheader"
+                        aria-label={new Intl.DateTimeFormat(locale, {
+                          weekday: "long",
+                          timeZone: "UTC",
+                          calendar: "gregory",
+                        }).format(day)}
+                      >
+                        {new Intl.DateTimeFormat(locale, {
+                          weekday: weekdayFormat,
+                          timeZone: "UTC",
+                          calendar: "gregory",
+                        }).format(day)}
+                      </span>
+                    );
+                  })}
+                </div>
+                {Array.from({ length: 6 }, (_, week) => (
+                  <div
+                    key={week}
+                    role="row"
+                    className="cr-calendar-week"
+                    data-week-numbers={showWeekNumbers || undefined}
+                  >
+                    {showWeekNumbers && (
+                      <span
+                        role="rowheader"
+                        className="cr-calendar-week-number"
+                      >
+                        {isoWeekNumber(
+                          addCalendarDays(
+                            current,
+                            week * 7 + ((4 - weekStartsOn + 7) % 7) - offset,
+                          ),
+                        )}
+                      </span>
+                    )}
+                    {Array.from({ length: 7 }, (_, dayIndex) => {
+                      const day = new Date(date);
+                      day.setUTCDate(1 - offset + week * 7 + dayIndex);
+                      const outside = day.getUTCMonth() !== date.getUTCMonth();
+                      if (
+                        day.getUTCFullYear() < 1 ||
+                        day.getUTCFullYear() > 9999 ||
+                        (months.length > 1 && outside)
+                      )
+                        return <span role="gridcell" key={dayIndex} />;
+                      const text = calendarISO(day),
+                        blocked = unavailable(text),
+                        inRange =
+                          !!displayedRange &&
+                          text >= displayedRange.start &&
+                          text <= displayedRange.end;
+                      const endpoint =
+                          !!displayedRange &&
+                          (text === displayedRange.start ||
+                            text === displayedRange.end),
+                        isSelected =
+                          props.mode === "range"
+                            ? !anchor && inRange
+                            : selected === text;
+                      return (
+                        <div
+                          role="gridcell"
+                          aria-selected={isSelected}
+                          aria-disabled={blocked || undefined}
+                          data-in-range={inRange || undefined}
+                          data-range-start={
+                            text === displayedRange?.start || undefined
+                          }
+                          data-range-end={
+                            text === displayedRange?.end || undefined
+                          }
+                          key={dayIndex}
+                        >
+                          <button
+                            type="button"
+                            data-date={text}
+                            data-outside={outside || undefined}
+                            data-selected={
+                              endpoint || selected === text || undefined
+                            }
+                            data-preview={(!!anchor && inRange) || undefined}
+                            aria-label={fullDate.format(day)}
+                            aria-current={text === today ? "date" : undefined}
+                            aria-disabled={blocked || undefined}
+                            disabled={blocked}
+                            tabIndex={!blocked && text === tabDate ? 0 : -1}
+                            onFocus={() => {
+                              setFocusDate(text);
+                              if (anchor) setHovered(text);
+                            }}
+                            onMouseEnter={() => {
+                              if (anchor) setHovered(text);
+                            }}
+                            onKeyDown={(event) => keyboard(event, text)}
+                            onClick={() => choose(text)}
+                          >
+                            {renderDay ? renderDay(text) : day.getUTCDate()}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </section>
+          );
+        })}
+      </div>
+      <div
+        className={status ? "cr-calendar-status" : "cr-sr-only"}
+        role="status"
+        aria-live="polite"
+      >
+        {status}
+      </div>
+    </div>
+  );
+}
+```

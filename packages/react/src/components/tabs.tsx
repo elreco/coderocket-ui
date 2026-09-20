@@ -7,6 +7,8 @@ export function Tabs({
   value,
   defaultValue,
   onValueChange,
+  keepMounted = false,
+  activateOnFocus = false,
 }: {
   label: string;
   items: Array<{
@@ -18,15 +20,23 @@ export function Tabs({
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  keepMounted?: boolean;
+  activateOnFocus?: boolean;
 }) {
   return (
     <Base.Root
       value={value}
-      defaultValue={defaultValue ?? items[0]?.value}
-      onValueChange={(v) => onValueChange?.(String(v))}
+      defaultValue={defaultValue ?? items.find((item) => !item.disabled)?.value}
+      onValueChange={(v) => {
+        if (typeof v === "string") onValueChange?.(v);
+      }}
       className="cr-tabs"
     >
-      <Base.List aria-label={label} className="cr-tabs-list">
+      <Base.List
+        activateOnFocus={activateOnFocus}
+        aria-label={label}
+        className="cr-tabs-list"
+      >
         {items.map((item) => (
           <Base.Tab
             key={item.value}
@@ -43,6 +53,7 @@ export function Tabs({
           key={item.value}
           value={item.value}
           className="cr-tab-panel"
+          keepMounted={keepMounted}
         >
           {item.content}
         </Base.Panel>

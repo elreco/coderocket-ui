@@ -16,9 +16,11 @@
     }
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc6 --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "zod": "4.6.5"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",

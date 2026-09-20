@@ -1,0 +1,65 @@
+---
+title: "EmptyState"
+description: "A welcoming empty collection with a primary action."
+---
+
+<DocPreview framework="vue" slug="empty-state" kind="block"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import EmptyStateBlock from './components/blocks/empty-state.vue'
+</script>
+
+<!-- Supply the required props and callbacks listed in Source and props. -->
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+The full ZIP also includes `examples/block-showcase.vue`, with populated block props, illustrations and local sample callbacks to adapt to your application.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import Card from "../ui/card.vue";
+import EmptyState from "../ui/empty-state.vue";
+import Button from "../ui/button.vue";
+import { FolderPlus, Plus } from "@lucide/vue";
+defineProps<{
+  title: string;
+  description: string;
+  actionLabel: string;
+  onAction: () => void;
+}>();
+</script>
+<template>
+  <Card class="cr-workspace-block cr-workspace-empty-block"
+    ><EmptyState :title="title" :description="description"
+      ><template #icon
+        ><span class="cr-workspace-empty-illustration"
+          ><span /><span /><span
+            ><FolderPlus
+              :size="30"
+              :stroke-width="1.5"
+              aria-hidden="true" /></span></span></template
+      ><template #action
+        ><Button @click="onAction"
+          ><Plus :size="16" aria-hidden="true" />{{ actionLabel }}</Button
+        ></template
+      ></EmptyState
+    ></Card
+  >
+</template>
+```

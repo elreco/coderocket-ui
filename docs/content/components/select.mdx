@@ -1,0 +1,145 @@
+---
+title: "Select"
+description: "Accessible single or multiple selection with disabled options, controlled state and native form support."
+---
+
+<DocPreview slug="select" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { Select } from './components/ui/select';
+
+<Select label="Timezone" defaultValue="paris" options={[{value:"paris",label:"Europe / Paris"},{value:"new-york",label:"America / New York"}]}/>
+```
+
+## Multiple values and forms
+
+Use `multiple` for a typed array of string values. `name`, `form`, `required`, `disabled`, `readOnly`, `value` and `onValueChange` are forwarded to Base UI. Use `triggerProps` to connect additional help or validation messages.
+
+```tsx
+<Select
+  label="Project labels"
+  name="labels"
+  multiple
+  defaultValue={["design"]}
+  options={[
+    { value: "design", label: "Design" },
+    { value: "engineering", label: "Engineering" },
+    { value: "archived", label: "Archived", disabled: true },
+  ]}
+/>
+```
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+## Behavior and accessibility
+
+- Provide meaningful labels for interactive controls.
+- Connect action callbacks to your application logic.
+- Verify keyboard navigation and contrast in your application.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+import type { ComponentProps } from "react";
+import { Select as Base } from "@base-ui/react/select";
+import { cx, usePortalContainer } from "./utils";
+export type SelectProps<Multiple extends boolean | undefined = false> = Omit<
+  Base.Root.Props<string, Multiple>,
+  "children" | "items"
+> & {
+  label: string;
+  options: ReadonlyArray<{ value: string; label: string; disabled?: boolean }>;
+  placeholder?: string;
+  className?: string;
+  triggerProps?: Omit<
+    ComponentProps<typeof Base.Trigger>,
+    "children" | "className" | "render" | "disabled"
+  >;
+};
+export function Select<Multiple extends boolean | undefined = false>({
+  label,
+  options,
+  placeholder = "Select an option",
+  className,
+  triggerProps,
+  ...props
+}: SelectProps<Multiple>) {
+  const container = usePortalContainer();
+  return (
+    <Base.Root {...props} items={options}>
+      <Base.Trigger
+        aria-label={label}
+        {...triggerProps}
+        className={cx("cr-select-trigger", className)}
+      >
+        <Base.Value placeholder={placeholder} className="cr-select-value" />
+        <Base.Icon>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </Base.Icon>
+      </Base.Trigger>
+      <Base.Portal container={container}>
+        <Base.Positioner
+          sideOffset={6}
+          alignItemWithTrigger={false}
+          className="cr-positioner"
+        >
+          <Base.Popup className="cr-popup">
+            <Base.List>
+              {options.map((option) => (
+                <Base.Item
+                  key={option.value}
+                  value={option.value}
+                  disabled={option.disabled}
+                  className="cr-menu-item"
+                >
+                  <Base.ItemText>{option.label}</Base.ItemText>
+                  <Base.ItemIndicator>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.75"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="m20 6-11 11-5-5" />
+                    </svg>
+                  </Base.ItemIndicator>
+                </Base.Item>
+              ))}
+            </Base.List>
+          </Base.Popup>
+        </Base.Positioner>
+      </Base.Portal>
+    </Base.Root>
+  );
+}
+```

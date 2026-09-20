@@ -1,0 +1,81 @@
+/* Map Reka state attributes onto the shared CodeRocket design system. */
+.cr-tab[data-state="active"] {
+  color: var(--cr-primary);
+  border-color: var(--cr-primary);
+}
+.cr-tab[data-state][data-disabled],
+.cr-accordion-trigger[data-state][data-disabled],
+.cr-menu-item[data-reka-collection-item][data-disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.cr-accordion-trigger[data-state="open"] > span {
+  transform: rotate(45deg);
+}
+.cr-collapsible-trigger[data-state="open"] > svg {
+  transform: rotate(180deg);
+}
+.cr-progress[data-state="indeterminate"] .cr-progress-indicator {
+  width: 40%;
+  animation: cr-indeterminate 1.4s ease-in-out infinite;
+}
+.cr-navigation[data-reka-navigation-menu] {
+  position: relative;
+}
+.cr-vue-navigation-positioner {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: var(--cr-z-popup, 50);
+  padding-top: 8px;
+}
+.cr-vue-navigation-positioner > .cr-popup {
+  width: var(--reka-navigation-menu-viewport-width);
+  height: var(--reka-navigation-menu-viewport-height);
+  overflow: hidden;
+}
+.cr-drawer-handle {
+  touch-action: none;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: grab;
+}
+.cr-drawer-handle > span {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--cr-border);
+}
+ol.cr-toast-viewport {
+  list-style: none;
+  margin: 0;
+}
+.cr-toast[data-swipe="move"] {
+  transform: translate(
+    var(--reka-toast-swipe-move-x),
+    var(--reka-toast-swipe-move-y)
+  );
+}
+.cr-toast[data-state="closed"] {
+  opacity: 0;
+}
+.cr-modal-viewport:has(> .cr-modal[data-state]) {
+  pointer-events: none;
+}
+.cr-modal[data-state] {
+  pointer-events: auto;
+}
+.cr-accordion-panel[hidden],
+.cr-collapsible-panel[hidden],
+.cr-tab-panel[hidden] {
+  display: none;
+}
+[data-reka-popper-content-wrapper] > .cr-popup,
+[data-reka-popper-content-wrapper] > .cr-tooltip {
+  z-index: var(--cr-z-dropdown);
+  --available-width: var(--reka-popper-available-width);
+  --available-height: var(--reka-popper-available-height);
+  --anchor-width: var(--reka-popper-anchor-width);
+}

@@ -1,0 +1,79 @@
+---
+title: CLI and coding agents
+description: Connect your project and give your coding agent the same components, tokens and design rules you use in the editor.
+---
+
+You can work entirely from an exported ZIP. Use a connection when you want your terminal or coding agent to read the latest saved version of a library.
+
+## Create a connection
+
+1. Save the library in the editor, then open **Connect**.
+2. Name the connection for the machine or agent that will use it.
+3. Choose **Create read-only connection** and copy the token shown once.
+4. Copy the generated setup commands or MCP configuration into your development environment.
+
+A connection can read only its library. It expires after 90 days and can be revoked from the same dialog. Put its token in your terminal or agent's protected environment; keep it out of source files, prompts and public URLs.
+
+## Install with the CLI
+
+The **Connect** dialog provides the CLI archive URL and complete commands for your library. Its commands use `npm exec --package <archive URL> -- coderocket …`, so a global installation is unnecessary. The table below abbreviates that prefix; use the full command from **Connect** and replace only its final arguments.
+
+| Command                        | Result                                                     |
+| ------------------------------ | ---------------------------------------------------------- |
+| `coderocket init`              | Connect the current project to a saved library             |
+| `coderocket add button dialog` | Install the named components and required shared files     |
+| `coderocket add block-login`   | Install a complete block                                   |
+| `coderocket add --all`         | Install the full catalogue                                 |
+| `coderocket sync`              | Update unchanged local files from the latest saved version |
+| `coderocket import`            | Write a local analysis report for importing project tokens |
+
+Install the listed runtime dependencies and import the generated styles once. See [export and installation](/docs/export) for React/Next.js, or [Vue and Nuxt setup](/docs/vue). The connection reads the framework from your saved library and serves the matching source and dependencies.
+
+### Your local edits stay yours
+
+The CLI compares file hashes before applying an update. If it finds a local edit or deletion, it stops the installation and writes the proposed changes into a `.coderocket/review-*` folder. Review and merge those changes in your codebase; the CLI does not silently replace your work.
+
+Save changes in the editor before syncing. A connection reads saved versions, not another browser's unsaved preview.
+
+## Use the shadcn registry (React)
+
+Vue libraries use the CodeRocket CLI or MCP above. The instructions below target React projects.
+
+Open **Connect → Use the shadcn registry** and copy the registry entry into your existing `components.json`. The configuration uses an authorization header from your environment to keep the library private.
+
+You can then install a component through your configured registry:
+
+```bash
+npx shadcn@latest add @coderocket/button
+```
+
+The local-change protection described above belongs to the CodeRocket CLI. When using another installer, review its proposed changes and your version-control diff.
+
+## Connect an agent with MCP
+
+Open **Connect → Connect a coding agent with MCP**. Copy the configuration to a compatible MCP client, storing the token in its protected environment settings.
+
+The connector gives your agent read access to:
+
+- The saved design model, tokens and revision.
+- Design rules and integration conventions.
+- Component and block search.
+- Source files, dependencies and installation paths.
+
+For example, you can ask an agent to “build a settings form using this library's input, select and button components.” The agent has the source and design context it needs to reuse your library. Design changes still happen in the editor, where you review and save them.
+
+## Include your design rules
+
+Every source export includes `AGENTS.md` with the library's conventions. It asks agents to reuse existing controls, consume semantic tokens, and preserve keyboard and focus behavior.
+
+If your project already has an `AGENTS.md`, merge the relevant design rules into it. Preserve your existing project-specific instructions.
+
+## Give an assistant the public reference
+
+Use **Copy for AI** on any documentation page. Paste the result into your preferred assistant, such as ChatGPT, Claude, Cursor, Copilot or Codex, and describe what you want to build. The copied context includes this page’s Markdown and links to source installation and agent setup. It works without a CodeRocket connection.
+
+This is the **public reference**. To work with your own saved components and theme, give your coding agent the exported files or [connect it through MCP](#connect-an-agent-with-mcp). Keep connection tokens in the agent’s protected environment settings.
+
+Component and block pages also offer **Open in editor**. Choose an existing library or create one; the editor keeps the component you selected. You can customize its design, inspect its code and export the source from there.
+
+The **Markdown** link opens a plain-text version of the page, useful for both people and tools. [`/llms.txt`](/llms.txt) provides the documentation index; [`/llms-full.txt`](/llms-full.txt) contains the full collection for tools that need it.

@@ -150,7 +150,7 @@
     "slug": "select",
     "name": "Select",
     "category": "Forms",
-    "description": "A select menu with keyboard navigation and form support.",
+    "description": "Accessible single or multiple selection with disabled options, controlled state and native form support.",
     "source": "components/select.tsx",
     "example": "<Select label=\"Timezone\" defaultValue=\"paris\" options={[{value:\"paris\",label:\"Europe / Paris\"},{value:\"new-york\",label:\"America / New York\"}]}/>"
   },
@@ -158,7 +158,7 @@
     "slug": "combobox",
     "name": "Combobox",
     "category": "Forms",
-    "description": "A searchable single-select list with an empty state.",
+    "description": "Searchable single selection with controlled search, disabled options, optional clearing and form support.",
     "source": "components/combobox.tsx",
     "example": "<Combobox label=\"Framework\" items={[\"React\",\"Vue\",\"Svelte\",\"SolidJS\"]}/>"
   },
@@ -240,7 +240,7 @@
     "slug": "data-table",
     "name": "DataTable",
     "category": "Data",
-    "description": "A searchable, sortable and paginated data table.",
+    "description": "Searchable, sortable and paginated data with controlled state, custom cells, stable row keys and loading/empty states.",
     "source": "components/data-table.tsx",
     "example": "<DataTable caption=\"Projects\" columns={[{key:\"name\",label:\"Name\"},{key:\"status\",label:\"Status\"}]} rows={[{name:\"Website\",status:\"Active\"},{name:\"Mobile app\",status:\"Planning\"}]}/>",
     "dependencies": ["input", "button", "pagination"]
@@ -270,8 +270,8 @@
     "category": "Overlays",
     "description": "A confirmation dialog with focus management, keyboard dismissal and a labelled title.",
     "source": "components/alert-dialog.tsx",
-    "example": "<AlertDialog trigger=\"Open alertdialog\" title=\"Workspace settings\" description=\"Manage the details of your workspace.\"><Input aria-label=\"Workspace name\" placeholder=\"Acme\"/></AlertDialog>",
-    "dependencies": ["input"],
+    "example": "<AlertDialog trigger=\"Preview confirmation\" title=\"Review before continuing\" description=\"Important changes deserve a final check.\" closeLabel=\"Cancel\"><p>This is a confirmation preview. No data will be changed. In your application, explain the consequences here before asking the user to confirm.</p></AlertDialog>",
+    "dependencies": [],
     "anatomy": [
       "trigger",
       "backdrop",
@@ -417,19 +417,32 @@
     "slug": "calendar",
     "name": "Calendar",
     "category": "Complex forms",
-    "description": "A Gregorian date-only calendar with keyboard navigation, locale and range limits.",
+    "description": "A Gregorian single-date or range calendar with month/year selection, disabled dates, week numbers and keyboard navigation.",
     "example": "<Calendar defaultValue=\"2026-09-17\" onValueChange={date=>console.info(date)}/>",
     "dependencies": ["button"],
-    "source": "components/calendar.tsx"
+    "source": "components/calendar.tsx",
+    "behavior": [
+      "Date-only ISO values are independent of time zones and display locale.",
+      "Arrow keys, Home/End, PageUp/PageDown and Shift+PageUp/PageDown move through days, months and years.",
+      "Disabled dates can be listed or supplied as a predicate; range selection can reject unavailable dates inside an interval.",
+      "Use `numberOfMonths={2}` for two months and showWeekNumbers for ISO week numbers."
+    ]
   },
   {
     "slug": "date-picker",
     "name": "DatePicker",
     "category": "Complex forms",
-    "description": "An ISO date picker with a localized label and accessible calendar popover.",
-    "example": "<DatePicker label=\"Due date\" defaultValue=\"2026-09-17\" onValueChange={date=>console.info(date)}/>",
-    "dependencies": ["calendar", "popover"],
-    "source": "components/date-picker.tsx"
+    "description": "Single-date and date-range selection with shortcuts, manual confirmation, localized calendars and editable date fields.",
+    "example": "<DatePicker mode=\"range\" label=\"Project dates\" defaultValue={{start:\"2026-09-17\",end:\"2026-09-23\"}} autoApply={false} onValueChange={range=>console.info(range ? range.start + \" – \" + range.end : \"Cleared\")}/>",
+    "dependencies": ["calendar", "button"],
+    "source": "components/date-picker.tsx",
+    "behavior": [
+      "Single mode returns an ISO date; range mode returns `{ start, end }`. Display formatting never changes stored values.",
+      "Choose one or two months, navigate by keyboard or month/year controls, and enter dates directly.",
+      "Shortcuts, disabled dates, min/max bounds, week numbers, inline display, clearing and Apply/Cancel are available.",
+      "French and English control labels are built in; other languages can supply labels alongside an Intl locale.",
+      "The same source and compiled styles are included in the library export."
+    ]
   },
   {
     "slug": "toast",

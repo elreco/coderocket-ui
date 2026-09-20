@@ -16,7 +16,7 @@
     }
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc6 --noEmit"
   },
   "dependencies": {
     "@coderocket/engine": "workspace:*",

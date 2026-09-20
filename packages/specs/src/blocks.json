@@ -6,7 +6,14 @@
     "category": "Authentication",
     "description": "A sign-in form with typed submission callback.",
     "source": "auth.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "button",
+      "card",
+      "field",
+      "input",
+      "input-group",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -16,7 +23,14 @@
     "category": "Authentication",
     "description": "A registration form with email and password validation.",
     "source": "auth.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "button",
+      "card",
+      "field",
+      "input",
+      "input-group",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -26,7 +40,14 @@
     "category": "Authentication",
     "description": "A recovery request form that preserves account privacy.",
     "source": "auth.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "button",
+      "card",
+      "field",
+      "input",
+      "input-group",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -36,7 +57,14 @@
     "category": "Authentication",
     "description": "A password reset form with matching confirmation.",
     "source": "auth.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "button",
+      "card",
+      "field",
+      "input",
+      "input-group",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -46,7 +74,14 @@
     "category": "Authentication",
     "description": "A one-time-code form with numeric validation.",
     "source": "auth.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "button",
+      "card",
+      "field",
+      "input",
+      "input-group",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -56,7 +91,23 @@
     "category": "Application",
     "description": "Collapsible workspace navigation with account identity.",
     "source": "application.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -66,7 +117,23 @@
     "category": "Application",
     "description": "Breadcrumbs, search and account actions in an application header.",
     "source": "application.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -76,7 +143,23 @@
     "category": "Application",
     "description": "Editable profile details and identity.",
     "source": "application.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -86,7 +169,23 @@
     "category": "Application",
     "description": "Workspace and notification settings in accessible tabs.",
     "source": "application.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -96,7 +195,23 @@
     "category": "Application",
     "description": "A member list with invitation and removal callbacks.",
     "source": "application.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -106,7 +221,23 @@
     "category": "Application",
     "description": "Subscription summary, seat usage and invoice links.",
     "source": "application.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -116,7 +247,23 @@
     "category": "Application",
     "description": "A masked key list with creation and revocation callbacks.",
     "source": "application.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -126,7 +273,23 @@
     "category": "Application",
     "description": "An inbox with unread states and mark-as-read actions.",
     "source": "application.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
     "status": "experimental"
   },
   {
@@ -136,7 +299,17 @@
     "category": "Data",
     "description": "A searchable, sortable, paginated records panel.",
     "source": "data.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
     "status": "experimental"
   },
   {
@@ -146,7 +319,17 @@
     "category": "Data",
     "description": "Search and status filters with reset and controlled output.",
     "source": "data.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
     "status": "experimental"
   },
   {
@@ -156,7 +339,17 @@
     "category": "Data",
     "description": "Filter and select content from a local collection.",
     "source": "data.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
     "status": "experimental"
   },
   {
@@ -166,7 +359,17 @@
     "category": "Data",
     "description": "A welcoming empty collection with a primary action.",
     "source": "data.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
     "status": "experimental"
   },
   {
@@ -176,7 +379,17 @@
     "category": "Data",
     "description": "Structured record details with an edit action.",
     "source": "data.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
     "status": "experimental"
   },
   {
@@ -186,7 +399,17 @@
     "category": "Data",
     "description": "Responsive metric cards with textual trend indicators.",
     "source": "data.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
     "status": "experimental"
   },
   {
@@ -196,7 +419,12 @@
     "category": "Marketing",
     "description": "A focused product introduction with two actions.",
     "source": "marketing.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
     "status": "experimental"
   },
   {
@@ -206,7 +434,12 @@
     "category": "Marketing",
     "description": "A responsive feature grid built from cards.",
     "source": "marketing.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
     "status": "experimental"
   },
   {
@@ -216,7 +449,12 @@
     "category": "Marketing",
     "description": "Comparable plans, features and purchase links.",
     "source": "marketing.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
     "status": "experimental"
   },
   {
@@ -226,7 +464,12 @@
     "category": "Marketing",
     "description": "Customer quotations with author identities.",
     "source": "marketing.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
     "status": "experimental"
   },
   {
@@ -236,7 +479,12 @@
     "category": "Marketing",
     "description": "An accessible accordion of questions and answers.",
     "source": "marketing.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
     "status": "experimental"
   },
   {
@@ -246,7 +494,12 @@
     "category": "Marketing",
     "description": "A call-to-action panel with product copy.",
     "source": "marketing.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
     "status": "experimental"
   },
   {
@@ -256,7 +509,12 @@
     "category": "Marketing",
     "description": "Grouped navigation, brand description and copyright.",
     "source": "marketing.tsx",
-    "dependencies": [],
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
     "status": "experimental"
   }
 ]

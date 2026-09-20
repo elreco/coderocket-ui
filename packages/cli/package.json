@@ -1,6 +1,6 @@
 {
   "name": "@coderocket/cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "exports": {
@@ -11,7 +11,7 @@
     }
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc6 --noEmit"
   },
   "dependencies": {
     "@coderocket/shared": "workspace:*"

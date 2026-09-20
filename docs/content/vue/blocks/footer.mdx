@@ -1,0 +1,91 @@
+---
+title: "Footer"
+description: "Grouped navigation, brand description and copyright."
+---
+
+<DocPreview framework="vue" slug="footer" kind="block"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import FooterBlock from './components/blocks/footer.vue'
+</script>
+
+<!-- Supply the required props and callbacks listed in Source and props. -->
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+The full ZIP also includes `examples/block-showcase.vue`, with populated block props, illustrations and local sample callbacks to adapt to your application.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import type { DisplayContent } from "../ui/display-types";
+import { RenderContent } from "../ui/display-utils";
+defineProps<{
+  brand: string;
+  description: string;
+  groups: readonly {
+    title: string;
+    links: readonly { label: string; href: string }[];
+  }[];
+  copyright: string;
+  logo?: DisplayContent;
+  brandHref?: string;
+  legalLinks?: readonly { label: string; href: string }[];
+}>();
+</script>
+<template>
+  <footer class="cr-footer">
+    <div class="cr-footer-main">
+      <div class="cr-footer-brand">
+        <component
+          :is="brandHref ? 'a' : 'div'"
+          class="cr-footer-identity"
+          :href="brandHref"
+          ><span
+            v-if="logo || $slots.logo"
+            class="cr-footer-logo"
+            aria-hidden="true"
+            ><slot name="logo"><RenderContent :content="logo" /></slot></span
+          ><strong>{{ brand }}</strong></component
+        >
+        <p class="cr-description">{{ description }}</p>
+      </div>
+      <div class="cr-footer-navigation">
+        <nav
+          v-for="group in groups"
+          :key="group.title"
+          :aria-label="group.title"
+        >
+          <strong>{{ group.title }}</strong
+          ><a v-for="link in group.links" :key="link.href" :href="link.href">{{
+            link.label
+          }}</a>
+        </nav>
+      </div>
+    </div>
+    <div class="cr-footer-bottom">
+      <p class="cr-description">{{ copyright }}</p>
+      <nav v-if="legalLinks?.length" aria-label="Legal">
+        <a v-for="link in legalLinks" :key="link.href" :href="link.href">{{
+          link.label
+        }}</a>
+      </nav>
+    </div>
+  </footer>
+</template>
+```

@@ -1,0 +1,100 @@
+---
+title: "Tabs"
+description: "Related panels connected to an accessible tab list."
+---
+
+<DocPreview slug="tabs" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { Tabs } from './components/ui/tabs';
+
+<Tabs label="Account" items={[{value:"profile",label:"Profile",content:"Your profile settings."},{value:"notifications",label:"Notifications",content:"Choose how you stay informed."}]}/>
+```
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+## Behavior and accessibility
+
+- Provide meaningful labels for interactive controls.
+- Connect action callbacks to your application logic.
+- Verify keyboard navigation and contrast in your application.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+import { Tabs as Base } from "@base-ui/react/tabs";
+import type { ReactNode } from "react";
+export function Tabs({
+  label,
+  items,
+  value,
+  defaultValue,
+  onValueChange,
+  keepMounted = false,
+  activateOnFocus = false,
+}: {
+  label: string;
+  items: Array<{
+    value: string;
+    label: string;
+    content: ReactNode;
+    disabled?: boolean;
+  }>;
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  keepMounted?: boolean;
+  activateOnFocus?: boolean;
+}) {
+  return (
+    <Base.Root
+      value={value}
+      defaultValue={defaultValue ?? items.find((item) => !item.disabled)?.value}
+      onValueChange={(v) => {
+        if (typeof v === "string") onValueChange?.(v);
+      }}
+      className="cr-tabs"
+    >
+      <Base.List
+        activateOnFocus={activateOnFocus}
+        aria-label={label}
+        className="cr-tabs-list"
+      >
+        {items.map((item) => (
+          <Base.Tab
+            key={item.value}
+            value={item.value}
+            disabled={item.disabled}
+            className="cr-tab"
+          >
+            {item.label}
+          </Base.Tab>
+        ))}
+      </Base.List>
+      {items.map((item) => (
+        <Base.Panel
+          key={item.value}
+          value={item.value}
+          className="cr-tab-panel"
+          keepMounted={keepMounted}
+        >
+          {item.content}
+        </Base.Panel>
+      ))}
+    </Base.Root>
+  );
+}
+```

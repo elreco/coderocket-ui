@@ -18,7 +18,7 @@ export type Lock = {
 export const hash = (content: string) =>
   createHash("sha256").update(content).digest("hex");
 export function allowedExportPath(path: string) {
-  return /^(components\/(ui|blocks)\/[a-z][a-z0-9-]*\.tsx?|styles\/[a-z][a-z0-9-]*\.css|\.coderocket\/(README\.md|LICENSE|AGENTS\.md)|design-system\.json|AGENTS\.md|README\.md|LICENSE)$/.test(
+  return /^(components\/(ui|blocks)\/[a-z][a-z0-9-]*\.(?:tsx?|vue)|styles\/[a-z][a-z0-9-]*\.css|\.coderocket\/(README\.md|LICENSE|AGENTS\.md)|design-system\.json|AGENTS\.md|README\.md|LICENSE)$/.test(
     path,
   );
 }

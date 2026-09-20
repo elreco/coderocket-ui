@@ -1,6 +1,36 @@
 "use client";
 import type { ReactNode } from "react";
-import { Accordion, Avatar, Badge, Card, Separator } from "@coderocket/react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  Layers3,
+  Quote,
+  SlidersHorizontal,
+  Workflow,
+} from "lucide-react";
+import { Accordion, Avatar, Badge, Card } from "@coderocket/react";
+
+function MarketingHeading({
+  title,
+  description,
+  eyebrow,
+}: {
+  title: string;
+  description?: string;
+  eyebrow?: string;
+}) {
+  return (
+    <header className="cr-marketing-heading">
+      <div>
+        {eyebrow && <p className="cr-marketing-eyebrow">{eyebrow}</p>}
+        <h2>{title}</h2>
+      </div>
+      {description && <p className="cr-description">{description}</p>}
+    </header>
+  );
+}
+
 export function HeroBlock({
   eyebrow,
   title,
@@ -17,57 +47,125 @@ export function HeroBlock({
   children?: ReactNode;
 }) {
   return (
-    <section className="cr-hero">
-      <Badge variant="outline">{eyebrow}</Badge>
-      <h1>{title}</h1>
-      <p className="cr-description">{description}</p>
-      <div className="cr-hero-actions">
-        <a className="cr-button" href={primary.href}>
-          {primary.label}
-        </a>
-        {secondary && (
-          <a className="cr-button" data-variant="outline" href={secondary.href}>
-            {secondary.label}
-          </a>
-        )}
+    <section className="cr-hero cr-marketing-hero">
+      <div className="cr-hero-decoration" aria-hidden="true">
+        <span>
+          <Layers3 strokeWidth={1.75} />
+        </span>
+        <span>
+          <SlidersHorizontal strokeWidth={1.75} />
+        </span>
+        <span>
+          <Workflow strokeWidth={1.75} />
+        </span>
       </div>
-      {children}
+      <div className="cr-hero-content">
+        <Badge variant="outline">
+          {eyebrow}
+          <ArrowUpRight size={13} strokeWidth={1.75} aria-hidden="true" />
+        </Badge>
+        <h1>{title}</h1>
+        <p className="cr-description">{description}</p>
+        <div className="cr-hero-actions">
+          <a className="cr-button" href={primary.href}>
+            {primary.label}
+            <ArrowRight size={17} strokeWidth={1.75} aria-hidden="true" />
+          </a>
+          {secondary && (
+            <a className="cr-button" data-variant="ghost" href={secondary.href}>
+              {secondary.label}
+              <ArrowUpRight size={16} strokeWidth={1.75} aria-hidden="true" />
+            </a>
+          )}
+        </div>
+      </div>
+      {children && <div className="cr-hero-media">{children}</div>}
     </section>
   );
 }
+
 export function FeaturesBlock({
   title,
   description,
+  eyebrow,
   items,
 }: {
   title: string;
   description: string;
-  items: Array<{ title: string; description: string; icon?: ReactNode }>;
+  eyebrow?: string;
+  items: Array<{
+    title: string;
+    description: string;
+    icon?: ReactNode;
+    visual?: ReactNode;
+    eyebrow?: string;
+    href?: string;
+    linkLabel?: string;
+  }>;
 }) {
+  const fallbackIcons = [Layers3, Workflow, SlidersHorizontal];
   return (
-    <section className="cr-marketing-section">
-      <h2>{title}</h2>
-      <p className="cr-description">{description}</p>
-      <div className="cr-block-grid">
-        {items.map((item) => (
-          <Card key={item.title} title={item.title}>
-            {item.icon && (
-              <span aria-hidden="true" className="cr-feature-icon">
-                {item.icon}
-              </span>
-            )}
-            <p className="cr-description">{item.description}</p>
-          </Card>
-        ))}
+    <section className="cr-marketing-section cr-features-section">
+      <MarketingHeading
+        title={title}
+        description={description}
+        eyebrow={eyebrow}
+      />
+      <div className="cr-features-grid">
+        {items.map((item, index) => {
+          const Icon = fallbackIcons[index % fallbackIcons.length];
+          return (
+            <Card
+              key={item.title}
+              className="cr-feature-card"
+              data-featured={(index === 0 && items.length >= 3) || undefined}
+              data-has-visual={Boolean(item.visual) || undefined}
+            >
+              <div className="cr-feature-copy">
+                <div className="cr-feature-topline">
+                  <span aria-hidden="true" className="cr-feature-icon">
+                    {item.icon ?? <Icon size={22} strokeWidth={1.75} />}
+                  </span>
+                  <span className="cr-feature-index" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                </div>
+                {item.eyebrow && (
+                  <p className="cr-marketing-eyebrow">{item.eyebrow}</p>
+                )}
+                <h3>{item.title}</h3>
+                <p className="cr-description">{item.description}</p>
+                {item.href && (
+                  <a className="cr-feature-link" href={item.href}>
+                    {item.linkLabel ?? "Explore feature"}
+                    <ArrowUpRight
+                      size={16}
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                  </a>
+                )}
+              </div>
+              {item.visual && (
+                <div className="cr-feature-visual">{item.visual}</div>
+              )}
+            </Card>
+          );
+        })}
       </div>
     </section>
   );
 }
+
 export function PricingBlock({
   title,
   plans,
+  eyebrow,
+  description,
 }: {
   title: string;
+  eyebrow?: string;
+  description?: string;
   plans: Array<{
     name: string;
     price: string;
@@ -80,16 +178,31 @@ export function PricingBlock({
   }>;
 }) {
   return (
-    <section className="cr-marketing-section">
-      <h2>{title}</h2>
-      <div className="cr-block-grid">
+    <section className="cr-marketing-section cr-pricing-section">
+      <MarketingHeading
+        title={title}
+        description={description}
+        eyebrow={eyebrow}
+      />
+      <div className="cr-pricing-grid">
         {plans.map((plan) => (
           <Card
             key={plan.name}
-            title={plan.name}
-            description={plan.description}
+            className="cr-pricing-card"
+            data-featured={plan.featured || undefined}
           >
-            {plan.featured && <Badge variant="primary">Recommended</Badge>}
+            <div className="cr-plan-heading">
+              <h3>{plan.name}</h3>
+              <div
+                className="cr-price-recommendation"
+                aria-hidden={!plan.featured || undefined}
+              >
+                {plan.featured && <Badge variant="primary">Recommended</Badge>}
+              </div>
+            </div>
+            <p className="cr-plan-description cr-description">
+              {plan.description}
+            </p>
             <p className="cr-price">
               {plan.price}
               <small>{plan.period}</small>
@@ -97,8 +210,8 @@ export function PricingBlock({
             <ul className="cr-price-features">
               {plan.features.map((feature) => (
                 <li key={feature}>
-                  <span aria-hidden="true">✓</span>
-                  {feature}
+                  <Check size={17} strokeWidth={1.75} aria-hidden="true" />
+                  <span>{feature}</span>
                 </li>
               ))}
             </ul>
@@ -108,6 +221,7 @@ export function PricingBlock({
               href={plan.href}
             >
               {plan.action}
+              <ArrowRight size={16} strokeWidth={1.75} aria-hidden="true" />
             </a>
           </Card>
         ))}
@@ -115,81 +229,149 @@ export function PricingBlock({
     </section>
   );
 }
+
 export function TestimonialsBlock({
   title,
   quotes,
+  eyebrow,
+  description,
 }: {
   title: string;
-  quotes: Array<{ quote: string; name: string; role: string }>;
+  eyebrow?: string;
+  description?: string;
+  quotes: Array<{ quote: string; name: string; role: string; avatar?: string }>;
 }) {
   return (
-    <section className="cr-marketing-section">
-      <h2>{title}</h2>
-      <div className="cr-block-grid">
-        {quotes.map((quote) => (
-          <Card key={quote.name}>
-            <blockquote className="cr-quote">“{quote.quote}”</blockquote>
-            <div className="cr-row">
-              <Avatar name={quote.name} />
-              <div>
-                <strong>{quote.name}</strong>
-                <p className="cr-description">{quote.role}</p>
-              </div>
-            </div>
+    <section className="cr-marketing-section cr-testimonials-section">
+      <MarketingHeading
+        title={title}
+        description={description}
+        eyebrow={eyebrow}
+      />
+      <div className="cr-testimonials-grid">
+        {quotes.map((quote, index) => (
+          <Card
+            key={quote.name}
+            className="cr-testimonial-card"
+            data-featured={index === 0 || undefined}
+          >
+            <figure className="cr-testimonial-figure">
+              <Quote
+                className="cr-quote-icon"
+                size={26}
+                strokeWidth={1.75}
+                aria-hidden="true"
+              />
+              <blockquote className="cr-quote">
+                <p>{quote.quote}</p>
+              </blockquote>
+              <figcaption className="cr-quote-author">
+                <Avatar name={quote.name} src={quote.avatar} size={40} />
+                <div>
+                  <cite>{quote.name}</cite>
+                  <p className="cr-description">{quote.role}</p>
+                </div>
+              </figcaption>
+            </figure>
           </Card>
         ))}
       </div>
     </section>
   );
 }
+
 export function FaqBlock({
   title,
   items,
+  eyebrow,
+  description,
+  contact,
 }: {
   title: string;
+  eyebrow?: string;
+  description?: string;
+  contact?: { label: string; href: string };
   items: Array<{ question: string; answer: ReactNode }>;
 }) {
   return (
-    <section className="cr-marketing-section">
-      <h2>{title}</h2>
-      <Accordion
-        items={items.map((item, index) => ({
-          value: String(index),
-          title: item.question,
-          content: item.answer,
-        }))}
-      />
+    <section className="cr-marketing-section cr-faq-section">
+      <div className="cr-faq-layout">
+        <div className="cr-faq-intro">
+          <MarketingHeading
+            title={title}
+            description={description}
+            eyebrow={eyebrow}
+          />
+          {contact && (
+            <a className="cr-feature-link" href={contact.href}>
+              {contact.label}
+              <ArrowUpRight size={16} strokeWidth={1.75} aria-hidden="true" />
+            </a>
+          )}
+        </div>
+        <div className="cr-faq-content">
+          <Accordion
+            items={items.map((item, index) => ({
+              value: String(index),
+              title: item.question,
+              content: item.answer,
+            }))}
+          />
+        </div>
+      </div>
     </section>
   );
 }
+
 export function CtaBlock({
   title,
   description,
   action,
+  eyebrow,
+  secondary,
 }: {
   title: string;
   description: string;
   action: { label: string; href: string };
+  eyebrow?: string;
+  secondary?: { label: string; href: string };
 }) {
   return (
-    <Card>
+    <Card className="cr-cta-card">
       <div className="cr-cta">
-        <div>
+        <div className="cr-cta-content">
+          {eyebrow && <p className="cr-marketing-eyebrow">{eyebrow}</p>}
           <h2>{title}</h2>
           <p className="cr-description">{description}</p>
+          <div className="cr-cta-actions">
+            <a className="cr-button" href={action.href}>
+              {action.label}
+              <ArrowRight size={17} strokeWidth={1.75} aria-hidden="true" />
+            </a>
+            {secondary && (
+              <a className="cr-feature-link" href={secondary.href}>
+                {secondary.label}
+                <ArrowUpRight size={16} strokeWidth={1.75} aria-hidden="true" />
+              </a>
+            )}
+          </div>
         </div>
-        <a className="cr-button" href={action.href}>
-          {action.label}
-        </a>
+        <div className="cr-cta-emblem" aria-hidden="true">
+          <ArrowUpRight strokeWidth={1.75} />
+        </div>
       </div>
     </Card>
   );
 }
+
 export function FooterBlock({
   brand,
   description,
   groups,
   copyright,
+  logo,
+  brandHref,
+  legalLinks,
 }: {
   brand: string;
   description: string;
@@ -198,27 +380,58 @@ export function FooterBlock({
     links: Array<{ label: string; href: string }>;
   }>;
   copyright: string;
+  logo?: ReactNode;
+  brandHref?: string;
+  legalLinks?: Array<{ label: string; href: string }>;
 }) {
+  const identity = (
+    <>
+      {logo && (
+        <span className="cr-footer-logo" aria-hidden="true">
+          {logo}
+        </span>
+      )}
+      <strong>{brand}</strong>
+    </>
+  );
   return (
     <footer className="cr-footer">
       <div className="cr-footer-main">
-        <div>
-          <strong>{brand}</strong>
+        <div className="cr-footer-brand">
+          {brandHref ? (
+            <a className="cr-footer-identity" href={brandHref}>
+              {identity}
+            </a>
+          ) : (
+            <div className="cr-footer-identity">{identity}</div>
+          )}
           <p className="cr-description">{description}</p>
         </div>
-        {groups.map((group) => (
-          <nav key={group.title} aria-label={group.title}>
-            <strong>{group.title}</strong>
-            {group.links.map((link) => (
-              <a className="cr-description" key={link.href} href={link.href}>
+        <div className="cr-footer-navigation">
+          {groups.map((group) => (
+            <nav key={group.title} aria-label={group.title}>
+              <strong>{group.title}</strong>
+              {group.links.map((link) => (
+                <a key={link.href} href={link.href}>
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+          ))}
+        </div>
+      </div>
+      <div className="cr-footer-bottom">
+        <p className="cr-description">{copyright}</p>
+        {legalLinks?.length ? (
+          <nav aria-label="Legal">
+            {legalLinks.map((link) => (
+              <a href={link.href} key={link.href}>
                 {link.label}
               </a>
             ))}
           </nav>
-        ))}
+        ) : null}
       </div>
-      <Separator />
-      <p className="cr-description">{copyright}</p>
     </footer>
   );
 }

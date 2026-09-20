@@ -1,0 +1,212 @@
+<script setup lang="ts">
+import { computed, ref, useId } from "vue";
+import {
+  SelectRoot,
+  SelectTrigger,
+  SelectValue,
+  SelectIcon,
+  SelectPortal,
+  SelectContent,
+  SelectViewport,
+  SelectItem,
+  SelectItemText,
+  SelectItemIndicator,
+} from "reka-ui";
+import {
+  cx,
+  useControllable,
+  useFieldControl,
+  useFormReset,
+  usePortalContainer,
+} from "./utils";
+defineOptions({ inheritAttrs: false });
+const props = withDefaults(
+  defineProps<{
+    label: string;
+    options: readonly { value: string; label: string; disabled?: boolean }[];
+    value?: string | string[] | null;
+    defaultValue?: string | string[] | null;
+    multiple?: boolean;
+    defaultOpen?: boolean;
+    placeholder?: string;
+    className?: string;
+    triggerProps?: Record<string, unknown>;
+    disabled?: boolean;
+    readOnly?: boolean;
+    required?: boolean;
+    name?: string;
+    form?: string;
+    id?: string;
+    dir?: "ltr" | "rtl";
+    autocomplete?: string;
+  }>(),
+  { placeholder: "Select an option" },
+);
+const model = defineModel<string | string[] | null>();
+const openModel = defineModel<boolean | undefined>("open", {
+  default: undefined,
+});
+const emit = defineEmits<{
+  "value-change": [value: string | string[] | null];
+  "open-change": [open: boolean];
+}>();
+const { field, fieldAttrs } = useFieldControl(() => props.id);
+const disabled = computed(() => props.disabled || field?.disabled.value);
+const value = useControllable(
+  model,
+  () => props.value,
+  () => props.defaultValue ?? (props.multiple ? [] : null),
+  (next) => emit("value-change", next),
+);
+const open = useControllable(
+  openModel,
+  () => undefined,
+  () => props.defaultOpen ?? false,
+  (next) => emit("open-change", next),
+);
+const popupOpen = computed({
+  get: () => (props.readOnly ? false : open.value),
+  set: (next: boolean) => {
+    if (!props.readOnly) open.value = next;
+  },
+});
+const portalContainer = usePortalContainer();
+const native = ref<HTMLSelectElement>();
+const emptyKey = `__cr_empty_${useId()}`;
+const encode = (value: string) => (value === "" ? emptyKey : value);
+const selected = computed(() =>
+  Array.isArray(value.value)
+    ? value.value.map(encode)
+    : value.value === null
+      ? undefined
+      : encode(value.value),
+);
+const display = computed(() =>
+  props.options
+    .filter((option) =>
+      Array.isArray(value.value)
+        ? value.value.includes(option.value)
+        : option.value === value.value,
+    )
+    .map((option) => option.label)
+    .join(", "),
+);
+function update(next: unknown) {
+  if (props.readOnly || disabled.value) return;
+  value.value = Array.isArray(next)
+    ? next.map((item) => (item === emptyKey ? "" : String(item)))
+    : next === emptyKey
+      ? ""
+      : next === undefined || next === null
+        ? null
+        : String(next);
+  field?.notifyChange();
+}
+function nativeChange(event: Event) {
+  if (props.readOnly || disabled.value) return;
+  const input = event.target as HTMLSelectElement;
+  value.value = props.multiple
+    ? Array.from(input.selectedOptions, (option) => option.value)
+    : input.value;
+  field?.notifyChange();
+}
+useFormReset(
+  native,
+  () => {
+    value.value = props.defaultValue ?? (props.multiple ? [] : null);
+    open.value = false;
+  },
+  () => props.form,
+);
+</script>
+<template>
+  <SelectRoot
+    :model-value="selected"
+    v-model:open="popupOpen"
+    :multiple="multiple"
+    :disabled="disabled"
+    :required="required"
+    :dir="dir"
+    @update:model-value="update"
+    ><SelectTrigger
+      v-bind="{ ...fieldAttrs, ...$attrs, ...triggerProps, name: undefined }"
+      :aria-label="label"
+      :aria-readonly="readOnly || undefined"
+      :class="cx('cr-select-trigger', className)"
+      ><SelectValue :placeholder="placeholder" class="cr-select-value">{{
+        display || placeholder
+      }}</SelectValue
+      ><SelectIcon
+        ><svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.75"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m6 9 6 6 6-6" /></svg></SelectIcon></SelectTrigger
+    ><SelectPortal :to="portalContainer"
+      ><SelectContent
+        class="cr-popup cr-positioner"
+        position="popper"
+        :side-offset="6"
+        align="start"
+        ><SelectViewport
+          ><SelectItem
+            v-for="option in options"
+            :key="option.value"
+            :value="encode(option.value)"
+            :disabled="option.disabled"
+            class="cr-menu-item"
+            ><SelectItemText>{{ option.label }}</SelectItemText
+            ><SelectItemIndicator
+              ><svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path
+                  d="m20 6-11 11-5-5"
+                /></svg></SelectItemIndicator></SelectItem></SelectViewport></SelectContent></SelectPortal
+    ><select
+      ref="native"
+      class="cr-sr-only"
+      aria-hidden="true"
+      tabindex="-1"
+      :name="name ?? fieldAttrs.name"
+      :form="form"
+      :required="required"
+      :disabled="disabled"
+      :multiple="multiple"
+      :autocomplete="autocomplete"
+      @change="nativeChange"
+    >
+      <option v-if="!multiple" value="" :selected="value === null" disabled>
+        {{ placeholder }}
+      </option>
+      <option
+        v-for="option in options"
+        :key="option.value"
+        :value="option.value"
+        :disabled="option.disabled"
+        :selected="
+          Array.isArray(value)
+            ? value.includes(option.value)
+            : value === option.value
+        "
+      >
+        {{ option.label }}
+      </option>
+    </select></SelectRoot
+  >
+</template>

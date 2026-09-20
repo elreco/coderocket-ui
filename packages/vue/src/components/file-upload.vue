@@ -1,0 +1,207 @@
+<script setup lang="ts">
+import { computed, onBeforeUnmount, ref, shallowRef, useId } from "vue";
+import Button from "./button.vue";
+import Progress from "./progress.vue";
+import { cx, useFormReset } from "./utils";
+import {
+  formatUploadSize,
+  validateUploadFile,
+  type FileUploadProps,
+} from "./file-upload";
+const props = withDefaults(defineProps<FileUploadProps>(), {
+  required: false,
+  label: "Upload a file",
+  maxBytes: 10 * 1024 * 1024,
+  disabled: false,
+});
+const emit = defineEmits<{
+  "file-select": [file: File];
+  "file-change": [file: File | null];
+}>();
+const model = defineModel<File | null>();
+const generatedId = useId();
+const hintId = useId();
+const errorId = useId();
+const inputId = computed(() => props.id ?? generatedId);
+const input = ref<HTMLInputElement>();
+const file = shallowRef<File | null>(null);
+const dragging = ref(false);
+const error = ref("");
+const status = ref<"idle" | "uploading" | "done">("idle");
+const progress = ref<number | null>(null);
+let controller: AbortController | undefined;
+onBeforeUnmount(() => controller?.abort());
+function change(next: File | null) {
+  file.value = next;
+  model.value = next;
+  emit("file-change", next);
+}
+function reset() {
+  controller?.abort();
+  change(null);
+  status.value = "idle";
+  progress.value = null;
+  error.value = "";
+  dragging.value = false;
+  if (input.value) input.value.value = "";
+}
+useFormReset(input, reset, () => props.form);
+function choose(next: File | undefined, fromDrop = false) {
+  if (!next || props.disabled || status.value === "uploading") return;
+  const validationError = validateUploadFile(
+    next,
+    props.accept,
+    props.maxBytes,
+  );
+  if (validationError) {
+    reset();
+    error.value = validationError;
+    return;
+  }
+  if (fromDrop && input.value) {
+    const transfer = new DataTransfer();
+    transfer.items.add(next);
+    input.value.files = transfer.files;
+  }
+  controller?.abort();
+  error.value = "";
+  status.value = "idle";
+  progress.value = null;
+  emit("file-select", next);
+  change(next);
+}
+async function upload() {
+  if (
+    !file.value ||
+    !props.onUpload ||
+    props.disabled ||
+    status.value === "uploading"
+  )
+    return;
+  const active = new AbortController();
+  controller = active;
+  status.value = "uploading";
+  error.value = "";
+  progress.value = null;
+  try {
+    await props.onUpload(file.value, {
+      signal: active.signal,
+      onProgress: (value) => {
+        if (!active.signal.aborted)
+          progress.value = Number.isFinite(value)
+            ? Math.max(0, Math.min(100, value))
+            : null;
+      },
+    });
+    if (!active.signal.aborted) {
+      progress.value = 100;
+      status.value = "done";
+    }
+  } catch {
+    if (!active.signal.aborted) {
+      error.value = "Upload failed. Please try again.";
+      status.value = "idle";
+    }
+  }
+}
+function drop(event: DragEvent) {
+  dragging.value = false;
+  choose(event.dataTransfer?.files[0], true);
+}
+function remove() {
+  reset();
+  input.value?.focus();
+}
+defineExpose({ input, upload, reset });
+</script>
+<template>
+  <div
+    :class="cx('cr-file-upload', className)"
+    :aria-busy="status === 'uploading' || undefined"
+  >
+    <div
+      class="cr-dropzone"
+      :data-dragging="dragging ? '' : undefined"
+      :data-disabled="disabled || status === 'uploading' ? '' : undefined"
+      @dragover.prevent="
+        !disabled && status !== 'uploading' && (dragging = true)
+      "
+      @dragleave="dragging = false"
+      @drop.prevent="drop"
+    >
+      <svg
+        width="24"
+        height="24"
+        class="cr-upload-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path
+          d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"
+        /></svg
+      ><label :for="inputId" class="cr-label">{{ label }}</label
+      ><input
+        ref="input"
+        :id="inputId"
+        type="file"
+        :name="name"
+        :form="form"
+        :required="required"
+        :accept="accept"
+        :disabled="disabled || status === 'uploading'"
+        :aria-describedby="error ? `${hintId} ${errorId}` : hintId"
+        :aria-invalid="error ? true : undefined"
+        @change="choose(($event.target as HTMLInputElement).files?.[0])"
+      />
+      <p :id="hintId" class="cr-description">
+        Choose or drop one file. Up to {{ formatUploadSize(maxBytes) }}.
+      </p>
+    </div>
+    <div
+      v-if="file"
+      class="cr-stack"
+      style="margin-top: calc(var(--cr-space) * 4)"
+    >
+      <p class="cr-description">
+        {{ file.name }} · {{ Math.ceil(file.size / 1024) }} KB
+      </p>
+      <Progress
+        v-if="status === 'uploading'"
+        label="Upload progress"
+        :value="progress"
+      />
+      <div class="cr-row">
+        <Button
+          v-if="onUpload && status !== 'done'"
+          :disabled="disabled"
+          :loading="status === 'uploading'"
+          @click="upload"
+          >Upload</Button
+        ><Button variant="outline" :disabled="disabled" @click="remove">{{
+          status === "uploading" ? "Cancel upload" : "Remove file"
+        }}</Button>
+      </div>
+      <p v-if="status === 'done'" role="status" class="cr-description">
+        Upload complete.
+      </p>
+      <p v-if="!onUpload" class="cr-description">
+        File selected locally. Connect onUpload to send it to your storage
+        service.
+      </p>
+    </div>
+    <p
+      v-if="error"
+      :id="errorId"
+      role="alert"
+      class="cr-description"
+      style="color: var(--cr-destructive)"
+    >
+      {{ error }}
+    </p>
+  </div>
+</template>

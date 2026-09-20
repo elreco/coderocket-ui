@@ -1,0 +1,96 @@
+---
+title: "Filters"
+description: "Search and status filters with reset and controlled output."
+---
+
+<DocPreview framework="vue" slug="filters" kind="block"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import FiltersBlock from './components/blocks/filters.vue'
+</script>
+
+<!-- Supply the required props and callbacks listed in Source and props. -->
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+The full ZIP also includes `examples/block-showcase.vue`, with populated block props, illustrations and local sample callbacks to adapt to your application.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import Card from "../ui/card.vue";
+import Badge from "../ui/badge.vue";
+import Field from "../ui/field.vue";
+import Input from "../ui/input.vue";
+import Select from "../ui/select.vue";
+import Button from "../ui/button.vue";
+import { computed, ref } from "vue";
+import { ListFilter, Search, X } from "@lucide/vue";
+const props = defineProps<{
+  onChange: (filters: { query: string; status: string }) => void;
+  statuses: Array<{ value: string; label: string }>;
+}>();
+const query = ref<string | number>(""),
+  status = ref("all");
+const active = computed(
+  () => Number(Boolean(query.value)) + Number(status.value !== "all"),
+);
+const options = computed(() => [
+  { value: "all", label: "All statuses" },
+  ...props.statuses.filter((item) => item.value !== "all"),
+]);
+function change() {
+  props.onChange({ query: String(query.value), status: status.value });
+}
+function clear() {
+  query.value = "";
+  status.value = "all";
+  change();
+}
+</script>
+<template>
+  <Card class="cr-workspace-block cr-workspace-filter-block"
+    ><div class="cr-workspace-filter-heading">
+      <span
+        ><ListFilter :size="17" aria-hidden="true" /><strong
+          >Filter records</strong
+        ></span
+      ><Badge v-if="active > 0" variant="outline">{{ active }} active</Badge>
+    </div>
+    <div class="cr-block-filters cr-workspace-filters">
+      <Field label="Search"
+        ><div class="cr-workspace-search-field">
+          <Search :size="17" aria-hidden="true" /><Input
+            v-model="query"
+            type="search"
+            placeholder="Name or keyword…"
+            @update:model-value="change"
+          /></div></Field
+      ><Field label="Status"
+        ><Select
+          v-model="status"
+          label="Status"
+          :options="options"
+          @update:model-value="change" /></Field
+      ><Button variant="ghost" :disabled="!active" @click="clear"
+        ><X :size="15" aria-hidden="true" />Clear filters</Button
+      >
+    </div></Card
+  >
+</template>
+```

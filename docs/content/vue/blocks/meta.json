@@ -1,0 +1,32 @@
+{
+  "title": "Vue blocks",
+  "pages": [
+    "index",
+    "login",
+    "signup",
+    "forgot-password",
+    "reset-password",
+    "otp",
+    "app-sidebar",
+    "app-header",
+    "profile",
+    "settings",
+    "team",
+    "billing",
+    "api-keys",
+    "notifications",
+    "data-table",
+    "filters",
+    "search",
+    "empty-state",
+    "detail-view",
+    "stats",
+    "hero",
+    "features",
+    "pricing",
+    "testimonials",
+    "faq",
+    "cta",
+    "footer"
+  ]
+}

@@ -1,0 +1,44 @@
+---
+title: Work with the assistant
+description: Ask for a change, review the proposal, then apply it.
+---
+
+The assistant is an interface to your design-system model. It does not rewrite the entire component library for every prompt.
+
+## Be specific
+
+> Use warmer surfaces and rounder cards, but keep the current primary color and button corners.
+
+The server requests a structured proposal from Gemini. The proposal is checked against the model schema and supported token paths. Color changes are checked for text contrast. Invalid output can be repaired once; it is not silently applied.
+
+## Review before applying
+
+The proposal lists the values that would change. **Apply to preview** changes the local editor state. **Save** creates a persistent version. Undo remains available before saving.
+
+If you edit the design while a proposal is in progress, the old proposal cannot overwrite your newer changes. Request another proposal using the updated design.
+
+## Missing information
+
+An ambiguous request may return a clarification. No changes accompany a clarification. Add the missing details to your prompt and try again.
+
+## Privacy and availability
+
+The prompt and the current design values are sent to Google's Gemini service to produce a response. Provider keys stay on the server. CodeRocket does not store raw prompts in its application history; it stores the validated proposals used to explain changes.
+
+If Gemini is unavailable or not configured, the assistant reports the issue. The visual editor, existing components and exports remain usable. There is no simulated AI response.
+
+## Create a component or block
+
+Use **Create component** in the editor to describe a form, card, settings panel or file selector. Gemini composes the existing primitives into a structured tree. The renderer produces editable React or Vue sources, matching the library’s framework, from that tree; generated strings are never executed as JavaScript.
+
+Review the preview, source and specification, then choose **Accept and save component**. The accepted component becomes part of the library's exports, registry and MCP catalogue. Its version is stored with its specification, source and validation metadata.
+
+This early-access generator supports composition of the available layout and form primitives. It does not invent a working backend or arbitrary new browser behavior. File selection stays local until your application's callback handles it; application buttons use the `onAction` prop in the exported source.
+
+The schema, tree and labels are checked before the preview. The editor then runs axe accessibility checks on the rendered preview; acceptance stays disabled until those checks pass. Components remain **experimental** until you test the integration, keyboard behavior and application actions in their final context.
+
+## Source, tests and stories
+
+Accepted compositions include their structured specification, editable React or Vue source, an SSR smoke test and a Storybook story in the ZIP export. Connect the exported stories to your application's Storybook theme decorator. Run the tests and accessibility checks in that application before promoting an experimental component to production.
+
+The current generator assembles validated primitives. It does not execute arbitrary generated JavaScript or invent application backends. Unsupported behavior requires clarification and implementation in your own action callbacks.

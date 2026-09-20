@@ -42,7 +42,7 @@ export const designSystemSchema = z
   .object({
     schemaVersion: z.literal(1),
     name: z.string().trim().min(1).max(80),
-    framework: z.literal("react"),
+    framework: z.enum(["react", "vue"]),
     mode: z.enum(["light", "dark"]),
     tokens: z
       .object({
@@ -119,7 +119,7 @@ export type Recipe = z.infer<typeof recipeSchema>;
 export type Framework = "react" | "vue" | "svelte" | "solid";
 export const frameworks = [
   { id: "react", label: "React", available: true },
-  { id: "vue", label: "Vue", available: false },
+  { id: "vue", label: "Vue", available: true },
   { id: "svelte", label: "Svelte", available: false },
   { id: "solid", label: "SolidJS", available: false },
 ] as const;
@@ -173,11 +173,12 @@ const darkColors: DesignSystem["tokens"]["colors"] = {
 export function createDesignSystem(
   name = "Untitled library",
   mode: "light" | "dark" = "light",
+  framework: DesignSystem["framework"] = "react",
 ): DesignSystem {
   return designSystemSchema.parse({
     schemaVersion: 1,
     name,
-    framework: "react",
+    framework,
     mode,
     tokens: {
       colors: { ...(mode === "dark" ? darkColors : lightColors) },

@@ -25,7 +25,7 @@ export function Button({
     <BaseButton
       {...props}
       disabled={disabled || loading}
-      aria-busy={loading || undefined}
+      aria-busy={loading || props["aria-busy"] || undefined}
       className={cx("cr-button", className)}
       data-variant={variant}
       data-size={size}

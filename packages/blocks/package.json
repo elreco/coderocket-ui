@@ -17,11 +17,12 @@
     "./styles.css": "./dist/styles.css"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc6 --noEmit"
   },
   "dependencies": {
     "@coderocket/react": "workspace:*",
-    "@coderocket/specs": "workspace:*"
+    "@coderocket/specs": "workspace:*",
+    "lucide-react": "1.47.0"
   },
   "license": "MIT",
   "repository": {

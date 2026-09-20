@@ -1,0 +1,28 @@
+---
+title: Accessibility
+description: Build on accessible primitives and verify the complete experience.
+---
+
+## Behavior
+
+Interactive primitives use Base UI for React and Reka UI for Vue where applicable: focus management, dialogs, menus, comboboxes, tabs and notifications. Native inputs retain form semantics.
+
+Always supply meaningful labels, associate descriptions with controls, and provide visible feedback for asynchronous actions. Do not use a placeholder as the only label.
+
+## Keyboard
+
+- Use Tab and Shift+Tab to move between controls.
+- Menus and comboboxes support arrow keys and selection through their framework’s accessible primitives.
+- Escape closes dismissible overlays; focus returns to their trigger.
+- The calendar uses arrow keys for days/weeks, Home/End for week boundaries and PageUp/PageDown for months. Shift with PageUp/PageDown changes the year.
+- The editor supports Command/Ctrl+K for search and Command/Ctrl+I for the assistant.
+
+## Visual changes need checks
+
+The editor evaluates semantic text color pairs. This is one check, not an accessibility certification. Check disabled states, images, focus indicators, errors, screen-reader announcements and zoom in your actual app.
+
+Reduced-motion preferences disable decorative animation. Do not communicate status through color alone. Keep controls usable on touch screens and do not remove visible focus styles.
+
+## Early access
+
+Components remain experimental while the catalogue is being tested and integrated. Storybook provides light, dark, compact and shape variations so changes can be inspected consistently.

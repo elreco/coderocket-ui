@@ -1,0 +1,85 @@
+---
+title: Quick start
+description: Create a library, customize a real component, and use the exported source in your app.
+---
+
+For Vue, follow the [Vue setup guide](/docs/vue); the Studio workflow and AI tools are the same.
+
+This walkthrough uses a React library called **Acme UI**. You can complete the design manually; AI is optional.
+
+## 1. Create your library
+
+[Create an account](/signup), confirm your email address, then open the editor. Your libraries are private to your account.
+
+Choose **New library**, name it **Acme UI**, and select React with a light starting appearance. Leave the optional design description empty for this walkthrough, then select **Create library**.
+
+## 2. Set a visual direction
+
+Open **Customize** and try these changes:
+
+| Control            | Value     | What to look for                                |
+| ------------------ | --------- | ----------------------------------------------- |
+| Primary color      | `#2563eb` | Primary actions use the same blue accent        |
+| Primary foreground | `#ffffff` | Button text stays readable on that accent       |
+| Density            | Compact   | Form controls become shorter                    |
+| Radius md          | `6px`     | Standard controls use a consistent corner shape |
+
+The preview updates immediately. Switch between **Components** and **Blocks** to check the same choices across different interfaces. The **Accessibility** view reports text contrast for the main semantic color pairs.
+
+Want one component to look different? Select it in **Components**, then adjust its override at the top of **Customize**. **Reset** removes that override and restores the shared design values.
+
+## 3. Optionally refine with AI
+
+Open **AI assistant** and describe a concrete change:
+
+> Make this a compact developer workspace. Keep the blue accent, use subtle shadows, and reduce the dialog corner radius to 8px.
+
+Inspect the proposed changes before applying them. You can undo a change in the preview. If the assistant asks for clarification, answer it before applying anything. See [working with AI](/docs/ai) for custom components and the limits of generation.
+
+## 4. Save a version
+
+Select **Save** to store the current design. **Version history** lets you restore an earlier design into the preview, then save it as a new version. Restoring a theme does not remove custom components already saved to the library.
+
+If another session has changed the library, saving reports a conflict. Reload and inspect the newer version before continuing.
+
+## 5. Export and render a component
+
+Save any pending changes, then choose **Export** and download the ZIP. Copy its `components/` and `styles/` folders into your React app, and install the runtime dependencies:
+
+```bash
+npm install react@19.3.0 react-dom@19.3.0 @base-ui/react@1.8.0 lucide-react@1.47.0
+```
+
+React and React DOM must use matching versions. Calendar and DatePicker require React 19.2 or newer; the current library is tested with 19.3. Lucide is used by the calendar, datepicker and blocks.
+
+Import the compiled styles once, then use the source directly:
+
+```tsx title="src/App.tsx"
+import { Button } from "./components/ui/button";
+import { ThemeScope } from "./components/ui/utils";
+import "./styles/components.css";
+import "./styles/theme.css";
+
+export default function App() {
+  return (
+    <ThemeScope>
+      <Button>Save changes</Button>
+    </ThemeScope>
+  );
+}
+```
+
+Your button uses the saved Acme UI theme. It renders from local source and CSS. Connect its `onClick` callback to your application when you add behavior.
+
+<Cards>
+  <Card
+    title="Understand the design system →"
+    href="/docs/design-system"
+    description="Learn how global tokens and component overrides work together."
+  />
+  <Card
+    title="Finish your integration →"
+    href="/docs/export"
+    description="Set up blocks, Next.js, optional Tailwind, and source updates."
+  />
+</Cards>

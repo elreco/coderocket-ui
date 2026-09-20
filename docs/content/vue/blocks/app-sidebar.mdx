@@ -1,0 +1,71 @@
+---
+title: "AppSidebar"
+description: "Collapsible workspace navigation with account identity."
+---
+
+<DocPreview framework="vue" slug="app-sidebar" kind="block"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import AppSidebarBlock from './components/blocks/app-sidebar.vue'
+</script>
+
+<!-- Supply the required props and callbacks listed in Source and props. -->
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+The full ZIP also includes `examples/block-showcase.vue`, with populated block props, illustrations and local sample callbacks to adapt to your application.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import Sidebar from "../ui/sidebar.vue";
+import Avatar from "../ui/avatar.vue";
+import { Layers2, LayoutGrid } from "@lucide/vue";
+import { RenderContent } from "../ui/display-utils";
+import type { SidebarItem } from "./common";
+defineProps<{ workspace: string; items: SidebarItem[]; accountName: string }>();
+</script>
+<template>
+  <div class="cr-app-sidebar-block">
+    <Sidebar :items="items"
+      ><template #brand
+        ><span class="cr-workspace-brand"
+          ><span class="cr-workspace-brand-icon"
+            ><Layers2 :size="19" aria-hidden="true" /></span
+          ><span
+            ><strong>{{ workspace }}</strong
+            ><small>Workspace</small></span
+          ></span
+        ></template
+      ><template #icon="{ item }"
+        ><RenderContent v-if="item.icon" :content="item.icon" /><LayoutGrid
+          v-else
+          :size="18"
+          aria-hidden="true" /></template
+      ><template #footer
+        ><div class="cr-workspace-account">
+          <Avatar :name="accountName" :size="34" /><span
+            ><strong>{{ accountName }}</strong
+            ><small>Account</small></span
+          >
+        </div></template
+      ></Sidebar
+    >
+  </div>
+</template>
+```

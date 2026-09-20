@@ -2,5 +2,7 @@ packages:
   - packages/*
 minimumReleaseAgeExclude:
   - lucide-react@1.47.0
+  - "@lucide/vue@1.47.0"
 allowBuilds:
   esbuild: true
+  vue-demi: true

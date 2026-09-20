@@ -1,0 +1,120 @@
+---
+title: "NavigationMenu"
+description: "A navigation bar with expandable groups and real link semantics."
+---
+
+<DocPreview slug="navigation-menu" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { NavigationMenu } from './components/ui/navigation-menu';
+
+<NavigationMenu items={[{label:"Product",links:[{label:"Overview",href:"#overview",description:"Explore the platform."},{label:"Components",href:"#components"}]}]}/>
+```
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+## Behavior and accessibility
+
+- Provide meaningful labels for interactive controls.
+- Connect action callbacks to your application logic.
+- Verify keyboard navigation and contrast in your application.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+import { NavigationMenu as Base } from "@base-ui/react/navigation-menu";
+import { usePortalContainer } from "./utils";
+export function NavigationMenu({
+  label = "Main navigation",
+  items,
+  value,
+  defaultValue,
+  onValueChange,
+}: {
+  label?: string;
+  value?: string | null;
+  defaultValue?: string | null;
+  onValueChange?: (value: string | null) => void;
+  items: Array<{
+    value?: string;
+    label: string;
+    links: Array<{
+      label: string;
+      href: string;
+      description?: string;
+      active?: boolean;
+    }>;
+  }>;
+}) {
+  const container = usePortalContainer();
+  return (
+    <Base.Root
+      value={value}
+      defaultValue={defaultValue}
+      onValueChange={onValueChange}
+      className="cr-navigation"
+      aria-label={label}
+    >
+      <Base.List className="cr-navigation-list">
+        {items.map((item, index) => (
+          <Base.Item
+            key={item.value ?? index}
+            value={item.value ?? String(index)}
+          >
+            <Base.Trigger className="cr-button" data-variant="ghost">
+              {item.label}{" "}
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </Base.Trigger>
+            <Base.Content className="cr-navigation-content">
+              {item.links.map((link) => (
+                <Base.Link
+                  key={link.href}
+                  href={link.href}
+                  active={link.active}
+                  closeOnClick
+                  className="cr-navigation-link"
+                >
+                  <strong>{link.label}</strong>
+                  {link.description && <span>{link.description}</span>}
+                </Base.Link>
+              ))}
+            </Base.Content>
+          </Base.Item>
+        ))}
+      </Base.List>
+      <Base.Portal container={container}>
+        <Base.Positioner sideOffset={8} className="cr-positioner">
+          <Base.Popup className="cr-popup">
+            <Base.Viewport />
+          </Base.Popup>
+        </Base.Positioner>
+      </Base.Portal>
+    </Base.Root>
+  );
+}
+```

@@ -1,0 +1,72 @@
+---
+title: "Avatar"
+description: "An image with an accessible fallback for a person or team."
+---
+
+<DocPreview framework="vue" slug="avatar" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import Avatar from "./components/ui/avatar.vue";
+</script>
+
+<template>
+  <Avatar name="Alex Morgan" />
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import { computed } from "vue";
+import { AvatarRoot, AvatarImage, AvatarFallback } from "reka-ui";
+const props = withDefaults(
+  defineProps<{
+    src?: string;
+    name: string;
+    size?: number;
+    className?: string;
+  }>(),
+  { size: 36 },
+);
+const initials = computed(
+  () =>
+    props.name
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((word) => Array.from(word)[0] ?? "")
+      .join("")
+      .toLocaleUpperCase() || "?",
+);
+</script>
+<template>
+  <AvatarRoot
+    :class="['cr-avatar', className]"
+    :style="{ width: `${size}px`, height: `${size}px` }"
+    ><AvatarImage
+      :src="src ?? ''"
+      :alt="name"
+      class="cr-avatar-image"
+    /><AvatarFallback role="img" :aria-label="name || 'Avatar'"
+      ><slot name="fallback">{{ initials }}</slot></AvatarFallback
+    ></AvatarRoot
+  >
+</template>
+```

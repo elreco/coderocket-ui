@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "jsxImportSource": "vue",
+    "types": ["vite/client", "node"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "preview/**/*.ts",
+    "preview/**/*.vue"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

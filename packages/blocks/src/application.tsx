@@ -1,5 +1,24 @@
 "use client";
-import { useState, type ComponentProps } from "react";
+import { useState, type ComponentProps, type ReactNode } from "react";
+import {
+  ArrowUpRight,
+  Bell,
+  Building2,
+  CheckCheck,
+  ChevronRight,
+  CreditCard,
+  FileText,
+  KeyRound,
+  Layers2,
+  LayoutGrid,
+  Plus,
+  Search,
+  ShieldCheck,
+  Trash2,
+  UserRound,
+  UserRoundPlus,
+  UsersRound,
+} from "lucide-react";
 import {
   Sidebar,
   Avatar,
@@ -11,11 +30,36 @@ import {
   Dropdown,
   Field,
   Input,
+  Progress,
   Switch,
   Tabs,
   Textarea,
 } from "@coderocket/react";
-import { ActionForm, BlockCard, type FormAction } from "./common";
+import { ActionForm, type FormAction } from "./common";
+
+function WorkspaceHeading({
+  eyebrow,
+  title,
+  description,
+  action,
+}: {
+  eyebrow: string;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+}) {
+  return (
+    <header className="cr-workspace-heading">
+      <div>
+        <span className="cr-workspace-eyebrow">{eyebrow}</span>
+        <h3>{title}</h3>
+        {description && <p>{description}</p>}
+      </div>
+      {action && <div className="cr-workspace-heading-action">{action}</div>}
+    </header>
+  );
+}
+
 export function AppSidebarBlock({
   workspace,
   items,
@@ -26,18 +70,37 @@ export function AppSidebarBlock({
   accountName: string;
 }) {
   return (
-    <Sidebar
-      brand={workspace}
-      items={items}
-      footer={
-        <div className="cr-row">
-          <Avatar name={accountName} size={28} />
-          <span>{accountName}</span>
-        </div>
-      }
-    />
+    <div className="cr-app-sidebar-block">
+      <Sidebar
+        brand={
+          <span className="cr-workspace-brand">
+            <span className="cr-workspace-brand-icon">
+              <Layers2 size={19} aria-hidden="true" />
+            </span>
+            <span>
+              <strong>{workspace}</strong>
+              <small>Workspace</small>
+            </span>
+          </span>
+        }
+        items={items.map((item) => ({
+          ...item,
+          icon: item.icon ?? <LayoutGrid size={18} aria-hidden="true" />,
+        }))}
+        footer={
+          <div className="cr-workspace-account">
+            <Avatar name={accountName} size={34} />
+            <span>
+              <strong>{accountName}</strong>
+              <small>Account</small>
+            </span>
+          </div>
+        }
+      />
+    </div>
   );
 }
+
 export function AppHeaderBlock({
   breadcrumbs,
   accountName,
@@ -50,20 +113,34 @@ export function AppHeaderBlock({
   onSignOut: () => void;
 }) {
   return (
-    <header className="cr-block-header">
-      <Breadcrumb items={breadcrumbs} />
-      <div className="cr-row">
-        <Button variant="outline" onClick={onSearch}>
-          Search <span aria-hidden="true">⌕</span>
+    <header className="cr-block-header cr-workspace-header">
+      <div className="cr-workspace-header-location">
+        <span className="cr-workspace-header-icon">
+          <Layers2 size={18} aria-hidden="true" />
+        </span>
+        <Breadcrumb items={breadcrumbs} />
+      </div>
+      <div className="cr-workspace-header-actions">
+        <Button variant="ghost" onClick={onSearch}>
+          <Search size={17} aria-hidden="true" />
+          <span>Search</span>
         </Button>
+        <span className="cr-workspace-header-divider" aria-hidden="true" />
         <Dropdown
-          trigger={<Avatar name={accountName} size={28} />}
+          trigger={
+            <>
+              <Avatar name={accountName} size={28} />
+              <span className="cr-workspace-header-name">{accountName}</span>
+              <span className="cr-sr-only">Account menu</span>
+            </>
+          }
           items={[{ label: "Sign out", onSelect: onSignOut }]}
         />
       </div>
     </header>
   );
 }
+
 export function ProfileBlock({
   name,
   email,
@@ -76,25 +153,54 @@ export function ProfileBlock({
   onSave: FormAction;
 }) {
   return (
-    <BlockCard title="Your profile" description="How you appear to your team.">
-      <div className="cr-row" style={{ marginBottom: 24 }}>
-        <Avatar name={name} size={56} />
-        <Badge>Member</Badge>
+    <Card className="cr-workspace-block cr-workspace-profile">
+      <WorkspaceHeading
+        eyebrow="Account"
+        title="Your profile"
+        description="The details your team sees when you work together."
+      />
+      <div className="cr-workspace-identity">
+        <Avatar name={name} size={58} />
+        <div>
+          <strong>{name}</strong>
+          <span>{email}</span>
+        </div>
+        <span className="cr-workspace-icon-tile">
+          <UserRound size={20} aria-hidden="true" />
+        </span>
       </div>
       <ActionForm onSubmit={onSave}>
-        <Field label="Display name">
-          <Input name="name" defaultValue={name} required />
-        </Field>
-        <Field label="Email address">
-          <Input name="email" type="email" defaultValue={email} required />
-        </Field>
+        <div className="cr-workspace-form-grid">
+          <Field label="Display name">
+            <Input
+              name="name"
+              defaultValue={name}
+              autoComplete="name"
+              required
+            />
+          </Field>
+          <Field label="Email address">
+            <Input
+              name="email"
+              type="email"
+              defaultValue={email}
+              autoComplete="email"
+              required
+            />
+          </Field>
+        </div>
         <Field label="About you">
-          <Textarea name="bio" defaultValue={bio} />
+          <Textarea
+            name="bio"
+            defaultValue={bio}
+            placeholder="A few words about you and your work."
+          />
         </Field>
       </ActionForm>
-    </BlockCard>
+    </Card>
   );
 }
+
 export function SettingsBlock({
   workspaceName,
   onSave,
@@ -105,10 +211,17 @@ export function SettingsBlock({
   onNotificationSave: FormAction;
 }) {
   return (
-    <Card
-      title="Workspace settings"
-      description="A workspace that works for you."
-    >
+    <Card className="cr-workspace-block cr-workspace-settings">
+      <WorkspaceHeading
+        eyebrow="Workspace"
+        title="Settings"
+        description="A few details that make this space yours."
+        action={
+          <span className="cr-workspace-icon-tile">
+            <Building2 size={20} aria-hidden="true" />
+          </span>
+        }
+      />
       <Tabs
         label="Settings sections"
         items={[
@@ -138,12 +251,28 @@ export function SettingsBlock({
             label: "Notifications",
             content: (
               <ActionForm onSubmit={onNotificationSave}>
-                <Switch name="digest" label="Weekly digest" defaultChecked />
-                <Switch
-                  name="mentions"
-                  label="Mention notifications"
-                  defaultChecked
-                />
+                <div className="cr-workspace-preference">
+                  <div>
+                    <span className="cr-workspace-icon-tile">
+                      <FileText size={18} aria-hidden="true" />
+                    </span>
+                    <p>A summary of what happened across your workspace.</p>
+                  </div>
+                  <Switch name="digest" label="Weekly digest" defaultChecked />
+                </div>
+                <div className="cr-workspace-preference">
+                  <div>
+                    <span className="cr-workspace-icon-tile">
+                      <Bell size={18} aria-hidden="true" />
+                    </span>
+                    <p>Stay in the loop when someone needs your attention.</p>
+                  </div>
+                  <Switch
+                    name="mentions"
+                    label="Mention notifications"
+                    defaultChecked
+                  />
+                </div>
               </ActionForm>
             ),
           },
@@ -152,6 +281,7 @@ export function SettingsBlock({
     </Card>
   );
 }
+
 export interface TeamMember {
   id: string;
   name: string;
@@ -170,34 +300,66 @@ export function TeamBlock({
   const [removing, setRemoving] = useState<string | null>(null),
     [error, setError] = useState(false);
   return (
-    <Card title="Your team" description="People who make things happen.">
-      <div className="cr-block-toolbar">
-        <Badge>{members.length} members</Badge>
-        <Dialog trigger="Invite member" title="Invite someone to your team">
-          <ActionForm
-            onSubmit={onInvite}
-            submitLabel="Send invitation"
-            successMessage="Invitation sent."
+    <Card className="cr-workspace-block cr-workspace-team">
+      <WorkspaceHeading
+        eyebrow="People & access"
+        title="Your team"
+        description="Good work starts with the right people."
+        action={
+          <Dialog
+            trigger={
+              <>
+                <UserRoundPlus size={16} aria-hidden="true" />
+                Invite member
+              </>
+            }
+            title="Invite someone to your team"
+            description="Enter the email address of the person you’d like to invite."
+            footer={null}
           >
-            <Field label="Email address">
-              <Input name="email" type="email" required />
-            </Field>
-          </ActionForm>
-        </Dialog>
+            <ActionForm
+              onSubmit={onInvite}
+              submitLabel="Send invitation"
+              successMessage="Invitation sent."
+            >
+              <Field label="Email address">
+                <Input
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="colleague@company.com"
+                  required
+                />
+              </Field>
+            </ActionForm>
+          </Dialog>
+        }
+      />
+      <div className="cr-workspace-list-heading">
+        <span>
+          <UsersRound size={15} aria-hidden="true" />
+          Team members
+        </span>
+        <Badge variant="outline">
+          {members.length} {members.length === 1 ? "member" : "members"}
+        </Badge>
       </div>
-      <ul className="cr-block-list">
+      <ul className="cr-workspace-list cr-workspace-member-list">
         {members.map((member) => (
           <li key={member.id}>
-            <Avatar name={member.name} />
-            <div>
+            <Avatar name={member.name} size={36} />
+            <div className="cr-workspace-person">
               <strong>{member.name}</strong>
-              <p className="cr-description">{member.email}</p>
+              <span>{member.email}</span>
             </div>
             <Badge variant="outline">{member.role}</Badge>
             <Button
               variant="ghost"
               size="sm"
+              className="cr-workspace-icon-button"
               disabled={Boolean(removing)}
+              loading={removing === member.id}
+              aria-label={`Remove ${member.name}`}
               onClick={async () => {
                 setRemoving(member.id);
                 setError(false);
@@ -209,13 +371,19 @@ export function TeamBlock({
                   setRemoving(null);
                 }
               }}
-              aria-label={`Remove ${member.name}`}
             >
-              Remove
+              {removing !== member.id && (
+                <Trash2 size={16} aria-hidden="true" />
+              )}
             </Button>
           </li>
         ))}
       </ul>
+      {!members.length && (
+        <p className="cr-block-empty">
+          No team members yet. Invite someone to get started.
+        </p>
+      )}
       {error && (
         <p role="alert" className="cr-description">
           Unable to remove this member.
@@ -224,6 +392,7 @@ export function TeamBlock({
     </Card>
   );
 }
+
 export function BillingBlock({
   plan,
   price,
@@ -241,34 +410,74 @@ export function BillingBlock({
   onManage: () => void;
   invoices: Array<{ id: string; date: string; amount: string; href: string }>;
 }) {
+  const safeLimit = Number.isFinite(limit) && limit > 0 ? limit : 1;
+  const safeUsage = Number.isFinite(usage)
+    ? Math.max(0, Math.min(usage, safeLimit))
+    : 0;
   return (
-    <Card title="Billing" description="Your subscription and invoices.">
-      <div className="cr-block-toolbar">
-        <div>
-          <Badge variant="primary">{plan}</Badge>
-          <h3 style={{ marginTop: 16 }}>{price}</h3>
-          <p className="cr-description">
-            {renewal} · {usage} of {limit} seats used
-          </p>
+    <Card className="cr-workspace-block cr-workspace-billing">
+      <WorkspaceHeading
+        eyebrow="Subscription"
+        title="Billing"
+        description="Your plan, usage and invoices in one place."
+        action={
+          <span className="cr-workspace-icon-tile">
+            <CreditCard size={20} aria-hidden="true" />
+          </span>
+        }
+      />
+      <div className="cr-workspace-plan">
+        <div className="cr-workspace-plan-main">
+          <Badge variant="outline">{plan} plan</Badge>
+          <strong className="cr-workspace-plan-price">{price}</strong>
+          <span className="cr-description">{renewal}</span>
         </div>
         <Button variant="outline" onClick={onManage}>
-          Manage subscription
+          Manage plan
+          <ArrowUpRight size={16} aria-hidden="true" />
         </Button>
       </div>
-      <ul className="cr-block-list">
+      <div className="cr-workspace-usage">
+        <div className="cr-workspace-list-heading">
+          <span>Team seats</span>
+          <span>
+            {usage} <span className="cr-description">/ {limit} used</span>
+          </span>
+        </div>
+        <Progress label="Seats used" value={safeUsage} max={safeLimit} />
+      </div>
+      <div className="cr-workspace-list-heading">
+        <span>Invoice history</span>
+        <Badge variant="outline">{invoices.length}</Badge>
+      </div>
+      <ul className="cr-workspace-list cr-workspace-invoice-list">
         {invoices.map((invoice) => (
           <li key={invoice.id}>
+            <span className="cr-workspace-icon-tile">
+              <FileText size={17} aria-hidden="true" />
+            </span>
             <span>{invoice.date}</span>
             <strong>{invoice.amount}</strong>
-            <a className="cr-link" href={invoice.href}>
-              View invoice
+            <a
+              className="cr-link cr-workspace-invoice-link"
+              href={invoice.href}
+              aria-label={`View invoice dated ${invoice.date}`}
+            >
+              View
+              <ArrowUpRight size={15} aria-hidden="true" />
             </a>
           </li>
         ))}
       </ul>
+      {!invoices.length && (
+        <p className="cr-block-empty">
+          No invoices yet. They will appear here after your first payment.
+        </p>
+      )}
     </Card>
   );
 }
+
 export function ApiKeysBlock({
   keys,
   onCreate,
@@ -279,45 +488,82 @@ export function ApiKeysBlock({
   onRevoke: (id: string) => void | Promise<void>;
 }) {
   const [error, setError] = useState(false),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState<string | null>(null);
   return (
-    <Card
-      title="API keys"
-      description="Keep your secret keys out of client-side code."
-    >
-      <Dialog trigger="Create key" title="Create an API key">
-        <ActionForm
-          onSubmit={onCreate}
-          submitLabel="Create key"
-          successMessage="Key created. Follow your application’s secure delivery flow."
-        >
-          <Field label="Key name">
-            <Input name="name" required placeholder="Production integration" />
-          </Field>
-        </ActionForm>
-      </Dialog>
-      <ul className="cr-block-list">
+    <Card className="cr-workspace-block cr-workspace-keys">
+      <WorkspaceHeading
+        eyebrow="Developer settings"
+        title="API keys"
+        description="Connect your tools to your workspace."
+        action={
+          <Dialog
+            trigger={
+              <>
+                <Plus size={16} aria-hidden="true" />
+                Create key
+              </>
+            }
+            title="Create an API key"
+            description="Give this key a name that helps you recognize its integration."
+            footer={null}
+          >
+            <ActionForm
+              onSubmit={onCreate}
+              submitLabel="Create key"
+              successMessage="Key created. Follow your application’s secure delivery flow."
+            >
+              <Field label="Key name">
+                <Input
+                  name="name"
+                  required
+                  placeholder="Production integration"
+                />
+              </Field>
+            </ActionForm>
+          </Dialog>
+        }
+      />
+      <div className="cr-workspace-security-note">
+        <ShieldCheck size={17} aria-hidden="true" />
+        <span>
+          Use keys on your server. Keep them out of public repositories and
+          client-side code.
+        </span>
+      </div>
+      <div className="cr-workspace-list-heading">
+        <span>Secret keys</span>
+        <Badge variant="outline">{keys.length}</Badge>
+      </div>
+      <ul className="cr-workspace-list cr-workspace-key-list">
         {keys.map((key) => (
           <li key={key.id}>
-            <div>
+            <span className="cr-workspace-icon-tile">
+              <KeyRound size={18} aria-hidden="true" />
+            </span>
+            <div className="cr-workspace-person">
               <strong>{key.name}</strong>
-              <p className="cr-description">
-                <code>{key.prefix}••••</code> · {key.created}
-              </p>
+              <span>
+                <code>{key.prefix}••••</code>
+                <span className="cr-workspace-key-date">
+                  Created {key.created}
+                </span>
+              </span>
             </div>
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
-              disabled={busy}
+              disabled={Boolean(busy)}
+              loading={busy === key.id}
+              aria-label={`Revoke ${key.name}`}
               onClick={async () => {
-                setBusy(true);
+                setBusy(key.id);
                 setError(false);
                 try {
                   await onRevoke(key.id);
                 } catch {
                   setError(true);
                 } finally {
-                  setBusy(false);
+                  setBusy(null);
                 }
               }}
             >
@@ -326,6 +572,11 @@ export function ApiKeysBlock({
           </li>
         ))}
       </ul>
+      {!keys.length && (
+        <p className="cr-block-empty">
+          No API keys yet. Create a key to connect an integration.
+        </p>
+      )}
       {error && (
         <p role="alert" className="cr-description">
           Unable to revoke this key.
@@ -334,6 +585,7 @@ export function ApiKeysBlock({
     </Card>
   );
 }
+
 export function NotificationsBlock({
   items,
   onReadAll,
@@ -349,34 +601,72 @@ export function NotificationsBlock({
   onReadAll: () => void;
   onOpen: (id: string) => void;
 }) {
+  const unread = items.filter((item) => item.unread).length;
   return (
-    <Card title="Notifications">
-      <div className="cr-block-toolbar">
-        <Badge>{items.filter((item) => item.unread).length} unread</Badge>
-        <Button variant="ghost" size="sm" onClick={onReadAll}>
-          Mark all read
-        </Button>
+    <Card className="cr-workspace-block cr-workspace-notifications">
+      <WorkspaceHeading
+        eyebrow="Your inbox"
+        title="Notifications"
+        description="The latest from your team and workspace."
+        action={
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onReadAll}
+            disabled={!unread}
+          >
+            <CheckCheck size={16} aria-hidden="true" />
+            Mark all read
+          </Button>
+        }
+      />
+      <div className="cr-workspace-list-heading">
+        <span>Recent activity</span>
+        <Badge variant={unread ? "primary" : "outline"}>{unread} unread</Badge>
       </div>
-      <ul className="cr-block-list">
+      <ul className="cr-workspace-list cr-workspace-notification-list">
         {items.map((item) => (
           <li key={item.id}>
             <button
-              className="cr-notification-item"
+              type="button"
+              className="cr-notification-item cr-workspace-notification"
+              data-unread={item.unread || undefined}
               onClick={() => onOpen(item.id)}
             >
-              <strong>
-                {item.title}
-                {item.unread && (
-                  <span aria-label="Unread" className="cr-unread-dot" />
+              <span className="cr-workspace-icon-tile">
+                {item.unread ? (
+                  <Bell size={18} aria-hidden="true" />
+                ) : (
+                  <CheckCheck size={18} aria-hidden="true" />
                 )}
-              </strong>
-              <p className="cr-description">{item.description}</p>
-              <small className="cr-description">{item.time}</small>
+              </span>
+              <span className="cr-workspace-notification-copy">
+                <strong>
+                  {item.title}
+                  {item.unread && (
+                    <>
+                      <span aria-hidden="true" className="cr-unread-dot" />
+                      <span className="cr-sr-only">Unread</span>
+                    </>
+                  )}
+                </strong>
+                <span className="cr-description">{item.description}</span>
+                <small>{item.time}</small>
+              </span>
+              <ChevronRight size={16} aria-hidden="true" />
             </button>
           </li>
         ))}
       </ul>
-      {!items.length && <p className="cr-description">You’re all caught up.</p>}
+      {!items.length && (
+        <div className="cr-workspace-caught-up">
+          <span className="cr-workspace-icon-tile">
+            <CheckCheck size={22} aria-hidden="true" />
+          </span>
+          <strong>You’re all caught up.</strong>
+          <p>New updates will appear here.</p>
+        </div>
+      )}
     </Card>
   );
 }

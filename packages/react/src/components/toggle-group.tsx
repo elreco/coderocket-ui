@@ -1,19 +1,36 @@
 "use client";
 import { ToggleGroup as Group } from "@base-ui/react/toggle-group";
 import { Toggle } from "@base-ui/react/toggle";
-export function ToggleGroup({
+import { cx } from "./utils";
+export type ToggleGroupProps<Value extends string = string> = Omit<
+  Group.Props<Value>,
+  "className" | "children"
+> & {
+  label: string;
+  className?: string;
+  items: Array<{ value: Value; label: string; disabled?: boolean }>;
+};
+export function ToggleGroup<Value extends string>({
   label,
   items,
+  className,
   multiple = false,
-}: {
-  label: string;
-  items: Array<{ value: string; label: string }>;
-  multiple?: boolean;
-}) {
+  ...props
+}: ToggleGroupProps<Value>) {
   return (
-    <Group aria-label={label} multiple={multiple} className="cr-toggle-group">
+    <Group
+      {...props}
+      aria-label={label}
+      multiple={multiple}
+      className={cx("cr-toggle-group", className)}
+    >
       {items.map((item) => (
-        <Toggle key={item.value} value={item.value} className="cr-toggle">
+        <Toggle
+          key={item.value}
+          value={item.value}
+          disabled={item.disabled}
+          className="cr-toggle"
+        >
           {item.label}
         </Toggle>
       ))}

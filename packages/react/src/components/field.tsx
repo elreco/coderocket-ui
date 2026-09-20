@@ -1,14 +1,17 @@
 "use client";
 import type { ComponentProps, ReactNode } from "react";
 import { Field as Base } from "@base-ui/react/field";
+import { cx } from "./utils";
 export function Field({
   label,
   description,
   error,
   children,
+  className,
   ...props
 }: Omit<ComponentProps<typeof Base.Root>, "className"> & {
   label: ReactNode;
+  className?: string;
   description?: ReactNode;
   error?: ReactNode;
 }) {
@@ -16,7 +19,7 @@ export function Field({
     <Base.Root
       {...props}
       invalid={Boolean(error) || props.invalid}
-      className="cr-field"
+      className={cx("cr-field", className)}
     >
       <Base.Label className="cr-label">{label}</Base.Label>
       {description && (
@@ -25,10 +28,12 @@ export function Field({
         </Base.Description>
       )}
       {children}
-      {error && (
+      {error ? (
         <Base.Error match className="cr-field-error">
           {error}
         </Base.Error>
+      ) : (
+        <Base.Error className="cr-field-error" />
       )}
     </Base.Root>
   );

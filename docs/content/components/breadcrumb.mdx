@@ -1,0 +1,81 @@
+---
+title: "Breadcrumb"
+description: "A semantic path through your application."
+---
+
+<DocPreview slug="breadcrumb" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { Breadcrumb } from './components/ui/breadcrumb';
+
+<Breadcrumb items={[{label:"Workspace",href:"#workspace"},{label:"Settings",href:"#settings"},{label:"Profile"}]}/>
+```
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+## Behavior and accessibility
+
+- Provide meaningful labels for interactive controls.
+- Connect action callbacks to your application logic.
+- Verify keyboard navigation and contrast in your application.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+export function Breadcrumb({
+  items,
+  label = "Breadcrumb",
+}: {
+  items: Array<{ label: string; href?: string }>;
+  label?: string;
+}) {
+  return (
+    <nav aria-label={label}>
+      <ol className="cr-breadcrumb">
+        {items.map((item, index) => (
+          <li key={index}>
+            {index > 0 && (
+              <svg
+                className="cr-breadcrumb-separator"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m9 6 6 6-6 6" />
+              </svg>
+            )}
+            {item.href && index < items.length - 1 ? (
+              <a href={item.href}>{item.label}</a>
+            ) : (
+              <span
+                aria-current={index === items.length - 1 ? "page" : undefined}
+              >
+                {item.label}
+              </span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+}
+```

@@ -75,6 +75,9 @@ describe("Design-system model", () => {
     ]);
     expect(
       designSystemSchema.safeParse({ ...a, framework: "vue" }).success,
+    ).toBe(true);
+    expect(
+      designSystemSchema.safeParse({ ...a, framework: "svelte" }).success,
     ).toBe(false);
     expect(() =>
       applyOperations(a, [

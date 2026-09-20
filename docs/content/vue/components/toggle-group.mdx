@@ -1,0 +1,118 @@
+---
+title: "ToggleGroup"
+description: "A labelled group of toggle buttons with keyboard navigation."
+---
+
+<DocPreview framework="vue" slug="toggle-group" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import ToggleGroup from "./components/ui/toggle-group.vue";
+</script>
+
+<template>
+  <ToggleGroup label="Text alignment" :items="[{ value: 'left', label: 'Left' }, { value: 'center', label: 'Center' }, { value: 'right', label: 'Right' }]" />
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import { computed, ref } from "vue";
+import { ToggleGroupRoot, ToggleGroupItem } from "reka-ui";
+import { cx, useControllable, useFormReset } from "./utils";
+const props = defineProps<{
+  label: string;
+  items: readonly { value: string; label: string; disabled?: boolean }[];
+  value?: string[];
+  defaultValue?: string[];
+  multiple?: boolean;
+  disabled?: boolean;
+  name?: string;
+  form?: string;
+  orientation?: "horizontal" | "vertical";
+  dir?: "ltr" | "rtl";
+  loop?: boolean;
+  rovingFocus?: boolean;
+  className?: string;
+}>();
+const model = defineModel<string[]>();
+const emit = defineEmits<{ "value-change": [value: string[]] }>();
+const root = ref<HTMLDivElement>();
+const value = useControllable(
+  model,
+  () => props.value,
+  () => props.defaultValue ?? [],
+  (value) => emit("value-change", value),
+);
+const selected = computed(() =>
+  props.multiple ? value.value : (value.value[0] ?? ""),
+);
+function update(next: unknown) {
+  value.value = Array.isArray(next)
+    ? next.map(String)
+    : next
+      ? [String(next)]
+      : [];
+}
+useFormReset(
+  root,
+  () => {
+    value.value = props.defaultValue ?? [];
+  },
+  () => props.form,
+);
+</script>
+<template>
+  <ToggleGroupRoot
+    as-child
+    :model-value="selected"
+    :type="multiple ? 'multiple' : 'single'"
+    :disabled="disabled"
+    :orientation="orientation"
+    :dir="dir"
+    :loop="loop"
+    :roving-focus="rovingFocus"
+    :aria-label="label"
+    @update:model-value="update"
+    ><div
+      ref="root"
+      :class="cx('cr-toggle-group', className)"
+      :data-orientation="orientation"
+    >
+      <ToggleGroupItem
+        v-for="item in items"
+        :key="item.value"
+        :value="item.value"
+        :disabled="item.disabled"
+        class="cr-toggle"
+        :data-pressed="value.includes(item.value) ? '' : undefined"
+        >{{ item.label }}</ToggleGroupItem
+      ><input
+        v-for="item in value"
+        :key="item"
+        type="hidden"
+        :name="name"
+        :form="form"
+        :value="item"
+        :disabled="disabled"
+      /></div
+  ></ToggleGroupRoot>
+</template>
+```

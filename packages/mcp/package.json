@@ -11,7 +11,7 @@
     }
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc6 --noEmit"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.30.0",

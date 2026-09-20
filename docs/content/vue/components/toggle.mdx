@@ -1,0 +1,74 @@
+---
+title: "Toggle"
+description: "A pressable on/off button with an accessible pressed state."
+---
+
+<DocPreview framework="vue" slug="toggle" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import Toggle from "./components/ui/toggle.vue";
+</script>
+
+<template>
+  <Toggle aria-label="Bold text">B</Toggle>
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import { Toggle } from "reka-ui";
+import { cx, useControllable } from "./utils";
+const props = withDefaults(
+  defineProps<{
+    pressed?: boolean;
+    defaultPressed?: boolean;
+    disabled?: boolean;
+    className?: string;
+    asChild?: boolean;
+  }>(),
+  { pressed: undefined },
+);
+const model = defineModel<boolean | undefined>({ default: undefined });
+const emit = defineEmits<{
+  "pressed-change": [pressed: boolean];
+  "update:pressed": [pressed: boolean];
+}>();
+const pressed = useControllable(
+  model,
+  () => props.pressed,
+  () => props.defaultPressed ?? false,
+  (value) => {
+    emit("pressed-change", value);
+    emit("update:pressed", value);
+  },
+);
+</script>
+<template>
+  <Toggle
+    v-model="pressed"
+    :disabled="disabled"
+    :as-child="asChild"
+    :class="cx('cr-toggle', className)"
+    :data-pressed="pressed ? '' : undefined"
+    ><slot
+  /></Toggle>
+</template>
+```

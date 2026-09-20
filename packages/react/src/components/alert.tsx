@@ -5,6 +5,7 @@ export function Alert({
   title,
   variant = "info",
   announce = false,
+  role,
   children,
   className,
   ...props
@@ -16,7 +17,7 @@ export function Alert({
   return (
     <div
       {...props}
-      role={announce ? "alert" : undefined}
+      role={role ?? (announce ? "alert" : undefined)}
       className={cx("cr-alert", className)}
       data-variant={variant}
     >

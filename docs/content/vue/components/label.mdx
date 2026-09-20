@@ -1,0 +1,47 @@
+---
+title: "Label"
+description: "An explicit label linked to a form control."
+---
+
+<DocPreview framework="vue" slug="label" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import { useId } from "vue";
+import Input from "./components/ui/input.vue";
+import Label from "./components/ui/label.vue";
+const labelId = useId();
+</script>
+
+<template>
+  <div><Label :html-for="labelId">Full name</Label><Input :id="labelId" /></div>
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import { Label } from "reka-ui";
+import { cx } from "./utils";
+defineProps<{ htmlFor?: string; className?: string }>();
+</script>
+<template>
+  <Label :for="htmlFor" :class="cx('cr-label', className)"><slot /></Label>
+</template>
+```

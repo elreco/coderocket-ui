@@ -1,0 +1,87 @@
+---
+title: "Input"
+description: "A text input that inherits the library’s field tokens."
+---
+
+<DocPreview framework="vue" slug="input" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import Input from "./components/ui/input.vue";
+</script>
+
+<template>
+  <Input aria-label="Email address" type="email" placeholder="you@company.com" />
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { cx, useControllable, useFieldControl, useFormReset } from "./utils";
+defineOptions({ inheritAttrs: false });
+const props = defineProps<{
+  id?: string;
+  name?: string;
+  form?: string;
+  disabled?: boolean;
+  required?: boolean;
+  value?: string | number;
+  defaultValue?: string | number;
+  className?: string;
+}>();
+const model = defineModel<string | number>();
+const emit = defineEmits<{ "value-change": [value: string] }>();
+const input = ref<HTMLInputElement>();
+const { fieldAttrs, field } = useFieldControl(() => props.id);
+const value = useControllable(
+  model,
+  () => props.value,
+  () => props.defaultValue ?? "",
+  (next) => emit("value-change", String(next)),
+);
+useFormReset(
+  input,
+  () => {
+    value.value = props.defaultValue ?? "";
+  },
+  () => props.form,
+);
+defineExpose({
+  input,
+  focus: () => input.value?.focus(),
+  select: () => input.value?.select(),
+});
+</script>
+<template>
+  <input
+    ref="input"
+    v-bind="{ ...fieldAttrs, ...$attrs }"
+    :id="id ?? fieldAttrs.id"
+    :name="name ?? fieldAttrs.name"
+    :form="form"
+    :required="required"
+    :disabled="disabled || field?.disabled.value"
+    :class="cx('cr-input', className)"
+    :value="value"
+    @input="value = ($event.target as HTMLInputElement).value"
+  />
+</template>
+```

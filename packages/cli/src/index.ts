@@ -81,7 +81,7 @@ export async function inspectCodebase(root: string) {
         continue;
       }
       const local = relative(root, path);
-      if (/\.tsx$/.test(path) && local.includes("components"))
+      if (/\.(tsx|vue)$/.test(path) && local.includes("components"))
         components.push(local);
       if (!/\.css$/.test(path) || (await lstat(path)).size > 250000) continue;
       const css = await readFile(path, "utf8");
@@ -95,13 +95,17 @@ export async function inspectCodebase(root: string) {
   const tsconfig = await readOptional(resolve(root, "tsconfig.json"));
   return {
     schemaVersion: 1,
-    framework: dependencies.next
-      ? "Next.js"
-      : dependencies.vite
-        ? "Vite"
-        : dependencies.react
-          ? "React"
-          : "Unknown",
+    framework: dependencies.nuxt
+      ? "Nuxt"
+      : dependencies.vue
+        ? "Vue"
+        : dependencies.next
+          ? "Next.js"
+          : dependencies.vite
+            ? "Vite"
+            : dependencies.react
+              ? "React"
+              : "Unknown",
     tailwind: dependencies.tailwindcss || null,
     dependencies,
     cssVariables,
@@ -246,8 +250,12 @@ async function run(
     ".coderocket/manifest.json",
     JSON.stringify(manifest, null, 2) + "\n",
   );
+  const dependencyList = Object.entries(bundle.dependencies || {})
+    .map(([name, version]) => `${name}@${version}`)
+    .join(", ");
+
   console.log(
-    `Installed library version ${bundle.revision}.\nRequired dependencies: React 19.3, React DOM 19.3, @base-ui/react 1.8.0.\nImport styles/components.css${manifest.blocks.length ? ", styles/blocks.css" : ""}, then styles/theme.css in your application entry.\nCommit .coderocket/manifest.json and lock.json with your components. Integration instructions are in .coderocket/README.md and .coderocket/AGENTS.md; include these rules in your coding agent context.`,
+    `Installed library version ${bundle.revision}.\nRequired dependencies: ${dependencyList}.\nImport styles/components.css${manifest.blocks.length ? ", styles/blocks.css" : ""}, then styles/theme.css in your application entry.\nCommit .coderocket/manifest.json and lock.json with your components. Integration instructions are in .coderocket/README.md and .coderocket/AGENTS.md; include these rules in your coding agent context.`,
   );
 }
 export async function main(

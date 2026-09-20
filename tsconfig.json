@@ -27,5 +27,5 @@
     }
   },
   "include": ["packages/**/*.ts", "packages/**/*.tsx"],
-  "exclude": ["node_modules", "**/dist", "legacy", ".build"]
+  "exclude": ["node_modules", "**/dist", "legacy", ".build", "packages/vue"]
 }

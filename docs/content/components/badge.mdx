@@ -1,0 +1,56 @@
+---
+title: "Badge"
+description: "A compact non-interactive status or label."
+---
+
+<DocPreview slug="badge" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { Badge } from './components/ui/badge';
+
+<Badge variant="success">Active</Badge>
+```
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+## Behavior and accessibility
+
+- Provide meaningful labels for interactive controls.
+- Connect action callbacks to your application logic.
+- Verify keyboard navigation and contrast in your application.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+import type { HTMLAttributes } from "react";
+import { cx } from "./utils";
+export function Badge({
+  variant = "secondary",
+  className,
+  ...props
+}: HTMLAttributes<HTMLSpanElement> & {
+  variant?:
+    "primary" | "secondary" | "success" | "warning" | "destructive" | "outline";
+}) {
+  return (
+    <span
+      {...props}
+      data-variant={variant}
+      className={cx("cr-badge", className)}
+    />
+  );
+}
+```

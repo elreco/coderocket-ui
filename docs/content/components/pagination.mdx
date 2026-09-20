@@ -1,0 +1,130 @@
+---
+title: "Pagination"
+description: "A controlled page navigator with bounded page selection."
+---
+
+<DocPreview slug="pagination" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { Pagination } from './components/ui/pagination';
+
+<Pagination page={2} totalPages={8} onPageChange={page=>console.info(page)}/>
+```
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+Dependencies: [button](/docs/components/button).
+
+## Behavior and accessibility
+
+- Provide meaningful labels for interactive controls.
+- Connect action callbacks to your application logic.
+- Verify keyboard navigation and contrast in your application.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+import { Button } from "./button";
+export function Pagination({
+  page,
+  totalPages,
+  onPageChange,
+  label = "Pagination",
+  disabled = false,
+  previousLabel = "Previous",
+  nextLabel = "Next",
+  pageLabel = (value) => `Page ${value}`,
+}: {
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  label?: string;
+  disabled?: boolean;
+  previousLabel?: string;
+  nextLabel?: string;
+  pageLabel?: (page: number) => string;
+}) {
+  const total = Number.isFinite(totalPages)
+    ? Math.max(1, Math.floor(totalPages))
+    : 1;
+  const current = Number.isFinite(page)
+    ? Math.max(1, Math.min(total, Math.floor(page)))
+    : 1;
+  const pages = Array.from(
+    { length: Math.min(total, 5) },
+    (_, i) => Math.max(1, Math.min(current - 2, total - 4)) + i,
+  );
+  return (
+    <nav aria-label={label} className="cr-pagination">
+      <Button
+        variant="outline"
+        size="sm"
+        aria-label={previousLabel}
+        disabled={disabled || current === 1}
+        onClick={() => onPageChange(current - 1)}
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+      </Button>
+      {pages.map((p) => (
+        <Button
+          key={p}
+          size="sm"
+          variant={p === current ? "primary" : "ghost"}
+          aria-current={p === current ? "page" : undefined}
+          aria-label={pageLabel(p)}
+          disabled={disabled}
+          onClick={() => onPageChange(p)}
+        >
+          {p}
+        </Button>
+      ))}
+      <Button
+        variant="outline"
+        size="sm"
+        aria-label={nextLabel}
+        disabled={disabled || current === total}
+        onClick={() => onPageChange(current + 1)}
+      >
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m9 6 6 6-6 6" />
+        </svg>
+      </Button>
+    </nav>
+  );
+}
+```

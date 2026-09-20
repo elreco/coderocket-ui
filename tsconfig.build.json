@@ -7,5 +7,12 @@
     "rootDir": ".",
     "outDir": ".build/types"
   },
-  "exclude": ["node_modules", "**/dist", "**/*.test.ts", "legacy", ".build"]
+  "exclude": [
+    "node_modules",
+    "**/dist",
+    "**/*.test.ts",
+    "legacy",
+    ".build",
+    "packages/vue"
+  ]
 }

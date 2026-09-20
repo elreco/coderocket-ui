@@ -1,0 +1,77 @@
+---
+title: "RadioGroup"
+description: "One selection from a labelled set, with arrow-key navigation."
+---
+
+<DocPreview slug="radio-group" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { RadioGroup } from './components/ui/radio-group';
+
+<RadioGroup label="Plan" defaultValue="personal" options={[{value:"personal",label:"Personal"},{value:"team",label:"Team"}]}/>
+```
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+## Behavior and accessibility
+
+- Provide meaningful labels for interactive controls.
+- Connect action callbacks to your application logic.
+- Verify keyboard navigation and contrast in your application.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+import type { ComponentProps } from "react";
+import { RadioGroup as Group } from "@base-ui/react/radio-group";
+import { Radio as Base } from "@base-ui/react/radio";
+import { cx } from "./utils";
+export function RadioGroup({
+  label,
+  options,
+  className,
+  ...props
+}: Omit<ComponentProps<typeof Group>, "className" | "children"> & {
+  label: string;
+  className?: string;
+  options: Array<{ value: string; label: string; disabled?: boolean }>;
+}) {
+  return (
+    <Group
+      {...props}
+      aria-label={label}
+      className={cx("cr-radio-group", className)}
+    >
+      {options.map((option) => (
+        <label
+          className="cr-check-label"
+          key={option.value}
+          data-disabled={props.disabled || option.disabled || undefined}
+        >
+          <Base.Root
+            value={option.value}
+            disabled={option.disabled}
+            className="cr-radio"
+          >
+            <Base.Indicator className="cr-radio-indicator" />
+          </Base.Root>
+          {option.label}
+        </label>
+      ))}
+    </Group>
+  );
+}
+```

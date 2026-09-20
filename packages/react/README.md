@@ -2,7 +2,7 @@
 
 48 experimental React components, built on Base UI with compiled CSS. MIT licensed. React 19.3 is the supported source-release version; Tailwind is optional.
 
-Build from the repository root with `pnpm build`, then use the workspace package:
+Build from the repository root with `pnpm build`, then use the workspace package. The package name does not imply a public npm release:
 
 ```tsx
 import { Button, ThemeScope } from "@coderocket/react";
@@ -22,3 +22,5 @@ Use `ThemeScope` so typography, focus and portalled controls share CSS variables
 The `composition` entry renders validated compositions of known primitives; it does not execute arbitrary model-generated JavaScript. The `showcase` entry provides examples.
 
 [Component documentation](https://ui.coderocket.app/docs/components) · [Development guide](../../docs/DEVELOPMENT.md)
+
+For native Vue components with the same tokens and catalogue, see [`@coderocket/vue`](../vue). Framework-specific props and behavior should be read in their own documentation.

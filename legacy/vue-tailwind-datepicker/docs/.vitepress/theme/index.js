@@ -20,7 +20,7 @@ const maintenanceNotice = () => h('aside', {
   h('a', {
     href: 'https://ui.coderocket.app',
     style: { color: 'var(--vp-c-brand-1)', textDecoration: 'underline' },
-  }, 'Explore CodeRocket UI, currently for React.'),
+  }, 'Explore CodeRocket UI for React and Vue.'),
 ])
 
 export default {

@@ -1,0 +1,115 @@
+---
+title: "Billing"
+description: "Subscription summary, seat usage and invoice links."
+---
+
+<DocPreview framework="vue" slug="billing" kind="block"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import BillingBlock from './components/blocks/billing.vue'
+</script>
+
+<!-- Supply the required props and callbacks listed in Source and props. -->
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+The full ZIP also includes `examples/block-showcase.vue`, with populated block props, illustrations and local sample callbacks to adapt to your application.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import WorkspaceHeading from "./workspace-heading.vue";
+import type { FormAction } from "./common";
+import Card from "../ui/card.vue";
+import Badge from "../ui/badge.vue";
+import Button from "../ui/button.vue";
+import Progress from "../ui/progress.vue";
+import { computed } from "vue";
+import { CreditCard, ArrowUpRight, FileText } from "@lucide/vue";
+const props = defineProps<{
+  plan: string;
+  price: string;
+  renewal: string;
+  usage: number;
+  limit: number;
+  onManage: () => void;
+  invoices: Array<{ id: string; date: string; amount: string; href: string }>;
+}>();
+const safeLimit = computed(() =>
+  Number.isFinite(props.limit) && props.limit > 0 ? props.limit : 1,
+);
+const safeUsage = computed(() =>
+  Number.isFinite(props.usage)
+    ? Math.max(0, Math.min(props.usage, safeLimit.value))
+    : 0,
+);
+</script>
+<template>
+  <Card class="cr-workspace-block cr-workspace-billing"
+    ><WorkspaceHeading
+      eyebrow="Subscription"
+      title="Billing"
+      description="Your plan, usage and invoices in one place."
+      ><template #action
+        ><span class="cr-workspace-icon-tile"
+          ><CreditCard :size="20" aria-hidden="true" /></span></template
+    ></WorkspaceHeading>
+    <div class="cr-workspace-plan">
+      <div class="cr-workspace-plan-main">
+        <Badge variant="outline">{{ plan }} plan</Badge
+        ><strong class="cr-workspace-plan-price">{{ price }}</strong
+        ><span class="cr-description">{{ renewal }}</span>
+      </div>
+      <Button variant="outline" @click="onManage"
+        >Manage plan<ArrowUpRight :size="16" aria-hidden="true"
+      /></Button>
+    </div>
+    <div class="cr-workspace-usage">
+      <div class="cr-workspace-list-heading">
+        <span>Team seats</span
+        ><span
+          >{{ usage }}
+          <span class="cr-description">/ {{ limit }} used</span></span
+        >
+      </div>
+      <Progress label="Seats used" :value="safeUsage" :max="safeLimit" />
+    </div>
+    <div class="cr-workspace-list-heading">
+      <span>Invoice history</span
+      ><Badge variant="outline">{{ invoices.length }}</Badge>
+    </div>
+    <ul class="cr-workspace-list cr-workspace-invoice-list">
+      <li v-for="invoice in invoices" :key="invoice.id">
+        <span class="cr-workspace-icon-tile"
+          ><FileText :size="17" aria-hidden="true" /></span
+        ><span>{{ invoice.date }}</span
+        ><strong>{{ invoice.amount }}</strong
+        ><a
+          class="cr-link cr-workspace-invoice-link"
+          :href="invoice.href"
+          :aria-label="`View invoice dated ${invoice.date}`"
+          >View<ArrowUpRight :size="15" aria-hidden="true"
+        /></a>
+      </li>
+    </ul>
+    <p v-if="!invoices.length" class="cr-block-empty">
+      No invoices yet. They will appear here after your first payment.
+    </p></Card
+  >
+</template>
+```

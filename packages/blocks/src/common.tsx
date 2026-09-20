@@ -7,23 +7,35 @@ export function ActionForm({
   children,
   submitLabel = "Save changes",
   successMessage = "Saved.",
+  validate,
+  submitIcon,
 }: {
   onSubmit: FormAction;
   children: ReactNode;
   submitLabel?: string;
   successMessage?: string;
+  validate?: (values: FormData) => string | undefined;
+  submitIcon?: ReactNode;
 }) {
   const [state, setState] = useState<"idle" | "busy" | "success" | "error">(
     "idle",
   );
   const pending = useRef(false);
+  const [errorMessage, setErrorMessage] = useState("Please try again.");
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pending.current) return;
     pending.current = true;
     const data = new FormData(event.currentTarget);
     setState("busy");
+    setErrorMessage("Please try again.");
     try {
+      const validationError = validate?.(data);
+      if (validationError) {
+        setErrorMessage(validationError);
+        setState("error");
+        return;
+      }
       await onSubmit(data);
       setState("success");
     } catch {
@@ -34,7 +46,8 @@ export function ActionForm({
   }
   return (
     <form
-      className="cr-stack"
+      className="cr-stack cr-block-action-form"
+      aria-busy={state === "busy" || undefined}
       onSubmit={submit}
       onChange={() => {
         if (!pending.current) setState("idle");
@@ -43,6 +56,7 @@ export function ActionForm({
       {children}
       <Button type="submit" loading={state === "busy"}>
         {submitLabel}
+        {state !== "busy" && submitIcon}
       </Button>
       {state === "success" && (
         <p role="status" className="cr-description">
@@ -50,8 +64,12 @@ export function ActionForm({
         </p>
       )}
       {state === "error" && (
-        <Alert title="Unable to complete this action" variant="destructive">
-          Please try again.
+        <Alert
+          title="Unable to complete this action"
+          variant="destructive"
+          announce
+        >
+          {errorMessage}
         </Alert>
       )}
     </form>
