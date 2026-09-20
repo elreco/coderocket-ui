@@ -12,10 +12,40 @@ import {
   type Snapshot,
 } from "@coderocket/shared/registry-client";
 
+declare const __CODEROCKET_VERSION__: string;
+export const VERSION =
+  typeof __CODEROCKET_VERSION__ === "string" ? __CODEROCKET_VERSION__ : "0.3.0";
+const HELP = `CodeRocket MCP ${VERSION}
+
+Usage: coderocket-mcp [--stdio]
+   or: npx -y @coderocketapp/mcp@latest
+
+A read-only MCP server for your saved CodeRocket library. Add it to your
+coding agent's MCP configuration with:
+  command: npx
+  args: ["-y", "@coderocketapp/mcp@latest"]
+  env: CODEROCKET_LIBRARY and CODEROCKET_TOKEN
+
+Copy your library ID and create a connection token in your saved library's
+Connect panel at https://ui.coderocket.app. Store these values in your MCP
+client's environment or secret settings. Never pass tokens as arguments or
+commit them to version control. CODEROCKET_SERVER is optional.
+
+Tools: get_design_system, get_design_rules, list_components, list_blocks,
+       search_components, search_blocks, get_component, get_block
+Resource: coderocket://design-rules
+
+Options:
+  --stdio         Start the stdio server (also the default)
+  --help, -h      Show this help without starting the server
+  --version, -v   Show the installed version
+
+Requires Node.js 24 or newer. The stdio server is intended for an MCP client.`;
+
 export function createServer(
   env: Record<string, string | undefined> = process.env,
 ) {
-  const server = new McpServer({ name: "coderocket", version: "0.1.0" });
+  const server = new McpServer({ name: "coderocket", version: VERSION });
   const origin = serverOrigin(env.CODEROCKET_SERVER || DEFAULT_SERVER),
     id = env.CODEROCKET_LIBRARY || "",
     token = env.CODEROCKET_TOKEN || "";
@@ -119,16 +149,38 @@ export function createServer(
   );
   return server;
 }
-async function main() {
-  await createServer().connect(new StdioServerTransport());
+export async function main(
+  args = process.argv.slice(2),
+  env: Record<string, string | undefined> = process.env,
+) {
+  if (args.length === 1 && ["help", "--help", "-h"].includes(args[0])) {
+    console.log(HELP);
+    return;
+  }
+  if (args.length === 1 && ["--version", "-v"].includes(args[0])) {
+    console.log(VERSION);
+    return;
+  }
+  if (args.length && !(args.length === 1 && args[0] === "--stdio"))
+    throw new Error(
+      "Unknown arguments. Run coderocket-mcp --help. Supply credentials through environment variables, never command arguments.",
+    );
+  if (
+    !/^[0-9a-f-]{36}$/i.test(env.CODEROCKET_LIBRARY || "") ||
+    !/^cr_[A-Za-z0-9_-]{43}$/.test(env.CODEROCKET_TOKEN || "")
+  )
+    throw new Error(
+      "Set CODEROCKET_LIBRARY and CODEROCKET_TOKEN from your saved library's Connect panel in your MCP client's environment. Run coderocket-mcp --help for setup.",
+    );
+  await createServer(env).connect(new StdioServerTransport());
 }
 if (
   process.argv[1] &&
   import.meta.url === pathToFileURL(realpathSync(resolve(process.argv[1]))).href
 )
-  main().catch(() => {
+  main().catch((error) => {
     console.error(
-      "CodeRocket MCP failed. Check its connection environment variables.",
+      error instanceof Error ? error.message : "CodeRocket MCP failed.",
     );
     process.exitCode = 1;
   });

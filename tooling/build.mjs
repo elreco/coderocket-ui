@@ -51,6 +51,9 @@ for (const [name, names] of Object.entries(entries)) {
     format: "esm",
     target: executable ? "node24" : "es2022",
     packages: "external",
+    define: executable
+      ? { __CODEROCKET_VERSION__: JSON.stringify(manifest.version) }
+      : undefined,
     tsconfigRaw: { compilerOptions: { jsx: "react-jsx" } },
     legalComments: "eof",
     outExtension: executable ? { ".js": ".mjs" } : undefined,

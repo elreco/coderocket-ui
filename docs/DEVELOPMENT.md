@@ -2,7 +2,7 @@
 
 ## Build and test
 
-Use Node.js 24+ and pnpm 12.4.2:
+Use the Node.js and pnpm versions declared in [`package.json`](../package.json):
 
 ```sh
 pnpm install --frozen-lockfile
@@ -13,7 +13,7 @@ pnpm check
 
 The build emits ES modules, TypeScript declarations and CSS. React entries retain the client boundary for frameworks such as Next.js. Vue single-file components are compiled for consumers. Runtime dependencies remain external. Tests cover date values, model validation, composition, framework behavior and the CLI's filesystem protection.
 
-These are source workspaces, not an announcement of npm availability. Add a consumer inside this pnpm workspace with `workspace:*` dependencies, or build and package the required dependencies locally. The hosted Studio also exports standalone source you can copy into an existing application.
+The component and model packages are source workspaces. Add a consumer inside this pnpm workspace with `workspace:*` dependencies, or build and package the required dependencies locally. The hosted Studio also exports standalone source you can copy into an existing application. The integration clients are distributed separately on npm as `@coderocketapp/cli` and `@coderocketapp/mcp`; see their [CLI](../packages/cli/README.md) and [MCP](../packages/mcp/README.md) guides.
 
 ## A local React consumer
 

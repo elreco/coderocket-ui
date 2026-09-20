@@ -13,3 +13,5 @@ coverage/
 **/.vitepress/cache/
 **/.vitepress/dist/
 *.tsbuildinfo
+
+.release/

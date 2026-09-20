@@ -7,6 +7,8 @@ For Vue, follow the [Vue setup guide](/docs/vue); the Studio workflow and AI too
 
 This walkthrough uses a React library called **Acme UI**. You can complete the design manually; AI is optional.
 
+You can use the [MIT-licensed component source](https://github.com/elreco/coderocket-ui) without an account. This walkthrough uses the hosted Studio to save a customized library and install it through its private registry, which requires an account and a library connection token.
+
 ## 1. Create your library
 
 [Create an account](/signup), confirm your email address, then open the editor. Your libraries are private to your account.
@@ -42,15 +44,24 @@ Select **Save** to store the current design. **Version history** lets you restor
 
 If another session has changed the library, saving reports a conflict. Reload and inspect the newer version before continuing.
 
-## 5. Export and render a component
+## 5. Install and render a component
 
-Save any pending changes, then choose **Export** and download the ZIP. Copy its `components/` and `styles/` folders into your React app, and install the runtime dependencies:
+Save any pending changes, then open **Connect** and choose **Create connection**. Copy the token shown once. With Node.js 24 or newer installed, run the official CLI from your application's folder using the library ID shown in **Connect**:
+
+In bash or zsh, paste your connection token at the hidden prompt and press Enter:
 
 ```bash
-npm install react@19.3.0 react-dom@19.3.0 @base-ui/react@1.8.0 lucide-react@1.47.0
+printf "Connection token: "
+read -rs CODEROCKET_TOKEN
+export CODEROCKET_TOKEN
+printf "\n"
+npx @coderocketapp/cli@latest init YOUR_LIBRARY_ID
+npx @coderocketapp/cli@latest add button
 ```
 
-React and React DOM must use matching versions. Calendar and DatePicker require React 19.2 or newer; the current library is tested with 19.3. Lucide is used by the calendar, datepicker and blocks.
+Keep your token in the terminal environment, outside source and version control. The CLI remembers the library ID in `.coderocket/manifest.json` and prints the required runtime dependencies; install those in your app. React and React DOM must use matching versions. See [CLI and coding agents](/docs/agents) for configuration and token renewal.
+
+You can also choose **Export** and copy the ZIP's `components/` and `styles/` folders into your app. Follow [export and installation](/docs/export) for that setup.
 
 Import the compiled styles once, then use the source directly:
 
@@ -70,6 +81,16 @@ export default function App() {
 ```
 
 Your button uses the saved Acme UI theme. It renders from local source and CSS. Connect its `onClick` callback to your application when you add behavior.
+
+Keep `CODEROCKET_TOKEN` set when using the CLI again. List available items, add more components, or save a new design in the Studio and sync it:
+
+```bash
+npx @coderocketapp/cli@latest list
+npx @coderocketapp/cli@latest add dialog
+npx @coderocketapp/cli@latest sync
+```
+
+The CLI preserves locally edited files and places conflicting updates in a review folder.
 
 <Cards>
   <Card

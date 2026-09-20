@@ -7,6 +7,25 @@ Your export contains the components, blocks and theme from your saved library. T
 
 Vue libraries export native `.vue` components, Vue-specific CLI/MCP rules and the same theme files. Follow [Vue and Nuxt installation](/docs/vue). The React setup below applies to React libraries.
 
+## Install through npm
+
+For ongoing updates, use the official CLI with Node.js 24 or newer. Save your library and create a token in **Connect**, then run these commands from your application folder with the library ID shown there:
+
+In bash or zsh, paste your connection token at the hidden prompt and press Enter:
+
+```bash
+printf "Connection token: "
+read -rs CODEROCKET_TOKEN
+export CODEROCKET_TOKEN
+printf "\n"
+npx @coderocketapp/cli@latest init YOUR_LIBRARY_ID
+npx @coderocketapp/cli@latest add button dialog
+```
+
+The CLI writes source and styles into your application and prints the runtime dependencies to install. Use `npx @coderocketapp/cli@latest list` to browse items and `npx @coderocketapp/cli@latest sync` after saving design changes. Keep the token in your environment. See [CLI and coding agents](/docs/agents) for local-edit protection, blocks and MCP setup.
+
+Hosted registry access needs an account, a saved library and its token. The [MIT-licensed component source](https://github.com/elreco/coderocket-ui) can be used without an account. The ZIP workflow below is also available for a saved Studio library.
+
 ## Download
 
 Save your library and select **Export**. The archive includes:

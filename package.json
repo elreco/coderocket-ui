@@ -12,10 +12,12 @@
     "build": "node tooling/build.mjs",
     "typecheck": "tsc6 --noEmit && vue-tsc --noEmit -p packages/vue/tsconfig.json",
     "test": "vitest run",
-    "check": "node tooling/check-source-manifest.mjs && pnpm typecheck && pnpm build && pnpm test && pnpm smoke",
+    "check": "node tooling/check-source-manifest.mjs && pnpm typecheck && pnpm build && pnpm test && pnpm smoke && pnpm clients:pack && pnpm clients:check",
     "legacy:build": "npm --prefix legacy/vue-tailwind-datepicker run build",
     "legacy:docs": "npm --prefix legacy/vue-tailwind-datepicker run docs:build",
-    "smoke": "node tooling/smoke-distribution.mjs"
+    "smoke": "node tooling/smoke-distribution.mjs",
+    "clients:pack": "node tooling/client-release.mjs",
+    "clients:check": "node tooling/check-client-packages.mjs"
   },
   "devDependencies": {
     "@types/node": "22.20.3",
