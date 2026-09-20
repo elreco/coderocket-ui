@@ -2,7 +2,8 @@
   # Netlify reads this configuration after applying the root base directory.
   # Keep this command aligned with the root Netlify configuration. The initial
   # pnpm workspace install does not install this standalone npm project.
-  command = "npm ci --no-audit --no-fund && npm ci --prefix docs --no-audit --no-fund && npm run docs:build"
+  # Docs import source components, so npm bundle/type preparation is unnecessary.
+  command = "npm ci --ignore-scripts --no-audit --no-fund && npm ci --prefix docs --no-audit --no-fund && npm run docs:build"
   publish = "docs/.vitepress/dist"
 
 [build.environment]

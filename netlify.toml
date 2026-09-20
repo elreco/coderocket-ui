@@ -4,7 +4,9 @@
   base = "legacy/vue-tailwind-datepicker"
   # Netlify detects the pnpm workspace at the repository root. The frozen
   # project is outside that workspace, so install both of its npm projects.
-  command = "npm ci --no-audit --no-fund && npm ci --prefix docs --no-audit --no-fund && npm run docs:build"
+  # Docs import the Vue sources directly: skip the package's prepare script,
+  # which builds npm artifacts and declaration files unrelated to this site.
+  command = "npm ci --ignore-scripts --no-audit --no-fund && npm ci --prefix docs --no-audit --no-fund && npm run docs:build"
   publish = "docs/.vitepress/dist"
 
 [build.environment]
