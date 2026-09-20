@@ -62,7 +62,9 @@ function blockDisabled(event: Event) {
 <template>
   <Primitive
     @click.capture="blockDisabled"
-    @keydown.capture="(disabled || loading) && blockDisabled($event)"
+    @keydown.capture="
+      ($event.key === 'Enter' || $event.key === ' ') && blockDisabled($event)
+    "
     :tabindex="disabled || loading ? -1 : undefined"
     :as="as"
     :as-child="asChild"

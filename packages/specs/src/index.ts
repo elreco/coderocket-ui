@@ -1,6 +1,8 @@
 import { z } from "zod";
 import catalogue from "./catalogue.json";
 import blockCatalogue from "./blocks.json";
+import { getCatalogueDisplayName } from "./display-name";
+export { getCatalogueDisplayName } from "./display-name";
 export const blockSpecs = blockCatalogue;
 export function getBlock(slug: string) {
   return blockSpecs.find((spec) => spec.slug === slug);
@@ -9,7 +11,7 @@ export function searchBlocks(query: string) {
   const terms = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
   return blockSpecs.filter((spec) =>
     terms.every((term) =>
-      `${spec.name} ${spec.category} ${spec.description}`
+      `${spec.name} ${getCatalogueDisplayName(spec.name)} ${spec.category} ${spec.description}`
         .toLowerCase()
         .includes(term),
     ),
@@ -89,7 +91,7 @@ export function searchComponents(query: string) {
   const terms = query.toLowerCase().trim().split(/\s+/).filter(Boolean);
   return componentSpecs.filter((spec) =>
     terms.every((term) =>
-      `${spec.name} ${spec.category} ${spec.description}`
+      `${spec.name} ${getCatalogueDisplayName(spec.name)} ${spec.category} ${spec.description}`
         .toLowerCase()
         .includes(term),
     ),

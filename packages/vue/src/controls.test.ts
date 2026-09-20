@@ -75,6 +75,54 @@ describe("Vue form controls", () => {
     expect(wrapper.find("a").attributes("tabindex")).toBe("-1");
   });
 
+  it("lets keyboard users leave a disabled link button without activating it", () => {
+    const wrapper = render(Button, {
+      props: { asChild: true, disabled: true },
+      slots: { default: () => h("a", { href: "/settings" }, "Settings") },
+    });
+    const link = wrapper.get("a").element;
+    for (const key of ["Tab", "Escape", "ArrowRight"]) {
+      const event = new KeyboardEvent("keydown", {
+        key,
+        bubbles: true,
+        cancelable: true,
+      });
+      link.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(false);
+    }
+    for (const key of ["Enter", " "]) {
+      const event = new KeyboardEvent("keydown", {
+        key,
+        bubbles: true,
+        cancelable: true,
+      });
+      link.dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(true);
+    }
+  });
+
+  it("announces a readonly radio group while keeping its value unchanged", async () => {
+    const wrapper = render(RadioGroup, {
+      props: {
+        label: "Visibility",
+        defaultValue: "private",
+        readOnly: true,
+        options: [
+          { value: "private", label: "Private" },
+          { value: "public", label: "Public" },
+        ],
+      },
+    });
+    expect(wrapper.get('[role="radiogroup"]').attributes("aria-readonly")).toBe(
+      "true",
+    );
+    await wrapper.findAll('[role="radio"]')[1].trigger("click");
+    expect(
+      wrapper.findAll('[role="radio"]')[0].attributes("aria-checked"),
+    ).toBe("true");
+    expect(wrapper.emitted("value-change")).toBeUndefined();
+  });
+
   it("supports external form submission and reset for text controls", async () => {
     document.body.innerHTML = '<form id="external"></form>';
     const input = render(Input, {

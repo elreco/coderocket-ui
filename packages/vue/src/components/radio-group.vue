@@ -52,6 +52,7 @@ useFormReset(
     :disabled="disabled"
     :required="required"
     :aria-label="label"
+    :aria-readonly="readOnly || undefined"
     :orientation="orientation"
     :dir="dir"
     :loop="loop"

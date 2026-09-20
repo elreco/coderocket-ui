@@ -1401,3 +1401,78 @@
 .cr-drawer .cr-modal-footer {
   padding-bottom: max(calc(var(--cr-space) * 4), env(safe-area-inset-bottom));
 }
+
+/* Interactive affordances shared by the Base UI and Reka renderers. Empty
+   results and decorative menu labels deliberately keep their default cursor. */
+.cr-theme
+  :where(
+    button,
+    a[href],
+    select,
+    summary,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"],
+    input[type="checkbox"],
+    input[type="radio"],
+    input[type="file"],
+    input[type="range"],
+    input[type="color"],
+    input[type="image"],
+    [role="button"],
+    [role="link"],
+    [role="checkbox"],
+    [role="radio"],
+    [role="switch"],
+    [role="tab"],
+    [role="option"],
+    [role="menuitem"],
+    [role="menuitemcheckbox"],
+    [role="menuitemradio"],
+    [role="slider"],
+    .cr-slider-control
+  ) {
+  cursor: pointer;
+}
+.cr-theme
+  :where(
+    input:not(
+      [type="button"],
+      [type="submit"],
+      [type="reset"],
+      [type="checkbox"],
+      [type="radio"],
+      [type="file"],
+      [type="range"],
+      [type="color"],
+      [type="image"],
+      [type="hidden"]
+    ),
+    textarea,
+    [contenteditable="true"]
+  ) {
+  cursor: text;
+}
+.cr-theme .cr-context-trigger {
+  cursor: context-menu;
+}
+.cr-theme :where([aria-readonly="true"], [data-readonly]):not(input, textarea),
+.cr-theme
+  :where(.cr-check-label):has(:where([aria-readonly="true"], [data-readonly])),
+.cr-theme
+  :where(.cr-radio-group[aria-readonly="true"])
+  :where(.cr-check-label, .cr-radio) {
+  cursor: default;
+}
+/* Disabled wins over readonly and covers non-native primitives as well. */
+.cr-theme :is(:disabled, [aria-disabled="true"], [data-disabled]),
+.cr-theme
+  :where(.cr-slider[data-disabled])
+  :where(.cr-slider-control, .cr-slider-thumb),
+.cr-theme
+  :where(.cr-check-label):has(
+    :where(:disabled, [aria-disabled="true"], [data-disabled])
+  ),
+.cr-theme input:disabled::file-selector-button {
+  cursor: not-allowed;
+}
