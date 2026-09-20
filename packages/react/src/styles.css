@@ -544,8 +544,8 @@
     transform var(--cr-motion),
     opacity var(--cr-motion);
 }
-.cr-modal[data-starting-style],
-.cr-modal[data-ending-style] {
+.cr-modal:not(.cr-sheet)[data-starting-style],
+.cr-modal:not(.cr-sheet)[data-ending-style] {
   opacity: 0;
   transform: translateY(8px) scale(0.98);
 }
@@ -618,16 +618,98 @@
   place-items: stretch end;
   padding: 0;
 }
+.cr-modal-viewport[data-kind="sheet"][data-side="left"] {
+  place-items: stretch start;
+}
+.cr-modal-viewport[data-kind="sheet"][data-side="top"] {
+  place-items: start stretch;
+}
+.cr-modal-viewport[data-kind="sheet"][data-side="bottom"] {
+  place-items: end stretch;
+}
+/* Reka owns content presence; its empty viewport must never intercept clicks. */
+.cr-modal-viewport[data-kind="sheet"][data-state] {
+  pointer-events: none;
+}
 .cr-sheet {
+  --cr-sheet-x: 100%;
+  --cr-sheet-y: 0%;
   height: 100%;
   max-height: 100svh;
   max-height: 100dvh;
   max-width: 420px;
   border-radius: var(--cr-sheet-radius, 0);
+  pointer-events: auto;
+  transition: none;
 }
-.cr-sheet[data-starting-style],
-.cr-sheet[data-ending-style] {
-  transform: translateX(100%);
+.cr-sheet[data-side="left"] {
+  --cr-sheet-x: -100%;
+}
+.cr-sheet[data-side="top"],
+.cr-sheet[data-side="bottom"] {
+  --cr-sheet-x: 0%;
+  height: auto;
+  max-width: none;
+}
+.cr-sheet[data-side="top"] {
+  --cr-sheet-y: -100%;
+}
+.cr-sheet[data-side="bottom"] {
+  --cr-sheet-y: 100%;
+}
+/* Named animations let both Base UI and Reka retain the panel until exit ends. */
+.cr-sheet[data-open],
+.cr-sheet[data-state="open"] {
+  animation: cr-sheet-in calc(var(--cr-motion) * 2) var(--cr-easing) both;
+}
+.cr-sheet[data-closed],
+.cr-sheet[data-state="closed"] {
+  animation: cr-sheet-out calc(var(--cr-motion) * 1.5) var(--cr-easing) both;
+}
+.cr-sheet-backdrop {
+  transition: none;
+}
+.cr-sheet-backdrop[data-open],
+.cr-sheet-backdrop[data-state="open"] {
+  animation: cr-sheet-backdrop-in calc(var(--cr-motion) * 2) var(--cr-easing)
+    both;
+}
+.cr-sheet-backdrop[data-closed],
+.cr-sheet-backdrop[data-state="closed"] {
+  animation: cr-sheet-backdrop-out calc(var(--cr-motion) * 1.5) var(--cr-easing)
+    both;
+}
+@keyframes cr-sheet-in {
+  from {
+    transform: translate(var(--cr-sheet-x), var(--cr-sheet-y));
+  }
+  to {
+    transform: translate(0, 0);
+  }
+}
+@keyframes cr-sheet-out {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(var(--cr-sheet-x), var(--cr-sheet-y));
+  }
+}
+@keyframes cr-sheet-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes cr-sheet-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 .cr-modal-viewport[data-kind="drawer"] {
   place-items: end center;
@@ -952,6 +1034,41 @@
   display: flex;
   flex-direction: column;
   gap: calc(var(--cr-space) * 4);
+  width: 100%;
+}
+.cr-data-table > .cr-input {
+  width: 100%;
+  max-width: 24rem;
+}
+/* Demo dimensions are independent of the exported component's layout. */
+.cr-demo {
+  min-width: 0;
+  width: 100%;
+}
+.cr-demo > .cr-demo-content {
+  min-width: 0;
+  max-width: 100%;
+}
+.cr-demo:is([data-component="table"], [data-component="data-table"])
+  > .cr-demo-content {
+  display: block;
+  width: 100%;
+}
+.cr-demo:is(
+    [data-component="card"],
+    [data-component="alert"],
+    [data-component="field"],
+    [data-component="empty-state"],
+    [data-component="tabs"],
+    [data-component="collapsible"]
+  )
+  > .cr-demo-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  width: min(100%, 28rem);
+  margin-inline: auto;
 }
 .cr-empty-state {
   text-align: center;
@@ -1045,6 +1162,8 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
+  .cr-sheet,
+  .cr-sheet-backdrop,
   .cr-theme *,
   .cr-theme *::before,
   .cr-theme *::after {

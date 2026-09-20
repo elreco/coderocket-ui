@@ -12,6 +12,7 @@ Get this component from a [saved library export](/docs/export) or the [connected
 Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
 
 ```tsx
+import { Input } from './components/ui/input';
 import { Popover } from './components/ui/popover';
 
 <Popover trigger="Set dimensions" title="Dimensions"><Input aria-label="Width" placeholder="Width"/></Popover>

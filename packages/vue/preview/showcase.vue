@@ -70,7 +70,7 @@ watch(
 </script>
 
 <template>
-  <div class="cr-demo">
+  <div class="cr-demo" :data-component="slug">
     <div class="cr-demo-content">
       <template v-if="slug === 'button'">
         <Button @click="notice = 'Ready to continue.'">Continue</Button>
@@ -250,16 +250,87 @@ watch(
       </template>
       <template v-else-if="slug === 'data-table'">
         <DataTable
-          caption="Projects"
+          caption="Recent payments"
+          search-placeholder="Filter by customer, status or invoice…"
+          :page-size="5"
           :columns="[
-            { key: 'name', label: 'Name' },
+            { key: 'id', label: 'Invoice' },
             { key: 'status', label: 'Status' },
+            { key: 'customer', label: 'Customer' },
+            { key: 'amount', label: 'Amount' },
           ]"
           :rows="[
-            { name: 'Website', status: 'Active' },
-            { name: 'Mobile app', status: 'Planning' },
+            {
+              id: 'INV-1048',
+              customer: 'olivia.martin@example.com',
+              status: 'Paid',
+              amount: 129,
+            },
+            {
+              id: 'INV-1047',
+              customer: 'jackson.lee@example.com',
+              status: 'Processing',
+              amount: 249,
+            },
+            {
+              id: 'INV-1046',
+              customer: 'sophia.brown@example.com',
+              status: 'Paid',
+              amount: 89,
+            },
+            {
+              id: 'INV-1045',
+              customer: 'noah.williams@example.com',
+              status: 'Pending',
+              amount: 399,
+            },
+            {
+              id: 'INV-1044',
+              customer: 'ava.robinson@example.com',
+              status: 'Paid',
+              amount: 149,
+            },
+            {
+              id: 'INV-1043',
+              customer: 'liam.thompson@example.com',
+              status: 'Refunded',
+              amount: 79,
+            },
+            {
+              id: 'INV-1042',
+              customer: 'emma.davis@example.com',
+              status: 'Paid',
+              amount: 299,
+            },
+            {
+              id: 'INV-1041',
+              customer: 'lucas.wilson@example.com',
+              status: 'Pending',
+              amount: 199,
+            },
           ]"
-        />
+        >
+          <template #cell-status="{ value }">
+            <Badge
+              :variant="
+                value === 'Paid'
+                  ? 'success'
+                  : value === 'Pending'
+                    ? 'warning'
+                    : 'secondary'
+              "
+              >{{ value }}</Badge
+            >
+          </template>
+          <template #cell-amount="{ value }">
+            <span style="font-variant-numeric: tabular-nums">{{
+              new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(Number(value))
+            }}</span>
+          </template>
+        </DataTable>
       </template>
       <template v-else-if="slug === 'dialog'">
         <Dialog

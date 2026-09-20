@@ -50,16 +50,24 @@ import { usePortalContainer } from "./utils";
 import { RenderContent, focusTarget, useDisplayModel } from "./display-utils";
 import type { OverlayProps } from "./display-types";
 defineOptions({ inheritAttrs: false });
-const props = withDefaults(defineProps<OverlayProps>(), {
-  open: undefined,
-  trigger: undefined,
-  footer: undefined,
-  initialFocus: undefined,
-  finalFocus: undefined,
-  defaultOpen: false,
-  modal: true,
-  closeLabel: "Close",
-});
+const props = withDefaults(
+  defineProps<
+    OverlayProps & {
+      side?: "top" | "right" | "bottom" | "left";
+    }
+  >(),
+  {
+    open: undefined,
+    trigger: undefined,
+    footer: undefined,
+    initialFocus: undefined,
+    finalFocus: undefined,
+    defaultOpen: false,
+    modal: true,
+    closeLabel: "Close",
+    side: "right",
+  },
+);
 const emit = defineEmits<{
   "update:open": [value: boolean];
   "open-change": [value: boolean];
@@ -92,11 +100,18 @@ const descriptionId = useId();
           ><RenderContent :content="trigger" /></component
         ><RenderContent v-else :content="trigger" /></slot></DialogTrigger
     ><DialogPortal :to="container"
-      ><DialogOverlay class="cr-backdrop" />
-      <div v-if="expanded" class="cr-modal-viewport" data-kind="sheet">
+      ><DialogOverlay class="cr-backdrop cr-sheet-backdrop" />
+      <!-- DialogContent owns presence so its closing animation can finish. -->
+      <div
+        class="cr-modal-viewport"
+        data-kind="sheet"
+        :data-side="side"
+        :data-state="expanded ? 'open' : 'closed'"
+      >
         <DialogContent
           v-bind="$attrs"
           :class="['cr-modal cr-sheet', className]"
+          :data-side="side"
           :aria-describedby="
             description || $slots.description ? descriptionId : undefined
           "
