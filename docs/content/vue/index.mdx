@@ -1,0 +1,49 @@
+---
+title: Vue 3
+description: Build a Vue library with the same design tokens, components and AI workflow.
+---
+
+# Your library, in Vue
+
+Choose **Vue** when creating a library. The Studio renders real Vue components; its source tab, ZIP exports, CLI and MCP return Vue single-file components.
+
+The catalogue includes 48 components and 26 blocks. Vue uses Reka UI for accessible primitives, while React uses Base UI. Tokens, theme controls, saved versions and the AI proposal workflow are shared. APIs use Vue's `v-model`, emitted events and slots. Some framework-specific APIs differ; read the component's source and props.
+
+## Installation
+
+```sh
+npm install vue@3.5.43 reka-ui@2.10.4 @lucide/vue@1.47.0
+```
+
+Export a **Vue** library and copy its components and styles into a Vue 3.5 application. Vite with `@vitejs/plugin-vue` and Nuxt are supported toolchains. Tailwind is optional.
+
+Import `styles/components.css`, then `styles/blocks.css` when using blocks, and finally `styles/theme.css`. Wrap your app in `ThemeScope` from `components/ui/theme-scope.vue` so portalled overlays inherit your theme.
+
+```vue
+<script setup lang="ts">
+import ThemeScope from './components/ui/theme-scope.vue'
+import Button from './components/ui/button.vue'
+import './styles/components.css'
+import './styles/theme.css'
+</script>
+
+<template>
+  <ThemeScope><Button>Continue</Button></ThemeScope>
+</template>
+```
+
+## Nuxt
+
+Copy the exported folders into your app, register the CSS files in `nuxt.config.ts`, and explicitly import ThemeScope and components in your pages. No client-only wrapper is required for the exported components. Use the `css` option with paths matching your Nuxt app directory, for example `~/styles/components.css` and `~/styles/theme.css`.
+
+## Framework differences
+
+The 48 components and 26 blocks share the same design tokens, layouts and core behavior. Vue components use `v-model`, events and named slots. They are native Vue SFCs, not wrappers around the React implementation.
+
+Advanced Base UI-specific APIs are not interchangeable: imperative trigger handles, transition event details and drawer snap points do not have identical Vue counterparts. Vue drawers support directional dismissal from their handle. Use the props listed in each Vue source; do not copy React JSX or Base UI-specific props into Vue templates.
+
+## AI and saved libraries
+
+Connect the CLI or MCP to a saved Vue library. The connection exposes Vue source, dependencies and Vue-specific design rules automatically. The AI generates the same validated composition model; CodeRocket renders and exports it with the library's framework. Existing React libraries stay React.
+
+[Explore Vue components](/docs/vue/components) · [Explore Vue blocks](/docs/vue/blocks) · [Connect a coding agent](/docs/agents)

@@ -1,0 +1,58 @@
+{
+  "name": "@coderocket/vue",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "source": "./src/index.ts"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./blocks": {
+      "types": "./dist/blocks/index.d.ts",
+      "import": "./dist/blocks/index.js",
+      "source": "./src/blocks/index.ts"
+    },
+    "./composition": {
+      "types": "./dist/composition.vue.d.ts",
+      "import": "./dist/composition.js",
+      "source": "./src/composition.vue"
+    }
+  },
+  "scripts": {
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@coderocket/engine": "workspace:*",
+    "@coderocket/specs": "workspace:*",
+    "reka-ui": "2.10.4",
+    "@lucide/vue": "1.47.0"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.43"
+  },
+  "devDependencies": {
+    "@vue/server-renderer": "3.5.43",
+    "vue-tsc": "3.3.11",
+    "@vitejs/plugin-vue": "6.0.9",
+    "vite": "8.3.0",
+    "@vue/test-utils": "2.4.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elreco/coderocket-ui.git",
+    "directory": "packages/vue"
+  },
+  "homepage": "https://ui.coderocket.app/docs/vue",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ]
+}

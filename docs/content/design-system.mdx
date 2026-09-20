@@ -1,0 +1,74 @@
+---
+title: Design system
+description: Make one set of design decisions, then apply it consistently across your entire library.
+---
+
+Your design system is the shared foundation behind every component: the color of a primary action, the height of an input, the typeface of a heading, and the space between elements. CodeRocket stores those decisions as a structured model and turns them into CSS.
+
+## Start with global tokens
+
+A **token** is a named design value. Instead of choosing a different blue for every button, you define `primary` once and reuse it throughout the library.
+
+| In Customize      | What it controls                                       | Example output              |
+| ----------------- | ------------------------------------------------------ | --------------------------- |
+| Colors            | Semantic backgrounds, text, borders and states         | `--cr-primary: #2563eb`     |
+| Typography        | Body and heading fonts, scale, weights and line height | `--cr-font-size: 14px`      |
+| Spacing & density | Spacing rhythm and control height                      | `--cr-control-height: 32px` |
+| Shape             | Corner radii, borders and shadows                      | `--cr-radius-md: 6px`       |
+| Motion            | Transition duration and easing                         | `--cr-motion: 150ms`        |
+
+Changes apply to components that inherit those values. Open a complete block alongside individual components to check whether your choices still work in context.
+
+## Keep color pairs together
+
+Semantic colors describe a purpose: `primary` for the main action, `surface` for a card, and `destructive` for a destructive action. Each background has a matching foreground for readable content.
+
+For example, these values belong together:
+
+```css title="styles/theme.css"
+:root {
+  --cr-primary: #2563eb;
+  --cr-primary-foreground: #ffffff;
+  --cr-surface: #ffffff;
+  --cr-surface-foreground: #171717;
+  --cr-radius-md: 6px;
+  --cr-control-height: 32px;
+}
+```
+
+The **Accessibility** view checks the main text/background pairs against a 4.5:1 contrast threshold. Changing only a background can make its text unreadable. Review focus, hover, disabled and error states in your application as well.
+
+## Give one component an override
+
+An override changes a particular component while keeping the rest of your system consistent. For example, you can give dialogs a larger corner radius without rounding every input.
+
+1. Open **Components** and select **Dialog**.
+2. In **Customize**, adjust its component-specific **Corner radius**.
+3. Switch to **Button** to confirm that its shared radius is unchanged.
+4. Use **Reset** in the Dialog override section to return to the inherited value.
+
+The style model resolves from the broadest rule to the most specific:
+
+```text
+Global tokens → Component recipe → Component override → Instance style
+```
+
+Recipes provide component defaults. Overrides are your library-level exceptions. After export, your application can provide instance props, classes or styles when one use needs a different treatment.
+
+## Typography and font loading
+
+Set the body and heading families separately. The visual controls offer system sans, serif and monospace stacks, which work without external font requests.
+
+The model also accepts `inter` and `geist`. If you use either in a generated or imported design, load that font in your application. Selecting a family in the model does not download a font file. Use the exported `ThemeScope` so components inherit the intended typography and overlays share the same theme.
+
+## Light and dark appearance
+
+Switching appearance in the editor starts from the corresponding semantic palette. It replaces the current color palette; use **Undo** if you want your previous edited colors back.
+
+An export contains the appearance you saved. For a runtime theme toggle in your app, maintain a token set for each appearance and switch the CSS scope in your application.
+
+## A model you can keep
+
+Every export includes `design-system.json` with `schemaVersion: 1`. It contains the saved name, framework, appearance, global tokens, recipes and overrides. The model is separate from the generated React or Vue source, so you can keep both under version control.
+
+**Save** records a new version of the model. Restoring a version changes the design preview; it does not delete custom components saved to the library. [Export and installation](/docs/export) explains how to move the complete library into your project.

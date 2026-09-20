@@ -1,0 +1,465 @@
+[
+  {
+    "slug": "button",
+    "name": "Button",
+    "category": "Foundation",
+    "description": "An action with six visual variants, three sizes and a loading state.",
+    "source": "components/button.tsx",
+    "example": "<Button>Continue</Button>",
+    "variants": [
+      "primary",
+      "secondary",
+      "outline",
+      "ghost",
+      "destructive",
+      "link"
+    ],
+    "states": ["default", "hover", "focus", "disabled", "loading"]
+  },
+  {
+    "slug": "badge",
+    "name": "Badge",
+    "category": "Foundation",
+    "description": "A compact non-interactive status or label.",
+    "source": "components/badge.tsx",
+    "example": "<Badge variant=\"success\">Active</Badge>"
+  },
+  {
+    "slug": "avatar",
+    "name": "Avatar",
+    "category": "Foundation",
+    "description": "An image with an accessible fallback for a person or team.",
+    "source": "components/avatar.tsx",
+    "example": "<Avatar name=\"Alex Morgan\"/>"
+  },
+  {
+    "slug": "card",
+    "name": "Card",
+    "category": "Foundation",
+    "description": "A surface that groups related content, with optional header and footer.",
+    "source": "components/card.tsx",
+    "example": "<Card title=\"Project settings\" description=\"Make this workspace your own.\">Your content goes here.</Card>"
+  },
+  {
+    "slug": "alert",
+    "name": "Alert",
+    "category": "Foundation",
+    "description": "A contextual message with optional assertive announcement.",
+    "source": "components/alert.tsx",
+    "example": "<Alert title=\"Everything is up to date.\" variant=\"success\">Your changes have been saved.</Alert>"
+  },
+  {
+    "slug": "separator",
+    "name": "Separator",
+    "category": "Foundation",
+    "description": "A visual and semantic divider.",
+    "source": "components/separator.tsx",
+    "example": "<div>Account<Separator/>Preferences</div>"
+  },
+  {
+    "slug": "skeleton",
+    "name": "Skeleton",
+    "category": "Foundation",
+    "description": "A reduced-motion-aware placeholder while content is loading.",
+    "source": "components/skeleton.tsx",
+    "example": "<div style={{width:240,display:\"grid\",gap:12}}><Skeleton style={{height:20,width:\"60%\"}}/><Skeleton style={{height:80}}/></div>"
+  },
+  {
+    "slug": "label",
+    "name": "Label",
+    "category": "Foundation",
+    "description": "An explicit label linked to a form control.",
+    "source": "components/label.tsx",
+    "example": "<div><Label htmlFor=\"label-demo\">Full name</Label><input id=\"label-demo\" className=\"cr-input\"/></div>"
+  },
+  {
+    "slug": "kbd",
+    "name": "Kbd",
+    "category": "Foundation",
+    "description": "A keyboard shortcut hint.",
+    "source": "components/kbd.tsx",
+    "example": "<span>Open search <Kbd>⌘ K</Kbd></span>"
+  },
+  {
+    "slug": "input",
+    "name": "Input",
+    "category": "Forms",
+    "description": "A text input that inherits the library’s field tokens.",
+    "source": "components/input.tsx",
+    "example": "<Input aria-label=\"Email address\" type=\"email\" placeholder=\"you@company.com\"/>"
+  },
+  {
+    "slug": "textarea",
+    "name": "Textarea",
+    "category": "Forms",
+    "description": "A multiline input with native form semantics.",
+    "source": "components/textarea.tsx",
+    "example": "<Textarea aria-label=\"Project description\" placeholder=\"Tell us about your project…\"/>"
+  },
+  {
+    "slug": "checkbox",
+    "name": "Checkbox",
+    "category": "Forms",
+    "description": "A labelled checkbox with checked and indeterminate states.",
+    "source": "components/checkbox.tsx",
+    "example": "<Checkbox label=\"Send me product updates\" defaultChecked/>"
+  },
+  {
+    "slug": "radio-group",
+    "name": "RadioGroup",
+    "category": "Forms",
+    "description": "One selection from a labelled set, with arrow-key navigation.",
+    "source": "components/radio-group.tsx",
+    "example": "<RadioGroup label=\"Plan\" defaultValue=\"personal\" options={[{value:\"personal\",label:\"Personal\"},{value:\"team\",label:\"Team\"}]}/>"
+  },
+  {
+    "slug": "switch",
+    "name": "Switch",
+    "category": "Forms",
+    "description": "An immediate on/off setting with a visible label.",
+    "source": "components/switch.tsx",
+    "example": "<Switch label=\"Email notifications\" defaultChecked/>"
+  },
+  {
+    "slug": "slider",
+    "name": "Slider",
+    "category": "Forms",
+    "description": "A bounded numeric value with keyboard controls and a visible output.",
+    "source": "components/slider.tsx",
+    "example": "<Slider label=\"Volume\" defaultValue={40} min={0} max={100}/>"
+  },
+  {
+    "slug": "field",
+    "name": "Field",
+    "category": "Forms",
+    "description": "A labelled field with description, validation and accessible errors.",
+    "source": "components/field.tsx",
+    "example": "<Field label=\"Email\" description=\"We’ll use this for account updates.\"><Input type=\"email\" placeholder=\"you@company.com\"/></Field>",
+    "dependencies": ["input"]
+  },
+  {
+    "slug": "input-group",
+    "name": "InputGroup",
+    "category": "Forms",
+    "description": "A text input with leading and trailing content.",
+    "source": "components/input-group.tsx",
+    "example": "<InputGroup aria-label=\"Website\" leading=\"https://\" placeholder=\"your-company.com\"/>",
+    "dependencies": ["input"]
+  },
+  {
+    "slug": "select",
+    "name": "Select",
+    "category": "Forms",
+    "description": "Accessible single or multiple selection with disabled options, controlled state and native form support.",
+    "source": "components/select.tsx",
+    "example": "<Select label=\"Timezone\" defaultValue=\"paris\" options={[{value:\"paris\",label:\"Europe / Paris\"},{value:\"new-york\",label:\"America / New York\"}]}/>"
+  },
+  {
+    "slug": "combobox",
+    "name": "Combobox",
+    "category": "Forms",
+    "description": "Searchable single selection with controlled search, disabled options, optional clearing and form support.",
+    "source": "components/combobox.tsx",
+    "example": "<Combobox label=\"Framework\" items={[\"React\",\"Vue\",\"Svelte\",\"SolidJS\"]}/>"
+  },
+  {
+    "slug": "accordion",
+    "name": "Accordion",
+    "category": "Navigation",
+    "description": "Expandable sections with built-in keyboard interaction.",
+    "source": "components/accordion.tsx",
+    "example": "<Accordion items={[{value:\"ownership\",title:\"Do I own the code?\",content:\"Yes. Export it and use it in your own project.\"},{value:\"runtime\",title:\"Does it need a server?\",content:\"The exported components run independently.\"}]}/>"
+  },
+  {
+    "slug": "tabs",
+    "name": "Tabs",
+    "category": "Navigation",
+    "description": "Related panels connected to an accessible tab list.",
+    "source": "components/tabs.tsx",
+    "example": "<Tabs label=\"Account\" items={[{value:\"profile\",label:\"Profile\",content:\"Your profile settings.\"},{value:\"notifications\",label:\"Notifications\",content:\"Choose how you stay informed.\"}]}/>"
+  },
+  {
+    "slug": "collapsible",
+    "name": "Collapsible",
+    "category": "Navigation",
+    "description": "An optional content section with a disclosure trigger.",
+    "source": "components/collapsible.tsx",
+    "example": "<Collapsible title=\"Advanced options\">Additional settings for this workspace.</Collapsible>"
+  },
+  {
+    "slug": "breadcrumb",
+    "name": "Breadcrumb",
+    "category": "Navigation",
+    "description": "A semantic path through your application.",
+    "source": "components/breadcrumb.tsx",
+    "example": "<Breadcrumb items={[{label:\"Workspace\",href:\"#workspace\"},{label:\"Settings\",href:\"#settings\"},{label:\"Profile\"}]}/>"
+  },
+  {
+    "slug": "pagination",
+    "name": "Pagination",
+    "category": "Navigation",
+    "description": "A controlled page navigator with bounded page selection.",
+    "source": "components/pagination.tsx",
+    "example": "<Pagination page={2} totalPages={8} onPageChange={page=>console.info(page)}/>",
+    "dependencies": ["button"]
+  },
+  {
+    "slug": "progress",
+    "name": "Progress",
+    "category": "Feedback",
+    "description": "A determinate or indeterminate progress bar with a label.",
+    "source": "components/progress.tsx",
+    "example": "<Progress label=\"Upload progress\" value={65}/>"
+  },
+  {
+    "slug": "spinner",
+    "name": "Spinner",
+    "category": "Feedback",
+    "description": "An accessible loading indicator that respects reduced motion.",
+    "source": "components/spinner.tsx",
+    "example": "<Spinner label=\"Loading your workspace\"/>"
+  },
+  {
+    "slug": "empty-state",
+    "name": "EmptyState",
+    "category": "Feedback",
+    "description": "A useful empty state with an optional next action.",
+    "source": "components/empty-state.tsx",
+    "example": "<EmptyState title=\"No projects yet\" description=\"Create your first project to get started.\" action={<Button>Create project</Button>}/>",
+    "dependencies": ["button"]
+  },
+  {
+    "slug": "table",
+    "name": "Table",
+    "category": "Data",
+    "description": "A semantic table with a caption and responsive overflow.",
+    "source": "components/table.tsx",
+    "example": "<Table caption=\"Team members\" columns={[\"Name\",\"Role\"]} rows={[[\"Alex Morgan\",\"Owner\"],[\"Sam Taylor\",\"Developer\"]]}/>"
+  },
+  {
+    "slug": "data-table",
+    "name": "DataTable",
+    "category": "Data",
+    "description": "Searchable, sortable and paginated data with controlled state, custom cells, stable row keys and loading/empty states.",
+    "source": "components/data-table.tsx",
+    "example": "<DataTable caption=\"Projects\" columns={[{key:\"name\",label:\"Name\"},{key:\"status\",label:\"Status\"}]} rows={[{name:\"Website\",status:\"Active\"},{name:\"Mobile app\",status:\"Planning\"}]}/>",
+    "dependencies": ["input", "button", "pagination"]
+  },
+  {
+    "slug": "dialog",
+    "name": "Dialog",
+    "category": "Overlays",
+    "description": "A modal dialog with focus management, keyboard dismissal and a labelled title.",
+    "source": "components/dialog.tsx",
+    "example": "<Dialog trigger=\"Open dialog\" title=\"Workspace settings\" description=\"Manage the details of your workspace.\"><Input aria-label=\"Workspace name\" placeholder=\"Acme\"/></Dialog>",
+    "dependencies": ["input"],
+    "anatomy": [
+      "trigger",
+      "backdrop",
+      "viewport",
+      "popup",
+      "title",
+      "description",
+      "close"
+    ],
+    "behavior": ["Focus trap", "Escape dismisses", "Focus returns to trigger"]
+  },
+  {
+    "slug": "alert-dialog",
+    "name": "AlertDialog",
+    "category": "Overlays",
+    "description": "A confirmation dialog with focus management, keyboard dismissal and a labelled title.",
+    "source": "components/alert-dialog.tsx",
+    "example": "<AlertDialog trigger=\"Preview confirmation\" title=\"Review before continuing\" description=\"Important changes deserve a final check.\" closeLabel=\"Cancel\"><p>This is a confirmation preview. No data will be changed. In your application, explain the consequences here before asking the user to confirm.</p></AlertDialog>",
+    "dependencies": [],
+    "anatomy": [
+      "trigger",
+      "backdrop",
+      "viewport",
+      "popup",
+      "title",
+      "description",
+      "close"
+    ],
+    "behavior": ["Focus trap", "Escape dismisses", "Focus returns to trigger"]
+  },
+  {
+    "slug": "drawer",
+    "name": "Drawer",
+    "category": "Overlays",
+    "description": "A swipeable drawer with focus management, keyboard dismissal and a labelled title.",
+    "source": "components/drawer.tsx",
+    "example": "<Drawer trigger=\"Open drawer\" title=\"Workspace settings\" description=\"Manage the details of your workspace.\"><Input aria-label=\"Workspace name\" placeholder=\"Acme\"/></Drawer>",
+    "dependencies": ["input"],
+    "anatomy": [
+      "trigger",
+      "backdrop",
+      "viewport",
+      "popup",
+      "title",
+      "description",
+      "close"
+    ],
+    "behavior": ["Focus trap", "Escape dismisses", "Focus returns to trigger"]
+  },
+  {
+    "slug": "sheet",
+    "name": "Sheet",
+    "category": "Overlays",
+    "description": "A side panel with focus management, keyboard dismissal and a labelled title.",
+    "source": "components/sheet.tsx",
+    "example": "<Sheet trigger=\"Open sheet\" title=\"Workspace settings\" description=\"Manage the details of your workspace.\"><Input aria-label=\"Workspace name\" placeholder=\"Acme\"/></Sheet>",
+    "dependencies": ["input"],
+    "anatomy": [
+      "trigger",
+      "backdrop",
+      "viewport",
+      "popup",
+      "title",
+      "description",
+      "close"
+    ],
+    "behavior": ["Focus trap", "Escape dismisses", "Focus returns to trigger"]
+  },
+  {
+    "slug": "popover",
+    "name": "Popover",
+    "category": "Overlays",
+    "description": "A non-modal panel anchored to a trigger.",
+    "source": "components/popover.tsx",
+    "example": "<Popover trigger=\"Set dimensions\" title=\"Dimensions\"><Input aria-label=\"Width\" placeholder=\"Width\"/></Popover>",
+    "dependencies": ["input"]
+  },
+  {
+    "slug": "tooltip",
+    "name": "Tooltip",
+    "category": "Overlays",
+    "description": "Additional non-essential text shown on hover or keyboard focus.",
+    "source": "components/tooltip.tsx",
+    "example": "<Tooltip trigger=\"Save\" content=\"Save your changes to this library\"/>"
+  },
+  {
+    "slug": "dropdown",
+    "name": "Dropdown",
+    "category": "Overlays",
+    "description": "A keyboard-accessible menu of actions.",
+    "source": "components/dropdown.tsx",
+    "example": "<Dropdown trigger=\"Project actions\" items={[{label:\"Rename\",onSelect:()=>console.info(\"Rename\")},{label:\"Archive\",onSelect:()=>console.info(\"Archive\")} ]}/>"
+  },
+  {
+    "slug": "context-menu",
+    "name": "ContextMenu",
+    "category": "Overlays",
+    "description": "A contextual action menu available by right-click or keyboard.",
+    "source": "components/context-menu.tsx",
+    "example": "<ContextMenu items={[{label:\"Open\",onSelect:()=>console.info(\"Open\")},{label:\"Duplicate\",onSelect:()=>console.info(\"Duplicate\")}]}>Right-click here, or press Shift + F10.</ContextMenu>",
+    "dependencies": ["dropdown"]
+  },
+  {
+    "slug": "hover-card",
+    "name": "HoverCard",
+    "category": "Overlays",
+    "description": "A preview card for supplementary link information.",
+    "source": "components/hover-card.tsx",
+    "example": "<HoverCard label=\"@alex\" href=\"#profile\"><strong>Alex Morgan</strong><p className=\"cr-description\">Designer and developer.</p></HoverCard>"
+  },
+  {
+    "slug": "navigation-menu",
+    "name": "NavigationMenu",
+    "category": "Navigation",
+    "description": "A navigation bar with expandable groups and real link semantics.",
+    "source": "components/navigation-menu.tsx",
+    "example": "<NavigationMenu items={[{label:\"Product\",links:[{label:\"Overview\",href:\"#overview\",description:\"Explore the platform.\"},{label:\"Components\",href:\"#components\"}]}]}/>"
+  },
+  {
+    "slug": "sidebar",
+    "name": "Sidebar",
+    "category": "Navigation",
+    "description": "A collapsible application sidebar with active-link semantics.",
+    "source": "components/sidebar.tsx",
+    "example": "<Sidebar brand=\"Acme\" items={[{label:\"Overview\",href:\"#overview\",active:true},{label:\"Projects\",href:\"#projects\"},{label:\"Settings\",href:\"#settings\"}]}/>",
+    "dependencies": ["button"]
+  },
+  {
+    "slug": "toggle",
+    "name": "Toggle",
+    "category": "Forms",
+    "description": "A pressable on/off button with an accessible pressed state.",
+    "source": "components/toggle.tsx",
+    "example": "<Toggle aria-label=\"Bold text\">B</Toggle>"
+  },
+  {
+    "slug": "toggle-group",
+    "name": "ToggleGroup",
+    "category": "Forms",
+    "description": "A labelled group of toggle buttons with keyboard navigation.",
+    "source": "components/toggle-group.tsx",
+    "example": "<ToggleGroup label=\"Text alignment\" items={[{value:\"left\",label:\"Left\"},{value:\"center\",label:\"Center\"},{value:\"right\",label:\"Right\"}]}/>"
+  },
+  {
+    "slug": "number-field",
+    "name": "NumberField",
+    "category": "Forms",
+    "description": "A numeric field with increment, decrement, constraints and locale formatting.",
+    "source": "components/number-field.tsx",
+    "example": "<NumberField label=\"Team size\" defaultValue={5} min={1} max={100}/>"
+  },
+  {
+    "slug": "command",
+    "name": "Command",
+    "category": "Complex forms",
+    "description": "A searchable command palette with keyboard navigation and real action callbacks.",
+    "example": "<Command items={[{value:\"settings\",label:\"Open settings\",onSelect:()=>console.info(\"Settings\")},{value:\"export\",label:\"Export library\",onSelect:()=>console.info(\"Export\")}]} />",
+    "dependencies": ["dialog"],
+    "source": "components/command.tsx"
+  },
+  {
+    "slug": "calendar",
+    "name": "Calendar",
+    "category": "Complex forms",
+    "description": "A Gregorian single-date or range calendar with month/year selection, disabled dates, week numbers and keyboard navigation.",
+    "example": "<Calendar defaultValue=\"2026-09-17\" onValueChange={date=>console.info(date)}/>",
+    "dependencies": ["button"],
+    "source": "components/calendar.tsx",
+    "behavior": [
+      "Date-only ISO values are independent of time zones and display locale.",
+      "Arrow keys, Home/End, PageUp/PageDown and Shift+PageUp/PageDown move through days, months and years.",
+      "Disabled dates can be listed or supplied as a predicate; range selection can reject unavailable dates inside an interval.",
+      "Use `numberOfMonths={2}` for two months and showWeekNumbers for ISO week numbers."
+    ]
+  },
+  {
+    "slug": "date-picker",
+    "name": "DatePicker",
+    "category": "Complex forms",
+    "description": "Single-date and date-range selection with shortcuts, manual confirmation, localized calendars and editable date fields.",
+    "example": "<DatePicker mode=\"range\" label=\"Project dates\" defaultValue={{start:\"2026-09-17\",end:\"2026-09-23\"}} autoApply={false} onValueChange={range=>console.info(range ? range.start + \" – \" + range.end : \"Cleared\")}/>",
+    "dependencies": ["calendar", "button"],
+    "source": "components/date-picker.tsx",
+    "behavior": [
+      "Single mode returns an ISO date; range mode returns `{ start, end }`. Display formatting never changes stored values.",
+      "Choose one or two months, navigate by keyboard or month/year controls, and enter dates directly.",
+      "Shortcuts, disabled dates, min/max bounds, week numbers, inline display, clearing and Apply/Cancel are available.",
+      "French and English control labels are built in; other languages can supply labels alongside an Intl locale.",
+      "The same source and compiled styles are included in the library export."
+    ]
+  },
+  {
+    "slug": "toast",
+    "name": "Toast",
+    "category": "Feedback",
+    "description": "Accessible notifications with a provider, imperative manager and dismiss controls.",
+    "example": "<Toast/>",
+    "dependencies": ["button"],
+    "source": "components/toast.tsx"
+  },
+  {
+    "slug": "file-upload",
+    "name": "FileUpload",
+    "category": "Forms",
+    "description": "A validated drag-and-drop file input with cancellable upload and real progress callbacks.",
+    "example": "<FileUpload label=\"Project attachment\" onFileSelect={file=>console.info(file.name)}/>",
+    "dependencies": ["button", "progress"],
+    "source": "components/file-upload.tsx"
+  }
+]

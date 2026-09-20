@@ -1,0 +1,95 @@
+---
+title: "Field"
+description: "A labelled field with description, validation and accessible errors."
+---
+
+<DocPreview slug="field" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { Field } from './components/ui/field';
+
+<Field label="Email" description="We’ll use this for account updates."><Input type="email" placeholder="you@company.com"/></Field>
+```
+
+## Validation feedback
+
+Wrap a control in Field to connect its visible label, help text and error. Native constraints and Base UI validation can produce the error; you do not need to supply an explicit message for every invalid state.
+
+```tsx
+<Field label="Work email" description="Used for account notifications.">
+  <Input name="email" type="email" required />
+</Field>
+
+<Field label="Workspace name" error="This name is already taken.">
+  <Input name="workspace" defaultValue="Acme" />
+</Field>
+```
+
+Use a native form or Base UI Form for submission and server validation. Keep credentials and server-side validation in your application.
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+Dependencies: [input](/docs/components/input).
+
+## Behavior and accessibility
+
+- Provide meaningful labels for interactive controls.
+- Connect action callbacks to your application logic.
+- Verify keyboard navigation and contrast in your application.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+import type { ComponentProps, ReactNode } from "react";
+import { Field as Base } from "@base-ui/react/field";
+import { cx } from "./utils";
+export function Field({
+  label,
+  description,
+  error,
+  children,
+  className,
+  ...props
+}: Omit<ComponentProps<typeof Base.Root>, "className"> & {
+  label: ReactNode;
+  className?: string;
+  description?: ReactNode;
+  error?: ReactNode;
+}) {
+  return (
+    <Base.Root
+      {...props}
+      invalid={Boolean(error) || props.invalid}
+      className={cx("cr-field", className)}
+    >
+      <Base.Label className="cr-label">{label}</Base.Label>
+      {description && (
+        <Base.Description className="cr-description">
+          {description}
+        </Base.Description>
+      )}
+      {children}
+      {error ? (
+        <Base.Error match className="cr-field-error">
+          {error}
+        </Base.Error>
+      ) : (
+        <Base.Error className="cr-field-error" />
+      )}
+    </Base.Root>
+  );
+}
+```

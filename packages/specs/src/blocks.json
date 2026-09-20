@@ -1,0 +1,520 @@
+[
+  {
+    "schemaVersion": 1,
+    "slug": "login",
+    "name": "LoginBlock",
+    "category": "Authentication",
+    "description": "A sign-in form with typed submission callback.",
+    "source": "auth.tsx",
+    "dependencies": [
+      "button",
+      "card",
+      "field",
+      "input",
+      "input-group",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "signup",
+    "name": "SignupBlock",
+    "category": "Authentication",
+    "description": "A registration form with email and password validation.",
+    "source": "auth.tsx",
+    "dependencies": [
+      "button",
+      "card",
+      "field",
+      "input",
+      "input-group",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "forgot-password",
+    "name": "ForgotPasswordBlock",
+    "category": "Authentication",
+    "description": "A recovery request form that preserves account privacy.",
+    "source": "auth.tsx",
+    "dependencies": [
+      "button",
+      "card",
+      "field",
+      "input",
+      "input-group",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "reset-password",
+    "name": "ResetPasswordBlock",
+    "category": "Authentication",
+    "description": "A password reset form with matching confirmation.",
+    "source": "auth.tsx",
+    "dependencies": [
+      "button",
+      "card",
+      "field",
+      "input",
+      "input-group",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "otp",
+    "name": "OtpBlock",
+    "category": "Authentication",
+    "description": "A one-time-code form with numeric validation.",
+    "source": "auth.tsx",
+    "dependencies": [
+      "button",
+      "card",
+      "field",
+      "input",
+      "input-group",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "app-sidebar",
+    "name": "AppSidebarBlock",
+    "category": "Application",
+    "description": "Collapsible workspace navigation with account identity.",
+    "source": "application.tsx",
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "app-header",
+    "name": "AppHeaderBlock",
+    "category": "Application",
+    "description": "Breadcrumbs, search and account actions in an application header.",
+    "source": "application.tsx",
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "profile",
+    "name": "ProfileBlock",
+    "category": "Application",
+    "description": "Editable profile details and identity.",
+    "source": "application.tsx",
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "settings",
+    "name": "SettingsBlock",
+    "category": "Application",
+    "description": "Workspace and notification settings in accessible tabs.",
+    "source": "application.tsx",
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "team",
+    "name": "TeamBlock",
+    "category": "Application",
+    "description": "A member list with invitation and removal callbacks.",
+    "source": "application.tsx",
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "billing",
+    "name": "BillingBlock",
+    "category": "Application",
+    "description": "Subscription summary, seat usage and invoice links.",
+    "source": "application.tsx",
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "api-keys",
+    "name": "ApiKeysBlock",
+    "category": "Application",
+    "description": "A masked key list with creation and revocation callbacks.",
+    "source": "application.tsx",
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "notifications",
+    "name": "NotificationsBlock",
+    "category": "Application",
+    "description": "An inbox with unread states and mark-as-read actions.",
+    "source": "application.tsx",
+    "dependencies": [
+      "sidebar",
+      "avatar",
+      "badge",
+      "breadcrumb",
+      "button",
+      "card",
+      "dialog",
+      "dropdown",
+      "field",
+      "input",
+      "progress",
+      "switch",
+      "tabs",
+      "textarea",
+      "alert"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "data-table",
+    "name": "DataTableBlock",
+    "category": "Data",
+    "description": "A searchable, sortable, paginated records panel.",
+    "source": "data.tsx",
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "filters",
+    "name": "FiltersBlock",
+    "category": "Data",
+    "description": "Search and status filters with reset and controlled output.",
+    "source": "data.tsx",
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "search",
+    "name": "SearchBlock",
+    "category": "Data",
+    "description": "Filter and select content from a local collection.",
+    "source": "data.tsx",
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "empty-state",
+    "name": "EmptyStateBlock",
+    "category": "Data",
+    "description": "A welcoming empty collection with a primary action.",
+    "source": "data.tsx",
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "detail-view",
+    "name": "DetailViewBlock",
+    "category": "Data",
+    "description": "Structured record details with an edit action.",
+    "source": "data.tsx",
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "stats",
+    "name": "StatsBlock",
+    "category": "Data",
+    "description": "Responsive metric cards with textual trend indicators.",
+    "source": "data.tsx",
+    "dependencies": [
+      "badge",
+      "button",
+      "card",
+      "data-table",
+      "empty-state",
+      "field",
+      "input",
+      "select",
+      "separator"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "hero",
+    "name": "HeroBlock",
+    "category": "Marketing",
+    "description": "A focused product introduction with two actions.",
+    "source": "marketing.tsx",
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "features",
+    "name": "FeaturesBlock",
+    "category": "Marketing",
+    "description": "A responsive feature grid built from cards.",
+    "source": "marketing.tsx",
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "pricing",
+    "name": "PricingBlock",
+    "category": "Marketing",
+    "description": "Comparable plans, features and purchase links.",
+    "source": "marketing.tsx",
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "testimonials",
+    "name": "TestimonialsBlock",
+    "category": "Marketing",
+    "description": "Customer quotations with author identities.",
+    "source": "marketing.tsx",
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "faq",
+    "name": "FaqBlock",
+    "category": "Marketing",
+    "description": "An accessible accordion of questions and answers.",
+    "source": "marketing.tsx",
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "cta",
+    "name": "CtaBlock",
+    "category": "Marketing",
+    "description": "A call-to-action panel with product copy.",
+    "source": "marketing.tsx",
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
+    "status": "experimental"
+  },
+  {
+    "schemaVersion": 1,
+    "slug": "footer",
+    "name": "FooterBlock",
+    "category": "Marketing",
+    "description": "Grouped navigation, brand description and copyright.",
+    "source": "marketing.tsx",
+    "dependencies": [
+      "accordion",
+      "avatar",
+      "badge",
+      "card"
+    ],
+    "status": "experimental"
+  }
+]

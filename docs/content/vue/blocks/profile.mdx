@@ -1,0 +1,95 @@
+---
+title: "Profile"
+description: "Editable profile details and identity."
+---
+
+<DocPreview framework="vue" slug="profile" kind="block"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import ProfileBlock from './components/blocks/profile.vue'
+</script>
+
+<!-- Supply the required props and callbacks listed in Source and props. -->
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+The full ZIP also includes `examples/block-showcase.vue`, with populated block props, illustrations and local sample callbacks to adapt to your application.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import WorkspaceHeading from "./workspace-heading.vue";
+import ActionForm from "./action-form.vue";
+import type { FormAction } from "./common";
+import Card from "../ui/card.vue";
+import Avatar from "../ui/avatar.vue";
+import Field from "../ui/field.vue";
+import Input from "../ui/input.vue";
+import Textarea from "../ui/textarea.vue";
+import { UserRound } from "@lucide/vue";
+withDefaults(
+  defineProps<{
+    name: string;
+    email: string;
+    bio?: string;
+    onSave: FormAction;
+  }>(),
+  { bio: "" },
+);
+</script>
+<template>
+  <Card class="cr-workspace-block cr-workspace-profile"
+    ><WorkspaceHeading
+      eyebrow="Account"
+      title="Your profile"
+      description="The details your team sees when you work together." />
+    <div class="cr-workspace-identity">
+      <Avatar :name="name" :size="58" />
+      <div>
+        <strong>{{ name }}</strong
+        ><span>{{ email }}</span>
+      </div>
+      <span class="cr-workspace-icon-tile"
+        ><UserRound :size="20" aria-hidden="true"
+      /></span>
+    </div>
+    <ActionForm :on-submit="onSave"
+      ><div class="cr-workspace-form-grid">
+        <Field label="Display name"
+          ><Input
+            name="name"
+            :default-value="name"
+            autocomplete="name"
+            required /></Field
+        ><Field label="Email address"
+          ><Input
+            name="email"
+            type="email"
+            :default-value="email"
+            autocomplete="email"
+            required
+        /></Field>
+      </div>
+      <Field label="About you"
+        ><Textarea
+          name="bio"
+          :default-value="bio"
+          placeholder="A few words about you and your work." /></Field></ActionForm
+  ></Card>
+</template>
+```

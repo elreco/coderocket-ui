@@ -1,0 +1,123 @@
+---
+title: "Toast"
+description: "Accessible notifications with a provider, imperative manager and dismiss controls."
+---
+
+<DocPreview slug="toast" kind="component"/>
+
+## Usage
+
+Get this component from a [saved library export](/docs/export) or the [connected CLI](/docs/agents). The imports below refer to local files installed in your app.
+
+Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
+
+```tsx
+import { Toast } from './components/ui/toast';
+
+<Toast/>
+```
+
+## Design system
+
+This component consumes your semantic colors, spacing, typography and shape tokens. Import the compiled styles and your theme once as described in [Export](/docs/export).
+
+Dependencies: [button](/docs/components/button).
+
+## Behavior and accessibility
+
+- Provide meaningful labels for interactive controls.
+- Connect action callbacks to your application logic.
+- Verify keyboard navigation and contrast in your application.
+
+Status: **experimental** during early access. Sample previews do not send emails, process payments or upload files to a service.
+
+## Source and props
+
+This is the exported source, using the same implementation as the editor.
+
+```tsx
+"use client";
+import { Toast as Base } from "@base-ui/react/toast";
+import { usePortalContainer } from "./utils";
+import { Button } from "./button";
+import type { ComponentProps } from "react";
+export const useToast = Base.useToastManager;
+export const createToastManager = Base.createToastManager;
+export function ToastProvider({
+  children,
+  limit = 3,
+  timeout = 6000,
+  dismissLabel = "Dismiss notification",
+  ...props
+}: ComponentProps<typeof Base.Provider> & { dismissLabel?: string }) {
+  return (
+    <Base.Provider {...props} limit={limit} timeout={timeout}>
+      {children}
+      <ToastViewport dismissLabel={dismissLabel} />
+    </Base.Provider>
+  );
+}
+function ToastViewport({ dismissLabel }: { dismissLabel: string }) {
+  const { toasts } = Base.useToastManager();
+  const container = usePortalContainer();
+  return (
+    <Base.Portal container={container}>
+      <Base.Viewport className="cr-toast-viewport">
+        {toasts.map((toast) => (
+          <Base.Root key={toast.id} toast={toast} className="cr-toast">
+            <Base.Content>
+              <Base.Title className="cr-toast-title" />
+              <Base.Description className="cr-description" />
+              {toast.actionProps && (
+                <Base.Action className="cr-button" data-variant="secondary" />
+              )}
+            </Base.Content>
+            <Base.Close aria-label={dismissLabel} className="cr-toast-close">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                aria-hidden="true"
+              >
+                <path d="m6 6 12 12M18 6 6 18" />
+              </svg>
+            </Base.Close>
+          </Base.Root>
+        ))}
+      </Base.Viewport>
+    </Base.Portal>
+  );
+}
+/** A self-contained notification example. Applications should use ToastProvider + useToast. */
+export function Toast({
+  title = "Changes saved",
+  description = "Your preferences are up to date.",
+}: {
+  title?: string;
+  description?: string;
+}) {
+  return (
+    <ToastProvider>
+      <ToastTrigger title={title} description={description} />
+    </ToastProvider>
+  );
+}
+function ToastTrigger({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
+  const manager = useToast();
+  return (
+    <Button onClick={() => manager.add({ title, description })}>
+      Show notification
+    </Button>
+  );
+}
+```

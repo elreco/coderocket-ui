@@ -1,0 +1,72 @@
+---
+title: Introduction
+description: Create a React or Vue component library for your product. Define its style, build with it, and bring the source into your app.
+---
+
+**CodeRocket UI is a visual workspace for building your own component library.** Choose your colors, typography and spacing once. Preview those choices across buttons, forms, dashboards and other interface patterns. Use AI when you want help refining the design or composing a new component.
+
+The result is a library of **editable React or Vue source files and local CSS**, ready to live in your codebase.
+
+Start with the [React setup](/docs/getting-started) or [Vue setup](/docs/vue), or explore the components in your framework:
+
+<Cards>
+  <Card
+    title="React components →"
+    href="/docs/components"
+    description="Try the 48 React components and inspect their props, behavior, and source."
+  />
+  <Card
+    title="Vue components →"
+    href="/docs/vue/components"
+    description="Try the 48 Vue components and inspect their props, behavior, and source."
+  />
+</Cards>
+
+## From a direction to your codebase
+
+1. **Define the foundation.** Start from a light or dark palette. Adjust colors, fonts, spacing and shapes with visual controls.
+2. **See the whole system.** Changes flow through the component catalogue and 26 complete blocks, so you can judge a design in context.
+3. **Make it yours.** Override an individual component, or describe a new form or layout to AI. Inspect each proposal before accepting it.
+4. **Take the source.** Save a version and download a ZIP. For ongoing use, connect your project through the registry, CLI or a coding agent.
+
+## What you are creating
+
+| Part                | What it contains                                                 | Where it goes                                                |
+| ------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------ |
+| Design system       | Your colors, typography, spacing, shapes and component overrides | A versioned `design-system.json` and generated theme CSS     |
+| Components          | Individual controls, such as buttons, inputs and dialogs         | Editable React or Vue files in `components/ui/`              |
+| Blocks              | Complete interface patterns built from those controls            | React or Vue files in `components/blocks/`                   |
+| Custom compositions | The component or block you generate and approve                  | Source, a structured specification, a story and a smoke test |
+
+A block supplies the interface. Your application provides its data, authentication, payments and other backend behavior through typed props and callbacks.
+
+## Build your way
+
+<Cards>
+  <Card
+    title="Design tokens and themes"
+    href="/docs/design-system"
+    description="Understand global styles, component overrides, and the CSS your app receives."
+  />
+  <Card
+    title="Working with AI"
+    href="/docs/ai"
+    description="Refine a theme or compose a component, with a review step before saving."
+  />
+  <Card
+    title="Export and installation"
+    href="/docs/export"
+    description="Install your saved source in React, Vue, Next.js or Nuxt, with or without Tailwind."
+  />
+  <Card
+    title="Coding agents and CLI"
+    href="/docs/agents"
+    description="Give your development tools the same components and design rules."
+  />
+</Cards>
+
+## Current availability
+
+**React and Vue are available today**, with 48 components and 26 blocks each. [Explore React](/docs/components) or [explore Vue](/docs/vue/components). Svelte and Solid remain planned; their framework options record interest. The catalogue is experimental during free early access, so verify components in your application before shipping.
+
+Exported component source is **MIT licensed**. It runs locally with React and Base UI, or Vue and Reka UI, plus CSS, and makes no runtime requests to CodeRocket. The hosted Studio and its design-system engine are separate from that source license.

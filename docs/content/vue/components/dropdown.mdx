@@ -1,0 +1,145 @@
+---
+title: "Dropdown"
+description: "A keyboard-accessible menu of actions."
+---
+
+<DocPreview framework="vue" slug="dropdown" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import Dropdown from "./components/ui/dropdown.vue";
+const notice = ref('');
+</script>
+
+<template>
+  <Dropdown trigger="Project actions" :items="[{ label: 'Rename' }, { label: 'Archive' }]" @select="notice = `${$event.label} selected`" />
+  <p v-if="notice" role="status" class="cr-description" style="margin-top: 12px">{{ notice }}</p>
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import {
+  DropdownMenuRoot,
+  DropdownMenuTrigger,
+  DropdownMenuPortal,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "reka-ui";
+import type { Component } from "vue";
+import { usePortalContainer } from "./utils";
+import { RenderContent, useDisplayModel } from "./display-utils";
+import type { DisplayContent, MenuAction } from "./display-types";
+defineOptions({ inheritAttrs: false });
+const props = withDefaults(
+  defineProps<{
+    trigger?: DisplayContent;
+    triggerRender?: Component;
+    items: MenuAction[];
+    disabled?: boolean;
+    side?: "top" | "bottom" | "left" | "right";
+    align?: "start" | "center" | "end";
+    emptyMessage?: DisplayContent;
+    open?: boolean;
+    defaultOpen?: boolean;
+    modal?: boolean;
+  }>(),
+  {
+    disabled: false,
+    side: "bottom",
+    align: "start",
+    emptyMessage: "No actions available.",
+    open: undefined,
+    defaultOpen: false,
+    modal: true,
+  },
+);
+const emit = defineEmits<{
+  "update:open": [value: boolean];
+  "open-change": [value: boolean];
+  select: [item: MenuAction];
+}>();
+const expanded = useDisplayModel(
+  () => props.open,
+  props.defaultOpen,
+  (value) => {
+    emit("update:open", value);
+    emit("open-change", value);
+  },
+);
+const container = usePortalContainer();
+function select(item: MenuAction) {
+  if (item.disabled) return;
+  item.onSelect?.();
+  emit("select", item);
+}
+</script>
+<template>
+  <DropdownMenuRoot v-model:open="expanded" :modal="modal"
+    ><DropdownMenuTrigger
+      :as-child="!!($slots.trigger || triggerRender)"
+      :disabled="disabled"
+      class="cr-button"
+      data-variant="outline"
+      ><slot name="trigger"
+        ><component :is="triggerRender" v-if="triggerRender"
+          ><RenderContent :content="trigger" /></component
+        ><template v-else
+          ><RenderContent :content="trigger" /><svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.75"
+            aria-hidden="true"
+          >
+            <path
+              d="m6 9 6 6 6-6"
+            /></svg></template></slot></DropdownMenuTrigger
+    ><DropdownMenuPortal :to="container"
+      ><DropdownMenuContent
+        v-bind="$attrs"
+        :side="side"
+        :align="align"
+        :side-offset="6"
+        class="cr-popup"
+        ><p v-if="!items.length" class="cr-description">
+          <slot name="empty"><RenderContent :content="emptyMessage" /></slot>
+        </p>
+        <DropdownMenuItem
+          v-for="(item, index) in items"
+          :key="item.id ?? index"
+          :as="item.href && !item.disabled ? 'a' : 'div'"
+          :href="item.disabled ? undefined : item.href"
+          :disabled="item.disabled"
+          :data-destructive="item.destructive || undefined"
+          class="cr-menu-item"
+          @select="select(item)"
+          ><slot name="item" :item="item">{{
+            item.label
+          }}</slot></DropdownMenuItem
+        ></DropdownMenuContent
+      ></DropdownMenuPortal
+    ></DropdownMenuRoot
+  >
+</template>
+```

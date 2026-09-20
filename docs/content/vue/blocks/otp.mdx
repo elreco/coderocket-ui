@@ -1,0 +1,82 @@
+---
+title: "Otp"
+description: "A one-time-code form with numeric validation."
+---
+
+<DocPreview framework="vue" slug="otp" kind="block"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import OtpBlock from './components/blocks/otp.vue'
+</script>
+
+<!-- Supply the required props and callbacks listed in Source and props. -->
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+The full ZIP also includes `examples/block-showcase.vue`, with populated block props, illustrations and local sample callbacks to adapt to your application.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import AuthFrame from "./auth-frame.vue";
+import ActionForm from "./action-form.vue";
+import type { FormAction } from "./common";
+import Field from "../ui/field.vue";
+import Input from "../ui/input.vue";
+import { ArrowRight, Mail } from "@lucide/vue";
+import { computed } from "vue";
+const props = withDefaults(
+  defineProps<{ onSubmit: FormAction; length?: number }>(),
+  { length: 6 },
+);
+const size = computed(() =>
+  Number.isFinite(props.length)
+    ? Math.max(4, Math.min(10, Math.floor(props.length)))
+    : 6,
+);
+const pattern = computed(() => `[0-9]{${size.value}}`);
+</script>
+<template>
+  <AuthFrame
+    title="Check your inbox."
+    :description="`Enter the ${size}-digit verification code from your email to continue.`"
+    eyebrow="One more step"
+    ><template #icon><Mail :size="24" :stroke-width="1.75" /></template
+    ><ActionForm
+      :on-submit="onSubmit"
+      submit-label="Verify code"
+      success-message="Code verified."
+      ><Field
+        label="Verification code"
+        description="You can paste the entire code into this field."
+        ><Input
+          name="code"
+          inputmode="numeric"
+          autocomplete="one-time-code"
+          :minlength="size"
+          :maxlength="size"
+          :pattern="pattern"
+          required
+          class="cr-otp"
+          :placeholder="'0'.repeat(size)"
+          :style="{ '--cr-otp-length': size }" /></Field
+      ><template #submit-icon
+        ><ArrowRight :size="17" aria-hidden="true" /></template></ActionForm
+  ></AuthFrame>
+</template>
+```

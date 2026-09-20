@@ -1,0 +1,52 @@
+{
+  "name": "@coderocket/react",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "source": "./src/index.ts"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./showcase": {
+      "types": "./dist/showcase.d.ts",
+      "import": "./dist/showcase.js",
+      "source": "./src/showcase.tsx"
+    },
+    "./composition": {
+      "types": "./dist/composition.d.ts",
+      "import": "./dist/composition.js",
+      "source": "./src/composition.tsx"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc6 --noEmit"
+  },
+  "dependencies": {
+    "@base-ui/react": "1.8.0",
+    "@coderocket/engine": "workspace:*",
+    "@coderocket/specs": "workspace:*",
+    "lucide-react": "1.47.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elreco/coderocket-ui.git",
+    "directory": "packages/react"
+  },
+  "homepage": "https://ui.coderocket.app/docs",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "peerDependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

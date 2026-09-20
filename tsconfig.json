@@ -1,30 +1,31 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "ESNext"],
-    "jsx": "preserve",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["node", "react", "react-dom"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["src/*"]
-    },
-    "types": ["node", "vite/client"],
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
     "strict": true,
-    "strictNullChecks": true,
-    "noUnusedLocals": true,
-    "skipLibCheck": true
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "paths": {
+      "@coderocket/react": ["./packages/react/src/index.ts"],
+      "@coderocket/react/*": ["./packages/react/src/*"],
+      "@coderocket/blocks": ["./packages/blocks/src/index.ts"],
+      "@coderocket/blocks/*": ["./packages/blocks/src/*"],
+      "@coderocket/engine": ["./packages/engine/src/index.ts"],
+      "@coderocket/engine/*": ["./packages/engine/src/*"],
+      "@coderocket/specs": ["./packages/specs/src/index.ts"],
+      "@coderocket/specs/*": ["./packages/specs/src/*"],
+      "@coderocket/shared": ["./packages/shared/src/index.ts"],
+      "@coderocket/shared/*": ["./packages/shared/src/*"]
+    }
   },
-  "exclude": [
-    "dist",
-    "node_modules",
-    "cypress",
-    "postcss.config.cjs",
-    "tailwind.config.ts"
-  ]
+  "include": ["packages/**/*.ts", "packages/**/*.tsx"],
+  "exclude": ["node_modules", "**/dist", "legacy", ".build", "packages/vue"]
 }

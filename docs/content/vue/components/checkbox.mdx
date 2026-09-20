@@ -1,0 +1,146 @@
+---
+title: "Checkbox"
+description: "A labelled checkbox with checked and indeterminate states."
+---
+
+<DocPreview framework="vue" slug="checkbox" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import Checkbox from "./components/ui/checkbox.vue";
+</script>
+
+<template>
+  <Checkbox label="Send me product updates" default-checked />
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import { computed, ref, useId } from "vue";
+import { CheckboxRoot, CheckboxIndicator } from "reka-ui";
+import { cx, useControllable, useFieldControl, useFormReset } from "./utils";
+defineOptions({ inheritAttrs: false });
+const props = withDefaults(
+  defineProps<{
+    label?: string;
+    className?: string;
+    checked?: boolean;
+    defaultChecked?: boolean;
+    indeterminate?: boolean;
+    disabled?: boolean;
+    required?: boolean;
+    readOnly?: boolean;
+    id?: string;
+    name?: string;
+    form?: string;
+    value?: string;
+  }>(),
+  { checked: undefined, value: "on" },
+);
+const model = defineModel<boolean | "indeterminate" | undefined>({
+  default: undefined,
+});
+const emit = defineEmits<{
+  "checked-change": [checked: boolean];
+  "update:checked": [checked: boolean];
+}>();
+const { field, fieldAttrs } = useFieldControl(() => props.id);
+const generatedId = useId();
+const inputId = computed(() => props.id ?? fieldAttrs.value.id ?? generatedId);
+const disabled = computed(() => props.disabled || field?.disabled.value);
+const root = ref<HTMLLabelElement>();
+const state = useControllable<boolean | "indeterminate">(
+  model,
+  () => props.checked,
+  () => props.defaultChecked ?? false,
+  (value) => {
+    emit("checked-change", value === true);
+    emit("update:checked", value === true);
+  },
+);
+const checked = computed(() =>
+  props.indeterminate ? "indeterminate" : state.value,
+);
+function update(value: boolean | "indeterminate") {
+  if (!props.readOnly) {
+    state.value = value;
+    field?.notifyChange();
+  }
+}
+useFormReset(
+  root,
+  () => {
+    state.value = props.defaultChecked ?? false;
+  },
+  () => props.form,
+);
+</script>
+<template>
+  <label
+    ref="root"
+    :for="inputId"
+    class="cr-check-label"
+    :data-disabled="disabled ? '' : undefined"
+    ><CheckboxRoot
+      v-bind="{ ...fieldAttrs, ...$attrs, name: undefined }"
+      :id="inputId"
+      :model-value="checked"
+      :disabled="disabled"
+      :required="required"
+      :aria-readonly="readOnly || undefined"
+      :class="cx('cr-checkbox', className)"
+      :data-checked="checked === true ? '' : undefined"
+      :data-indeterminate="checked === 'indeterminate' ? '' : undefined"
+      @update:model-value="update"
+      ><CheckboxIndicator class="cr-check-indicator"
+        ><svg
+          width="13"
+          height="13"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <path
+            :d="checked === 'indeterminate' ? 'M5 12h14' : 'm5 12 4 4L19 6'"
+          /></svg></CheckboxIndicator></CheckboxRoot
+    ><input
+      class="cr-sr-only"
+      aria-hidden="true"
+      tabindex="-1"
+      type="checkbox"
+      :name="name ?? fieldAttrs.name"
+      :form="form"
+      :value="value"
+      :checked="state === true"
+      :indeterminate="checked === 'indeterminate'"
+      :disabled="disabled"
+      :required="required"
+      @change="update(($event.target as HTMLInputElement).checked)"
+    /><span
+      ><slot>{{ label }}</slot></span
+    ></label
+  >
+</template>
+```

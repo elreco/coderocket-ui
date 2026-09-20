@@ -1,0 +1,36 @@
+{
+  "name": "@coderocket/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "source": "./src/index.ts"
+    },
+    "./registry-client": {
+      "types": "./dist/registry-client.d.ts",
+      "import": "./dist/registry-client.js",
+      "source": "./src/registry-client.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc6 --noEmit"
+  },
+  "dependencies": {
+    "zod": "4.6.5"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elreco/coderocket-ui.git",
+    "directory": "packages/shared"
+  },
+  "homepage": "https://ui.coderocket.app/docs",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
+}

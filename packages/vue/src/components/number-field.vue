@@ -1,0 +1,162 @@
+<script setup lang="ts">
+import { computed, ref, useId } from "vue";
+import {
+  NumberFieldRoot,
+  NumberFieldInput,
+  NumberFieldIncrement,
+  NumberFieldDecrement,
+} from "reka-ui";
+import { cx, useControllable, useFieldControl, useFormReset } from "./utils";
+defineOptions({ inheritAttrs: false });
+const props = withDefaults(
+  defineProps<{
+    label: string;
+    id?: string;
+    value?: number | null;
+    defaultValue?: number;
+    step?: number;
+    smallStep?: number;
+    largeStep?: number;
+    min?: number;
+    max?: number;
+    locale?: string;
+    format?: Intl.NumberFormatOptions;
+    formatOptions?: Intl.NumberFormatOptions;
+    disabled?: boolean;
+    readOnly?: boolean;
+    required?: boolean;
+    name?: string;
+    form?: string;
+    allowWheelScrub?: boolean;
+    className?: string;
+  }>(),
+  { step: 1, defaultValue: 0, locale: "en-US" },
+);
+const model = defineModel<number | null>();
+const emit = defineEmits<{
+  "value-change": [value: number | null];
+  "value-committed": [value: number | null];
+}>();
+const { field, fieldAttrs } = useFieldControl(() => props.id);
+const generatedId = useId();
+const inputId = computed(() => props.id ?? fieldAttrs.value.id ?? generatedId);
+const disabled = computed(() => props.disabled || field?.disabled.value);
+const value = useControllable(
+  model,
+  () => props.value,
+  () => props.defaultValue,
+  (next) => emit("value-change", next),
+);
+const root = ref<HTMLDivElement>();
+useFormReset(
+  root,
+  () => {
+    value.value = props.defaultValue;
+  },
+  () => props.form,
+);
+function update(next: number) {
+  value.value = Number.isFinite(next) ? next : null;
+  field?.notifyChange();
+}
+let drag: { x: number; value: number } | undefined;
+function scrubStart(event: PointerEvent) {
+  if (event.button !== 0 || disabled.value || props.readOnly) return;
+  drag = { x: event.clientX, value: value.value ?? props.min ?? 0 };
+  (event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
+}
+function scrubMove(event: PointerEvent) {
+  if (!drag || disabled.value || props.readOnly) return;
+  const step = event.shiftKey
+    ? (props.largeStep ?? props.step * 10)
+    : event.altKey
+      ? (props.smallStep ?? props.step / 10)
+      : props.step;
+  const next = drag.value + Math.trunc((event.clientX - drag.x) / 4) * step;
+  value.value = Math.min(
+    props.max ?? Infinity,
+    Math.max(props.min ?? -Infinity, Number(next.toFixed(10))),
+  );
+}
+function scrubEnd() {
+  if (drag) emit("value-committed", value.value);
+  drag = undefined;
+}
+</script>
+<template>
+  <NumberFieldRoot
+    as-child
+    :model-value="value"
+    :id="inputId"
+    :step="step"
+    :min="min"
+    :max="max"
+    :locale="locale"
+    :format-options="formatOptions ?? format"
+    :disabled="disabled"
+    :readonly="readOnly"
+    :disable-wheel-change="!allowWheelScrub"
+    @update:model-value="update"
+    ><div ref="root" v-bind="$attrs" :class="cx('cr-number-field', className)">
+      <label
+        :for="inputId"
+        class="cr-label"
+        :style="{
+          cursor: disabled || readOnly ? undefined : 'ew-resize',
+          touchAction: 'none',
+        }"
+        @pointerdown="scrubStart"
+        @pointermove="scrubMove"
+        @pointerup="scrubEnd"
+        @pointercancel="scrubEnd"
+        >{{ label }}</label
+      >
+      <div class="cr-number-group">
+        <NumberFieldDecrement :aria-label="'Decrease ' + label"
+          ><svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M5 12h14" /></svg></NumberFieldDecrement
+        ><NumberFieldInput
+          v-bind="{ ...fieldAttrs, name: undefined, id: inputId }"
+          :required="required"
+          :form="form"
+          @blur="emit('value-committed', value)"
+        /><NumberFieldIncrement :aria-label="'Increase ' + label"
+          ><svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M5 12h14M12 5v14" /></svg
+        ></NumberFieldIncrement>
+      </div>
+      <input
+        class="cr-sr-only"
+        aria-hidden="true"
+        tabindex="-1"
+        type="number"
+        :name="name ?? fieldAttrs.name"
+        :form="form"
+        :value="value ?? ''"
+        :min="min"
+        :max="max"
+        :step="step"
+        :required="required"
+        :disabled="disabled"
+        @change="update(($event.target as HTMLInputElement).valueAsNumber)"
+      /></div
+  ></NumberFieldRoot>
+</template>

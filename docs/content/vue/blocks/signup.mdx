@@ -1,0 +1,92 @@
+---
+title: "Signup"
+description: "A registration form with email and password validation."
+---
+
+<DocPreview framework="vue" slug="signup" kind="block"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import SignupBlock from './components/blocks/signup.vue'
+</script>
+
+<!-- Supply the required props and callbacks listed in Source and props. -->
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+The full ZIP also includes `examples/block-showcase.vue`, with populated block props, illustrations and local sample callbacks to adapt to your application.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import AuthFrame from "./auth-frame.vue";
+import ActionForm from "./action-form.vue";
+import PasswordInput from "./password-input.vue";
+import type { FormAction } from "./common";
+import Field from "../ui/field.vue";
+import InputGroup from "../ui/input-group.vue";
+import { ArrowRight, UserRound, Mail } from "@lucide/vue";
+defineProps<{ onSubmit: FormAction; loginHref: string }>();
+</script>
+<template>
+  <AuthFrame
+    title="Make room for what’s next."
+    description="Create your account. A fresh workspace starts here."
+    eyebrow="A new beginning"
+    ><template #icon><UserRound :size="23" :stroke-width="1.75" /></template
+    ><ActionForm
+      :on-submit="onSubmit"
+      submit-label="Create account"
+      success-message="Check your inbox to confirm your email address."
+      ><Field label="Full name"
+        ><InputGroup
+          name="name"
+          autocomplete="name"
+          required
+          placeholder="Your full name"
+          ><template #leading
+            ><UserRound
+              :size="16"
+              aria-hidden="true" /></template></InputGroup></Field
+      ><Field label="Email address"
+        ><InputGroup
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          placeholder="you@company.com"
+          ><template #leading
+            ><Mail
+              :size="16"
+              aria-hidden="true" /></template></InputGroup></Field
+      ><Field label="Password" description="Use at least 12 characters."
+        ><PasswordInput
+          name="password"
+          auto-complete="new-password"
+          :min-length="12"
+          placeholder="Create a password" /></Field
+      ><template #submit-icon
+        ><ArrowRight :size="17" aria-hidden="true" /></template></ActionForm
+    ><template #footer
+      ><p class="cr-auth-footer">
+        Already have an account?
+        <a class="cr-auth-link" :href="loginHref"
+          >Sign in <ArrowRight :size="14" aria-hidden="true"
+        /></a></p></template
+  ></AuthFrame>
+</template>
+```

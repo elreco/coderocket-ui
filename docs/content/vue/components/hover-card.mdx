@@ -1,0 +1,90 @@
+---
+title: "HoverCard"
+description: "A preview card for supplementary link information."
+---
+
+<DocPreview framework="vue" slug="hover-card" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import HoverCard from "./components/ui/hover-card.vue";
+</script>
+
+<template>
+  <HoverCard label="@alex" href="#profile"><strong>Alex Morgan</strong><p class="cr-description">Designer and developer.</p></HoverCard>
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import {
+  HoverCardRoot,
+  HoverCardTrigger,
+  HoverCardPortal,
+  HoverCardContent,
+} from "reka-ui";
+import { useDisplayModel } from "./display-utils";
+import { usePortalContainer } from "./utils";
+defineOptions({ inheritAttrs: false });
+const props = withDefaults(
+  defineProps<{
+    label: string;
+    href: string;
+    open?: boolean;
+    defaultOpen?: boolean;
+    openDelay?: number;
+    closeDelay?: number;
+    side?: "top" | "bottom" | "left" | "right";
+    align?: "start" | "center" | "end";
+  }>(),
+  { open: undefined, defaultOpen: false, side: "bottom", align: "start" },
+);
+const emit = defineEmits<{
+  "update:open": [value: boolean];
+  "open-change": [value: boolean];
+}>();
+const expanded = useDisplayModel(
+  () => props.open,
+  props.defaultOpen,
+  (value) => {
+    emit("update:open", value);
+    emit("open-change", value);
+  },
+);
+const container = usePortalContainer();
+</script>
+<template>
+  <HoverCardRoot
+    v-model:open="expanded"
+    :open-delay="openDelay"
+    :close-delay="closeDelay"
+    ><HoverCardTrigger :as-child="!!$slots.trigger" :href="href" class="cr-link"
+      ><slot name="trigger">{{ label }}</slot></HoverCardTrigger
+    ><HoverCardPortal :to="container"
+      ><HoverCardContent
+        v-bind="$attrs"
+        :side="side"
+        :align="align"
+        :side-offset="8"
+        class="cr-popup cr-hover-card"
+        ><slot /></HoverCardContent></HoverCardPortal
+  ></HoverCardRoot>
+</template>
+```

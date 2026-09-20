@@ -1,0 +1,82 @@
+---
+title: "Button"
+description: "An action with six visual variants, three sizes and a loading state."
+---
+
+<DocPreview framework="vue" slug="button" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import Button from "./components/ui/button.vue";
+const notice = ref('');
+</script>
+
+<template>
+  <Button @click="notice = 'Ready to continue.'">Continue</Button>
+  <p v-if="notice" role="status" class="cr-description" style="margin-top: 12px">{{ notice }}</p>
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import { Primitive } from "reka-ui";
+import { cx } from "./utils";
+const props = withDefaults(
+  defineProps<{
+    variant?:
+      "primary" | "secondary" | "outline" | "ghost" | "destructive" | "link";
+    size?: "sm" | "md" | "lg";
+    loading?: boolean;
+    disabled?: boolean;
+    className?: string;
+    type?: "button" | "submit" | "reset";
+    as?: string;
+    asChild?: boolean;
+  }>(),
+  { variant: "primary", size: "md", type: "button", as: "button" },
+);
+function blockDisabled(event: Event) {
+  if (!props.disabled && !props.loading) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+}
+</script>
+<template>
+  <Primitive
+    @click.capture="blockDisabled"
+    @keydown.capture="(disabled || loading) && blockDisabled($event)"
+    :tabindex="disabled || loading ? -1 : undefined"
+    :as="as"
+    :as-child="asChild"
+    :type="type"
+    :disabled="disabled || loading"
+    :aria-disabled="disabled || loading || undefined"
+    :aria-busy="loading || undefined"
+    :class="cx('cr-button', className)"
+    :data-variant="variant"
+    :data-size="size"
+    ><span
+      v-if="loading && !asChild"
+      class="cr-spinner"
+      aria-hidden="true" /><slot
+  /></Primitive>
+</template>
+```

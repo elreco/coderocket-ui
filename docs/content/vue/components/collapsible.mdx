@@ -1,0 +1,94 @@
+---
+title: "Collapsible"
+description: "An optional content section with a disclosure trigger."
+---
+
+<DocPreview framework="vue" slug="collapsible" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import Collapsible from "./components/ui/collapsible.vue";
+</script>
+
+<template>
+  <Collapsible title="Advanced options">Additional settings for this workspace.</Collapsible>
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import {
+  CollapsibleRoot,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "reka-ui";
+import { useDisplayModel } from "./display-utils";
+const props = withDefaults(
+  defineProps<{
+    title: string;
+    defaultOpen?: boolean;
+    open?: boolean;
+    disabled?: boolean;
+    keepMounted?: boolean;
+  }>(),
+  { defaultOpen: false, open: undefined, disabled: false, keepMounted: false },
+);
+const emit = defineEmits<{
+  "update:open": [value: boolean];
+  "open-change": [value: boolean];
+}>();
+const expanded = useDisplayModel(
+  () => props.open,
+  props.defaultOpen,
+  (value) => {
+    emit("update:open", value);
+    emit("open-change", value);
+  },
+);
+</script>
+<template>
+  <CollapsibleRoot
+    v-model:open="expanded"
+    :disabled="disabled"
+    class="cr-collapsible"
+    ><CollapsibleTrigger
+      :as-child="!!$slots.trigger"
+      class="cr-button cr-collapsible-trigger"
+      data-variant="ghost"
+      ><slot name="trigger"
+        >{{ title
+        }}<svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.75"
+          aria-hidden="true"
+        >
+          <path d="m6 9 6 6 6-6" /></svg></slot></CollapsibleTrigger
+    ><CollapsibleContent
+      :force-mount="keepMounted || undefined"
+      v-show="!keepMounted || expanded"
+      class="cr-collapsible-panel"
+      ><slot /></CollapsibleContent
+  ></CollapsibleRoot>
+</template>
+```

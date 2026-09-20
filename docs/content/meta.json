@@ -1,0 +1,20 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "---Getting started---",
+    "index",
+    "getting-started",
+    "design-system",
+    "ai",
+    "---Catalogue---",
+    "components",
+    "blocks",
+    "vue",
+    "---Build with your library---",
+    "export",
+    "agents",
+    "accessibility",
+    "pilot",
+    "changelog"
+  ]
+}

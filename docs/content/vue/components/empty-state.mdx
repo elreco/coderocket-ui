@@ -1,0 +1,60 @@
+---
+title: "EmptyState"
+description: "A useful empty state with an optional next action."
+---
+
+<DocPreview framework="vue" slug="empty-state" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import Button from "./components/ui/button.vue";
+import EmptyState from "./components/ui/empty-state.vue";
+const notice = ref('');
+</script>
+
+<template>
+  <EmptyState title="No projects yet" description="Create your first project to get started."><template #action><Button @click="notice = 'New project created in this preview.'">Create project</Button></template></EmptyState>
+  <p v-if="notice" role="status" class="cr-description" style="margin-top: 12px">{{ notice }}</p>
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import type { DisplayContent } from "./display-types";
+import { RenderContent } from "./display-utils";
+defineProps<{
+  title: string;
+  description?: string;
+  icon?: DisplayContent;
+  action?: DisplayContent;
+}>();
+</script>
+<template>
+  <section class="cr-empty-state">
+    <div v-if="icon || $slots.icon" aria-hidden="true" class="cr-empty-icon">
+      <slot name="icon"><RenderContent :content="icon" /></slot>
+    </div>
+    <h3>{{ title }}</h3>
+    <p v-if="description" class="cr-description">{{ description }}</p>
+    <slot name="action"><RenderContent :content="action" /></slot><slot />
+  </section>
+</template>
+```

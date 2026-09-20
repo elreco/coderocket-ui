@@ -1,0 +1,96 @@
+---
+title: Export and installation
+description: Install your saved React or Vue library as local source, with or without Tailwind.
+---
+
+Your export contains the components, blocks and theme from your saved library. The files live in your application and can be edited like any other source. You do not need a CodeRocket connection for them to render.
+
+Vue libraries export native `.vue` components, Vue-specific CLI/MCP rules and the same theme files. Follow [Vue and Nuxt installation](/docs/vue). The React setup below applies to React libraries.
+
+## Download
+
+Save your library and select **Export**. The archive includes:
+
+```text
+components/ui/             React primitives and controls
+components/blocks/         Complete patterns with typed callbacks
+styles/components.css     Compiled component styles
+styles/blocks.css          Compiled block styles
+styles/theme.css           Your generated theme
+examples/blocks-preview.tsx Interactive examples from the Studio
+design-system.json        Your versioned design model
+AGENTS.md                 Design rules for coding agents
+LICENSE                   MIT license for exported source
+```
+
+## Install dependencies
+
+Use matching versions of React and React DOM. The current components are tested with React 19.3; Calendar and DatePicker require at least React 19.2 because they use `useEffectEvent`. Lucide supplies icons for the calendar, datepicker and blocks.
+
+```bash
+npm install react@19.3.0 react-dom@19.3.0 @base-ui/react@1.8.0 lucide-react@1.47.0
+```
+
+Copy the folders into your app. Import styles once in your entry point or root layout:
+
+```tsx
+import "./styles/components.css";
+import "./styles/blocks.css";
+import "./styles/theme.css";
+```
+
+Then use a component directly:
+
+```tsx
+import { Button } from "./components/ui/button";
+
+export function SaveAction() {
+  return (
+    <Button onClick={() => console.info("Save requested")}>Save changes</Button>
+  );
+}
+```
+
+## Tailwind or plain CSS
+
+Tailwind is optional for consumers. The archive contains compiled styles. You can add Tailwind utilities in your app, but the exported components do not require a Tailwind plugin or a build-time connection to CodeRocket.
+
+## Next.js
+
+Interactive component files include `'use client'`. You can import them from Server Components. Place client event handlers inside your own Client Component and import global styles from your root layout.
+
+## Blocks connect to your backend
+
+The full export includes `examples/blocks-preview.tsx`. Render its `BlockShowcase` inside `ThemeScope`, for example `<BlockShowcase slug="features" />`, to start from the same visual example shown in the Studio. Copy and adapt its props, illustrations and callbacks for your product. Example actions only update local sample data.
+
+Block action callbacks receive form data or record identifiers. Implement those callbacks in your application. Authentication, billing, email delivery, invitations and file storage are not bundled backends.
+
+For example, `FileUpload` accepts `onUpload(file, { signal, onProgress })`. Report actual transport progress, honor cancellation and reject the promise when the upload fails.
+
+## Ownership and updates
+
+Edit any exported file. Your modifications belong in your codebase. Keep your export under version control and review changes when installing a newer version. The CodeRocket CLI detects local modifications before replacing files.
+
+## Theme and overlays
+
+Wrap your application in the exported `ThemeScope` to share typography, focus styles and the theme with popovers and dialogs:
+
+```tsx
+import { ThemeScope } from "./components/ui/utils";
+import "./styles/components.css";
+import "./styles/theme.css";
+
+export function App() {
+  return <ThemeScope>{/* Your application */}</ThemeScope>;
+}
+```
+
+Custom compositions saved in the editor are included as `custom-<slug>.tsx`. Pass your own `onAction(action, values)` handler to connect forms and actions to your backend. The editor preview uses a local status message to show which callback fired.
+
+## Import an existing project
+
+Run `coderocket import` in your project, using the CLI available in **Connect**. The command writes `.coderocket/import-report.json` locally and does not upload source code.
+
+In the editor, press **⌘ K** (or **Ctrl K**) and choose **Import project tokens**. Select the report, inspect the before/after values, then apply the reviewed tokens. Save the library when the preview looks right.
+
+The first importer supports recognized hex color variables and px/rem radius variables. Custom font installation, HSL/OKLCH conversion and existing component source adoption require manual review. Existing source files are listed as an inventory and remain in your project.

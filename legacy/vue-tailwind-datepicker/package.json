@@ -1,0 +1,239 @@
+{
+  "name": "@coderocketapp/vue-tailwind-datepicker",
+  "type": "module",
+  "version": "1.8.0",
+  "description": "A date range picker component for Vue.js 3 using Tailwind CSS",
+  "author": {
+    "name": "elreco",
+    "email": "alexandre@heypongo.com",
+    "url": "https://github.com/elreco"
+  },
+  "homepage": "https://elreco.github.io/vue-tailwind-datepicker/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elreco/vue-tailwind-datepicker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/elreco/vue-tailwind-datepicker/issues",
+    "email": "alexandre@heypongo.com"
+  },
+  "keywords": [
+    "vue-tailwind-datepicker",
+    "vue-datepicker",
+    "vue-daterangepicker",
+    "vue-daterange-picker",
+    "tailwind-datepicker",
+    "tailwind-daterange-picker"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/vue-tailwind-datepicker.js",
+      "require": "./dist/vue-tailwind-datepicker.umd.cjs"
+    },
+    "./style.css": "./dist/vue-tailwind-datepicker.css"
+  },
+  "main": "./dist/vue-tailwind-datepicker.umd.cjs",
+  "module": "./dist/vue-tailwind-datepicker.js",
+  "types": "./dist/types.d.ts",
+  "files": [
+    "dist"
+  ],
+  "contributors": [],
+  "scripts": {
+    "dev": "vite --configLoader runner",
+    "build": "vite build --configLoader runner",
+    "preview": "vite preview --port 4173",
+    "prepare": "npm run build",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "docs:dev": "npm --prefix docs run dev",
+    "docs:build": "npm --prefix docs run build",
+    "docs:serve": "npm --prefix docs run serve",
+    "typecheck": "vue-tsc --noEmit",
+    "semantic-release": "semantic-release",
+    "check:package": "node scripts/check-package.mjs",
+    "docs:install": "npm ci --prefix docs"
+  },
+  "release": {
+    "branches": [
+      "main",
+      {
+        "name": "develop",
+        "prerelease": "dev",
+        "channel": "dev"
+      },
+      {
+        "name": "next",
+        "prerelease": true
+      },
+      {
+        "name": "beta",
+        "prerelease": true
+      },
+      {
+        "name": "alpha",
+        "prerelease": true
+      }
+    ],
+    "plugins": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      [
+        "@semantic-release/commit-analyzer",
+        {
+          "releaseRules": [
+            {
+              "type": "refactor",
+              "release": "patch"
+            },
+            {
+              "type": "docs",
+              "scope": "README",
+              "release": "patch"
+            },
+            {
+              "type": "test",
+              "release": "patch"
+            },
+            {
+              "type": "style",
+              "release": "patch"
+            },
+            {
+              "type": "perf",
+              "release": "patch"
+            },
+            {
+              "type": "ci",
+              "release": "patch"
+            },
+            {
+              "type": "build",
+              "release": "patch"
+            },
+            {
+              "type": "chore",
+              "release": "patch"
+            },
+            {
+              "type": "no-release",
+              "release": false
+            }
+          ]
+        }
+      ],
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "conventionalcommits",
+          "presetConfig": {
+            "types": [
+              {
+                "type": "feat",
+                "section": ":sparkles: Features",
+                "hidden": false
+              },
+              {
+                "type": "fix",
+                "section": ":bug: Fixes",
+                "hidden": false
+              },
+              {
+                "type": "docs",
+                "section": ":memo: Documentation",
+                "hidden": false
+              },
+              {
+                "type": "style",
+                "section": ":barber: Code-style",
+                "hidden": false
+              },
+              {
+                "type": "refactor",
+                "section": ":zap: Refactor",
+                "hidden": false
+              },
+              {
+                "type": "perf",
+                "section": ":fast_forward: Performance",
+                "hidden": false
+              },
+              {
+                "type": "test",
+                "section": ":white_check_mark: Tests",
+                "hidden": false
+              },
+              {
+                "type": "ci",
+                "section": ":repeat: CI",
+                "hidden": false
+              },
+              {
+                "type": "chore",
+                "section": ":repeat: Chore",
+                "hidden": false
+              }
+            ]
+          }
+        }
+      ],
+      [
+        "@semantic-release/github",
+        {
+          "assets": [],
+          "successComment": false,
+          "failComment": false
+        }
+      ]
+    ]
+  },
+  "peerDependencies": {
+    "dayjs": "^1.11.13",
+    "tailwindcss": "^4.1.11",
+    "vue": "^3.3.13"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.5.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.43.1",
+    "@commitlint/cli": "^20.4.1",
+    "@commitlint/config-conventional": "^20.4.1",
+    "@headlessui/vue": "1.7.23",
+    "@microsoft/api-extractor": "^7.56.3",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^13.1.4",
+    "@semantic-release/release-notes-generator": "^14.1.0",
+    "@tailwindcss/forms": "^0.5.11",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.8.10",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "dayjs": "^1.11.19",
+    "esbuild": "^0.27.3",
+    "eslint": "^8.51.0",
+    "fs-extra": "^11.3.3",
+    "husky": "^8.0.3",
+    "postcss": "^8.4.49",
+    "semantic-release": "^25.0.3",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4",
+    "vue": "^3.5.28",
+    "vue-tsc": "^3.2.4"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependenciesMeta": {
+    "tailwindcss": {
+      "optional": true
+    }
+  }
+}

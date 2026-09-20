@@ -1,0 +1,138 @@
+---
+title: "Sidebar"
+description: "A collapsible application sidebar with active-link semantics."
+---
+
+<DocPreview framework="vue" slug="sidebar" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import Sidebar from "./components/ui/sidebar.vue";
+</script>
+
+<template>
+  <Sidebar brand="Acme" :items="[{ label: 'Overview', href: '#overview', active: true }, { label: 'Projects', href: '#projects' }, { label: 'Settings', href: '#settings' }]" />
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import { useId } from "vue";
+import { RenderContent, useDisplayModel } from "./display-utils";
+import type { DisplayContent } from "./display-types";
+const props = withDefaults(
+  defineProps<{
+    brand?: DisplayContent;
+    items: Array<{
+      label: string;
+      href: string;
+      icon?: DisplayContent;
+      active?: boolean;
+    }>;
+    footer?: DisplayContent;
+    label?: string;
+    collapsed?: boolean;
+    defaultCollapsed?: boolean;
+  }>(),
+  {
+    label: "Workspace navigation",
+    collapsed: undefined,
+    defaultCollapsed: false,
+  },
+);
+const emit = defineEmits<{
+  "update:collapsed": [value: boolean];
+  "collapsed-change": [value: boolean];
+}>();
+const isCollapsed = useDisplayModel(
+  () => props.collapsed,
+  props.defaultCollapsed,
+  (value) => {
+    emit("update:collapsed", value);
+    emit("collapsed-change", value);
+  },
+);
+const navigationId = useId();
+</script>
+<template>
+  <aside class="cr-sidebar" :data-collapsed="isCollapsed">
+    <div class="cr-sidebar-header">
+      <template v-if="!isCollapsed"
+        ><slot name="brand"><RenderContent :content="brand" /></slot></template
+      ><button
+        type="button"
+        class="cr-button cr-sidebar-toggle"
+        data-variant="ghost"
+        data-size="sm"
+        :aria-label="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+        :aria-expanded="!isCollapsed"
+        :aria-controls="navigationId"
+        @click="isCollapsed = !isCollapsed"
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.75"
+          aria-hidden="true"
+        >
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <path
+            :d="isCollapsed ? 'M9 3v18m4-12 3 3-3 3' : 'M9 3v18m7-12-3 3 3 3'"
+          />
+        </svg>
+      </button>
+    </div>
+    <nav :id="navigationId" :aria-label="label">
+      <a
+        v-for="item in items"
+        :key="item.href"
+        :href="item.href"
+        :aria-label="isCollapsed ? item.label : undefined"
+        :aria-current="item.active ? 'page' : undefined"
+        :title="isCollapsed ? item.label : undefined"
+        ><span class="cr-sidebar-icon" aria-hidden="true"
+          ><slot name="icon" :item="item"
+            ><RenderContent v-if="item.icon" :content="item.icon" /><svg
+              v-else
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.75"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="9"
+                stroke-dasharray="3 3"
+              /></svg></slot></span
+        ><template v-if="!isCollapsed">{{ item.label }}</template></a
+      >
+    </nav>
+    <footer v-if="!isCollapsed && (footer || $slots.footer)">
+      <slot name="footer"><RenderContent :content="footer" /></slot>
+    </footer>
+  </aside>
+</template>
+```

@@ -1,0 +1,109 @@
+---
+title: "Features"
+description: "A responsive feature grid built from cards."
+---
+
+<DocPreview framework="vue" slug="features" kind="block"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import FeaturesBlock from './components/blocks/features.vue'
+</script>
+
+<!-- Supply the required props and callbacks listed in Source and props. -->
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+The full ZIP also includes `examples/block-showcase.vue`, with populated block props, illustrations and local sample callbacks to adapt to your application.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import {
+  ArrowUpRight,
+  Layers3,
+  SlidersHorizontal,
+  Workflow,
+} from "@lucide/vue";
+import Card from "../ui/card.vue";
+import type { DisplayContent } from "../ui/display-types";
+import { RenderContent } from "../ui/display-utils";
+import MarketingHeading from "./marketing-heading.vue";
+defineProps<{
+  title: string;
+  description: string;
+  eyebrow?: string;
+  items: readonly {
+    title: string;
+    description: string;
+    icon?: DisplayContent;
+    visual?: DisplayContent;
+    eyebrow?: string;
+    href?: string;
+    linkLabel?: string;
+  }[];
+}>();
+const fallbackIcons = [Layers3, Workflow, SlidersHorizontal];
+</script>
+<template>
+  <section class="cr-marketing-section cr-features-section">
+    <MarketingHeading
+      :title="title"
+      :description="description"
+      :eyebrow="eyebrow"
+    />
+    <div class="cr-features-grid">
+      <Card
+        v-for="(item, index) in items"
+        :key="item.title"
+        class-name="cr-feature-card"
+        :data-featured="index === 0 && items.length >= 3 ? '' : undefined"
+        :data-has-visual="item.visual || $slots.visual ? '' : undefined"
+        ><div class="cr-feature-copy">
+          <div class="cr-feature-topline">
+            <span aria-hidden="true" class="cr-feature-icon"
+              ><slot name="icon" :item="item" :index="index"
+                ><RenderContent
+                  v-if="item.icon"
+                  :content="item.icon" /><component
+                  :is="fallbackIcons[index % fallbackIcons.length]"
+                  v-else
+                  :size="22"
+                  :stroke-width="1.75" /></slot></span
+            ><span class="cr-feature-index" aria-hidden="true">{{
+              String(index + 1).padStart(2, "0")
+            }}</span>
+          </div>
+          <p v-if="item.eyebrow" class="cr-marketing-eyebrow">
+            {{ item.eyebrow }}
+          </p>
+          <h3>{{ item.title }}</h3>
+          <p class="cr-description">{{ item.description }}</p>
+          <a v-if="item.href" class="cr-feature-link" :href="item.href"
+            >{{ item.linkLabel ?? "Explore feature"
+            }}<ArrowUpRight :size="16" :stroke-width="1.75" aria-hidden="true"
+          /></a>
+        </div>
+        <div v-if="item.visual || $slots.visual" class="cr-feature-visual">
+          <slot name="visual" :item="item" :index="index"
+            ><RenderContent :content="item.visual"
+          /></slot></div
+      ></Card>
+    </div>
+  </section>
+</template>
+```

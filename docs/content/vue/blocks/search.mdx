@@ -1,0 +1,101 @@
+---
+title: "Search"
+description: "Filter and select content from a local collection."
+---
+
+<DocPreview framework="vue" slug="search" kind="block"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import SearchBlock from './components/blocks/search.vue'
+</script>
+
+<!-- Supply the required props and callbacks listed in Source and props. -->
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+The full ZIP also includes `examples/block-showcase.vue`, with populated block props, illustrations and local sample callbacks to adapt to your application.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import WorkspaceHeading from "./workspace-heading.vue";
+import type { FormAction } from "./common";
+import Card from "../ui/card.vue";
+import Input from "../ui/input.vue";
+import { computed, ref } from "vue";
+import { Search, SearchX, FileText, ChevronRight } from "@lucide/vue";
+const props = defineProps<{
+  items: Array<{ id: string; title: string; description: string }>;
+  onSelect: (id: string) => void;
+}>();
+const query = ref<string | number>("");
+const results = computed(() =>
+  props.items.filter((item) =>
+    `${item.title} ${item.description}`
+      .toLowerCase()
+      .includes(String(query.value).toLowerCase()),
+  ),
+);
+</script>
+<template>
+  <Card class="cr-workspace-block cr-workspace-search-block"
+    ><WorkspaceHeading
+      eyebrow="Workspace search"
+      title="Find your next step"
+      description="Documents, projects and ideas. Right where you need them."
+    />
+    <div class="cr-workspace-search-field">
+      <Search :size="18" aria-hidden="true" /><Input
+        v-model="query"
+        aria-label="Search content"
+        type="search"
+        placeholder="Search your workspace…"
+      />
+    </div>
+    <div class="cr-workspace-list-heading">
+      <span>{{ query ? "Matching results" : "All items" }}</span
+      ><span class="cr-description" role="status"
+        >{{ results.length }}
+        {{ results.length === 1 ? "result" : "results" }}</span
+      >
+    </div>
+    <ul class="cr-workspace-list cr-workspace-search-results">
+      <li v-for="item in results" :key="item.id">
+        <button
+          type="button"
+          class="cr-notification-item cr-workspace-search-result"
+          @click="onSelect(item.id)"
+        >
+          <span class="cr-workspace-icon-tile"
+            ><FileText :size="18" aria-hidden="true" /></span
+          ><span
+            ><strong>{{ item.title }}</strong
+            ><span class="cr-description">{{ item.description }}</span></span
+          ><ChevronRight :size="16" aria-hidden="true" />
+        </button>
+      </li>
+    </ul>
+    <div v-if="!results.length" class="cr-workspace-caught-up">
+      <span class="cr-workspace-icon-tile"
+        ><SearchX :size="22" aria-hidden="true" /></span
+      ><strong>No results found</strong>
+      <p>Try a different name or keyword.</p>
+    </div></Card
+  >
+</template>
+```

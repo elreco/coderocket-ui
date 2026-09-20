@@ -1,0 +1,42 @@
+---
+title: "Skeleton"
+description: "A reduced-motion-aware placeholder while content is loading."
+---
+
+<DocPreview framework="vue" slug="skeleton" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import Skeleton from "./components/ui/skeleton.vue";
+</script>
+
+<template>
+  <div style="width: 240px; display: grid; gap: 12px"><Skeleton style="height: 20px; width: 60%" /><Skeleton style="height: 80px" /></div>
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+defineProps<{ className?: string }>();
+</script>
+<template>
+  <div :class="['cr-skeleton', className]" aria-hidden="true"><slot /></div>
+</template>
+```

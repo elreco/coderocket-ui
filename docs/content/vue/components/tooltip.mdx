@@ -1,0 +1,103 @@
+---
+title: "Tooltip"
+description: "Additional non-essential text shown on hover or keyboard focus."
+---
+
+<DocPreview framework="vue" slug="tooltip" kind="component"/>
+
+## Usage
+
+Choose Vue in the Studio and export your saved library, or install this item through its connected CLI/MCP. [Vue setup and Nuxt integration](/docs/vue).
+
+```vue
+<script setup lang="ts">
+import Tooltip from "./components/ui/tooltip.vue";
+</script>
+
+<template>
+  <Tooltip trigger="Save" content="Save your changes to this library" />
+</template>
+
+```
+
+## Design system
+
+This Vue component consumes the same CodeRocket tokens as the React version. Import the compiled styles and wrap your app in ThemeScope. Tailwind is optional.
+
+## Behavior and accessibility
+
+Vue uses native events, v-model and slots. Reka UI handles keyboard and focus behavior in complex primitives. Connect actions to your own application and review labels, contrast and mobile behavior in context. Components are experimental during early access.
+
+## Source and props
+
+This is the exact Vue single-file component delivered by the export. Related helpers and dependencies are included automatically.
+
+```vue
+<script setup lang="ts">
+import {
+  TooltipProvider,
+  TooltipRoot,
+  TooltipTrigger,
+  TooltipPortal,
+  TooltipContent,
+  TooltipArrow,
+} from "reka-ui";
+import type { Component } from "vue";
+import type { DisplayContent } from "./display-types";
+import { RenderContent, useDisplayModel } from "./display-utils";
+import { usePortalContainer } from "./utils";
+defineOptions({ inheritAttrs: false });
+const props = withDefaults(
+  defineProps<{
+    trigger?: DisplayContent;
+    triggerRender?: Component;
+    content?: DisplayContent;
+    side?: "top" | "bottom" | "left" | "right";
+    align?: "start" | "center" | "end";
+    delay?: number;
+    open?: boolean;
+    defaultOpen?: boolean;
+    disabled?: boolean;
+    disableHoverableContent?: boolean;
+  }>(),
+  { side: "top", align: "center", open: undefined, defaultOpen: false },
+);
+const emit = defineEmits<{
+  "update:open": [value: boolean];
+  "open-change": [value: boolean];
+}>();
+const expanded = useDisplayModel(
+  () => props.open,
+  props.defaultOpen,
+  (value) => {
+    emit("update:open", value);
+    emit("open-change", value);
+  },
+);
+const container = usePortalContainer();
+</script>
+<template>
+  <TooltipProvider
+    :delay-duration="delay"
+    :disable-hoverable-content="disableHoverableContent"
+    ><TooltipRoot v-model:open="expanded" :disabled="disabled"
+      ><TooltipTrigger
+        :as-child="!!($slots.trigger || triggerRender)"
+        class="cr-button"
+        data-variant="outline"
+        ><slot name="trigger"
+          ><component :is="triggerRender" v-if="triggerRender"
+            ><RenderContent :content="trigger" /></component
+          ><RenderContent v-else :content="trigger" /></slot></TooltipTrigger
+      ><TooltipPortal :to="container"
+        ><TooltipContent
+          v-bind="$attrs"
+          :side="side"
+          :align="align"
+          :side-offset="6"
+          class="cr-tooltip"
+          ><slot><RenderContent :content="content" /></slot
+          ><TooltipArrow /></TooltipContent></TooltipPortal></TooltipRoot
+  ></TooltipProvider>
+</template>
+```
