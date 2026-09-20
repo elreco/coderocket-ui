@@ -273,6 +273,93 @@ describe("Vue display controls", () => {
     expect(action).toHaveBeenCalledOnce();
     expect(wrapper.emitted("update:open")?.at(-1)).toEqual([false]);
   });
+  it("keeps command search, keyboard selection, and Escape in one dialog focus scope", async () => {
+    const action = vi.fn();
+    const blocked = vi.fn();
+    const wrapper = render(Command, {
+      props: {
+        items: [
+          {
+            value: "locked",
+            label: "Locked",
+            disabled: true,
+            onSelect: blocked,
+          },
+          { value: "save", label: "Save file", onSelect: action },
+        ],
+      },
+    });
+    const trigger = wrapper.get("button");
+    (trigger.element as HTMLElement).focus();
+    await trigger.trigger("click");
+    await flushPromises();
+    let input = document.querySelector('[role="combobox"]') as HTMLInputElement;
+    expect(document.activeElement).toBe(input);
+    expect(
+      document
+        .getElementById(input.getAttribute("aria-controls")!)
+        ?.getAttribute("role"),
+    ).toBe("listbox");
+    input.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    );
+    await flushPromises();
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    expect(wrapper.emitted("update:open")?.at(-1)).toEqual([false]);
+    expect(document.activeElement).toBe(trigger.element);
+
+    await trigger.trigger("click");
+    await flushPromises();
+    input = document.querySelector('[role="combobox"]') as HTMLInputElement;
+    input.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }),
+    );
+    await nextTick();
+    expect(
+      document.getElementById(input.getAttribute("aria-activedescendant")!)
+        ?.textContent,
+    ).toBe("Save file");
+    input.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Enter", bubbles: true }),
+    );
+    await flushPromises();
+    expect(action).toHaveBeenCalledOnce();
+    expect(blocked).not.toHaveBeenCalled();
+    expect(wrapper.emitted("select")?.at(-1)?.[0]).toMatchObject({
+      value: "save",
+    });
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+    expect(document.activeElement).toBe(trigger.element);
+  });
+  it("announces empty command results and respects controlled dismissal", async () => {
+    const wrapper = render(Command, {
+      props: {
+        open: true,
+        items: [{ value: "save", label: "Save" }],
+        emptyMessage: "No commands found",
+      },
+    });
+    await flushPromises();
+    const input = document.querySelector(
+      '[role="combobox"]',
+    ) as HTMLInputElement;
+    input.value = "Missing";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    await nextTick();
+    expect(document.querySelectorAll('[role="option"]')).toHaveLength(0);
+    expect(document.querySelector('[role="status"]')?.textContent).toBe(
+      "No commands found",
+    );
+    input.dispatchEvent(
+      new KeyboardEvent("keydown", { key: "Escape", bubbles: true }),
+    );
+    await flushPromises();
+    expect(wrapper.emitted("update:open")?.at(-1)).toEqual([false]);
+    expect(document.querySelector('[role="dialog"]')).not.toBeNull();
+    await wrapper.setProps({ open: false });
+    await flushPromises();
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+  });
   it("sorts numbers, paginates, filters and renders custom cells without mutating rows", async () => {
     const rows = [
       { id: 1, name: "Zed", amount: 20 },

@@ -37,14 +37,12 @@ This is the exact Vue single-file component delivered by the export. Related hel
 
 ```vue
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, useId } from "vue";
 import {
-  ComboboxRoot,
-  ComboboxInput,
-  ComboboxContent,
-  ComboboxViewport,
-  ComboboxItem,
-  ComboboxEmpty,
+  ListboxRoot,
+  ListboxFilter,
+  ListboxContent,
+  ListboxItem,
 } from "reka-ui";
 import Dialog from "./dialog.vue";
 import { RenderContent, useDisplayModel } from "./display-utils";
@@ -85,7 +83,8 @@ const expanded = useDisplayModel(
   },
 );
 const search = ref("");
-const input = ref<InstanceType<typeof ComboboxInput>>();
+const input = ref<InstanceType<typeof ListboxFilter>>();
+const listId = `cr-command-list-${useId()}`;
 const filtered = computed(() =>
   props.items.filter((item) =>
     `${item.label} ${item.description ?? ""}`
@@ -108,42 +107,38 @@ function select(value: unknown) {
     :title="title"
     :initial-focus="() => input?.$el as HTMLInputElement"
     ><template v-if="$slots.trigger" #trigger><slot name="trigger" /></template
-    ><ComboboxRoot
-      :open="true"
-      :model-value="null"
-      :reset-search-term-on-blur="false"
-      :reset-search-term-on-select="false"
-      ignore-filter
-      @update:model-value="select"
-      ><ComboboxInput
+    ><ListboxRoot :model-value="null" @update:model-value="select"
+      ><ListboxFilter
         ref="input"
         v-model="search"
+        role="combobox"
+        :aria-expanded="expanded"
+        :aria-controls="listId"
+        aria-autocomplete="list"
         :aria-label="searchLabel"
         :placeholder="searchPlaceholder"
-        class="cr-input"
-      /><ComboboxContent
-        :disable-outside-pointer-events="false"
+        class="cr-input" /><ListboxContent
+        :id="listId"
+        :aria-label="title"
         class="cr-command-list"
-        ><ComboboxViewport
-          ><ComboboxEmpty v-if="!filtered.length" class="cr-description"
-            ><slot name="empty"
-              ><RenderContent :content="emptyMessage" /></slot></ComboboxEmpty
-          ><ComboboxItem
-            v-for="item in filtered"
-            :key="item.value"
-            :value="item.value"
-            :disabled="item.disabled"
-            class="cr-menu-item"
-            ><span class="cr-command-item-text"
-              ><span>{{ item.label }}</span
-              ><small v-if="item.description" class="cr-description">{{
-                item.description
-              }}</small></span
-            ></ComboboxItem
-          ></ComboboxViewport
-        ></ComboboxContent
-      ></ComboboxRoot
-    ></Dialog
-  >
+        ><ListboxItem
+          v-for="item in filtered"
+          :key="item.value"
+          :value="item.value"
+          :disabled="item.disabled"
+          class="cr-menu-item"
+          ><span class="cr-command-item-text"
+            ><span>{{ item.label }}</span
+            ><small v-if="item.description" class="cr-description">{{
+              item.description
+            }}</small></span
+          ></ListboxItem
+        ></ListboxContent
+      >
+      <p v-if="!filtered.length" role="status" class="cr-description">
+        <slot name="empty"
+          ><RenderContent :content="emptyMessage"
+        /></slot></p></ListboxRoot
+  ></Dialog>
 </template>
 ```

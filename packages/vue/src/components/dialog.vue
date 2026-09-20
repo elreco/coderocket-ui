@@ -16,7 +16,16 @@ import type { OverlayProps } from "./display-types";
 defineOptions({ inheritAttrs: false });
 const props = withDefaults(
   defineProps<OverlayProps & { size?: "default" | "wide" }>(),
-  { open: undefined, defaultOpen: false, modal: true, closeLabel: "Close" },
+  {
+    open: undefined,
+    trigger: undefined,
+    footer: undefined,
+    initialFocus: undefined,
+    finalFocus: undefined,
+    defaultOpen: false,
+    modal: true,
+    closeLabel: "Close",
+  },
 );
 const emit = defineEmits<{
   "update:open": [value: boolean];

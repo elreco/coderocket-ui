@@ -16,6 +16,10 @@ import type { OverlayProps } from "./display-types";
 defineOptions({ inheritAttrs: false });
 const props = withDefaults(defineProps<OverlayProps>(), {
   open: undefined,
+  trigger: undefined,
+  footer: undefined,
+  initialFocus: undefined,
+  finalFocus: undefined,
   defaultOpen: false,
   modal: true,
   closeLabel: "Close",
