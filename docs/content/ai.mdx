@@ -42,3 +42,11 @@ The schema, tree and labels are checked before the preview. The editor then runs
 Accepted compositions include their structured specification, editable React or Vue source, an SSR smoke test and a Storybook story in the ZIP export. Connect the exported stories to your application's Storybook theme decorator. Run the tests and accessibility checks in that application before promoting an experimental component to production.
 
 The current generator assembles validated primitives. It does not execute arbitrary generated JavaScript or invent application backends. Unsupported behavior requires clarification and implementation in your own action callbacks.
+
+## Use your library with a coding agent
+
+To give your coding agent the saved design rules and catalogue, open **Connect → Coding agents · MCP**. The official npm server runs with `npx -y @coderocketapp/mcp@latest` and requires Node.js 24 or newer. Set `CODEROCKET_LIBRARY` and `CODEROCKET_TOKEN` in the MCP client's environment, using the library-scoped connection created in the Studio. Keep tokens out of prompts and source files. [Copy the complete MCP configuration](/docs/agents#connect-an-agent-with-mcp).
+
+The MCP server provides read-only access to the saved library. Your agent can fetch source and use its own tools to integrate it into your app. Save Studio changes before requesting an updated design. To install and sync from a terminal, use `npx @coderocketapp/cli@latest init YOUR_LIBRARY_ID` with the token in your environment, then `add` or `sync` as shown in the [CLI guide](/docs/agents#install-with-the-cli).
+
+Hosted connections require an account and a saved library. The public documentation and [MIT-licensed component source](https://github.com/elreco/coderocket-ui) can be used with an assistant without an account or connection token.

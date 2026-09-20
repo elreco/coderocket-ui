@@ -9,9 +9,14 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: public-core-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -22,5 +27,5 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
 
-# Publication is intentionally not automated. The historical datepicker release
-# workflows are archived under legacy/, outside GitHub's active workflow directory.
+# npm clients are released independently through publish-clients.yml.
+# Legacy datepicker workflows remain archived under legacy/.

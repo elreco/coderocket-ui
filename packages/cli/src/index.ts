@@ -25,6 +25,89 @@ import {
   type Snapshot,
   type Bundle,
 } from "@coderocket/shared/registry-client";
+
+declare const __CODEROCKET_VERSION__: string;
+export const VERSION =
+  typeof __CODEROCKET_VERSION__ === "string" ? __CODEROCKET_VERSION__ : "0.3.0";
+const HELP = `CodeRocket CLI ${VERSION}
+
+Usage: coderocket <command>
+   or: npx @coderocketapp/cli@latest <command>
+
+Commands:
+  init <library-id>         Connect a saved library and install its theme
+  list [components|blocks]  Browse the connected library's catalogue
+  add button dialog        Install components by slug
+  add block-login          Install a block by its prefixed slug
+  add --all                Install the complete catalogue
+  sync                     Update untouched files; preserve local changes
+  import                   Analyse this project locally
+  --help, -h               Show this help
+  --version, -v            Show the installed version
+
+Quick start (Node.js 24 or newer):
+  1. Open your saved library's Connect panel in https://ui.coderocket.app.
+  2. Copy its library ID and create a connection token.
+  3. Set CODEROCKET_TOKEN using a hidden shell prompt or secret manager.
+     In bash/zsh: read -rs CODEROCKET_TOKEN; export CODEROCKET_TOKEN
+     Paste the token at the hidden prompt and press Enter.
+  4. Run npx @coderocketapp/cli@latest init <library-id> in your project.
+  5. Run npx @coderocketapp/cli@latest list, then add the slugs you need.
+
+CODEROCKET_LIBRARY can supply the library ID for init or list before init.
+CODEROCKET_SERVER optionally selects a different registry server.
+Tokens are read only from CODEROCKET_TOKEN and never saved in project files.
+Never include a token in command arguments or commit it to version control.`;
+
+function validateArguments(args: string[]) {
+  const [command, ...rest] = args;
+  if (!["init", "list", "add", "sync", "import"].includes(command))
+    throw new Error("Unknown command. Run coderocket --help.");
+  if (rest.some((value) => /^--?token(?:=|$)/i.test(value)))
+    throw new Error(
+      "Tokens must be supplied through CODEROCKET_TOKEN, never as command arguments. Run coderocket --help for secure setup.",
+    );
+  if (
+    command === "init" &&
+    (rest.length > 1 || rest.some((value) => value.startsWith("-")))
+  )
+    throw new Error(
+      "Usage: coderocket init <library-id>. Supply the token through CODEROCKET_TOKEN. Run coderocket --help for setup.",
+    );
+  if (
+    command === "list" &&
+    (rest.length > 1 ||
+      (rest[0] && !["components", "blocks"].includes(rest[0])))
+  )
+    throw new Error("Usage: coderocket list [components|blocks].");
+  if (["sync", "import"].includes(command) && rest.length)
+    throw new Error(`Usage: coderocket ${command}.`);
+  if (command === "add") {
+    if (!rest.length)
+      throw new Error(
+        "Choose components or blocks with coderocket list, then run coderocket add <slug> or coderocket add --all.",
+      );
+    if (
+      (rest.includes("--all") && rest.length !== 1) ||
+      rest.some((value) => value.startsWith("-") && value !== "--all")
+    )
+      throw new Error(
+        "Usage: coderocket add <slug>... or coderocket add --all.",
+      );
+  }
+}
+
+function requireConnection(libraryId: string, token: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(libraryId))
+    throw new Error(
+      "A valid library ID is required. Copy it from your saved library's Connect panel, then run coderocket init <library-id> or set CODEROCKET_LIBRARY.",
+    );
+  if (!/^cr_[A-Za-z0-9_-]{43}$/.test(token))
+    throw new Error(
+      "Set a valid CODEROCKET_TOKEN from your saved library's Connect panel. Use a hidden shell prompt or secret manager; run coderocket --help for setup.",
+    );
+}
+
 export type Manifest = {
   schemaVersion: 1;
   server: string;
@@ -34,9 +117,14 @@ export type Manifest = {
   revision: number;
 };
 export async function readManifest(root: string): Promise<Manifest> {
-  const data = JSON.parse(
-    await readFile(await safePath(root, ".coderocket/manifest.json"), "utf8"),
-  ) as Manifest;
+  const source = await readOptional(
+    await safePath(root, ".coderocket/manifest.json"),
+  );
+  if (!source)
+    throw new Error(
+      "This project is not connected. Run coderocket init <library-id> first. Run coderocket --help for setup.",
+    );
+  const data = JSON.parse(source) as Manifest;
   if (
     data.schemaVersion !== 1 ||
     !Array.isArray(data.components) ||
@@ -122,12 +210,6 @@ async function run(
   env = process.env,
 ) {
   const [command, ...rest] = args;
-  if (!command || ["help", "--help", "-h"].includes(command)) {
-    console.log(
-      "CodeRocket\n\ninit                  Connect a saved library\nadd button dialog     Install components\nadd block-login       Install a block\nadd --all             Install the complete catalogue\nsync                  Update untouched files; preserve local changes\nimport                Analyse this project locally\n\nSet CODEROCKET_LIBRARY, CODEROCKET_TOKEN, and optionally CODEROCKET_SERVER. Tokens are never written into project files.",
-    );
-    return;
-  }
   if (command === "import") {
     const report = await inspectCodebase(root);
     const path = ".coderocket/import-report.json";
@@ -139,18 +221,22 @@ async function run(
     console.log(`Analysis saved to ${path}. No source changes or uploads.`);
     return;
   }
-  if (!["init", "add", "sync"].includes(command))
-    throw new Error("Unknown command. Run coderocket --help.");
   const server = serverOrigin(env.CODEROCKET_SERVER || DEFAULT_SERVER),
     token = env.CODEROCKET_TOKEN || "";
   let manifest: Manifest;
-  if (command === "init") {
-    if (await readOptional(await safePath(root, ".coderocket/manifest.json")))
+  const manifestExists =
+    (await readOptional(await safePath(root, ".coderocket/manifest.json"))) !==
+    undefined;
+  if (command === "init" || (command === "list" && !manifestExists)) {
+    if (command === "init" && manifestExists)
       throw new Error("This project is already connected. Use add or sync.");
     manifest = {
       schemaVersion: 1,
       server,
-      libraryId: env.CODEROCKET_LIBRARY || "",
+      libraryId:
+        (command === "init" ? rest[0] : undefined) ||
+        env.CODEROCKET_LIBRARY ||
+        "",
       components: [],
       blocks: [],
       revision: 0,
@@ -162,12 +248,36 @@ async function run(
         "This project uses a different server. Set CODEROCKET_SERVER explicitly before sending your token.",
       );
   }
+  requireConnection(manifest.libraryId, token);
   const snapshot = await registryRequest<Snapshot>(
     server,
     manifest.libraryId,
     "snapshot.json",
     token,
   );
+  if (command === "list") {
+    const kinds = rest[0]
+      ? [rest[0] as "components" | "blocks"]
+      : (["components", "blocks"] as const);
+    const sections = kinds.map((kind) => {
+      const items = snapshot[kind];
+      return [
+        `${kind === "components" ? "Components" : "Blocks"} (${items.length})`,
+        ...items.map(
+          (item) =>
+            `  ${kind === "blocks" ? "block-" : ""}${item.slug}  ${item.name}`,
+        ),
+        ...(items.length ? [] : ["  No items available."]),
+      ].join("\n");
+    });
+    const setup = manifestExists
+      ? ""
+      : `Connect this project first: npx @coderocketapp/cli@latest init ${manifest.libraryId}\n`;
+    console.log(
+      `${snapshot.name} — revision ${snapshot.revision}\n\n${sections.join("\n\n")}\n\n${setup}Install with: npx @coderocketapp/cli@latest add <slug>`,
+    );
+    return;
+  }
   const selectedComponents = new Set(manifest.components),
     selectedBlocks = new Set(manifest.blocks);
   if (command === "add") {
@@ -263,8 +373,21 @@ export async function main(
   root = process.cwd(),
   env = process.env,
 ) {
-  if (!args[0] || ["help", "--help", "-h"].includes(args[0]))
-    return run(args, root, env);
+  if (
+    !args[0] ||
+    args[0] === "help" ||
+    args.includes("--help") ||
+    args.includes("-h")
+  ) {
+    console.log(HELP);
+    return;
+  }
+  if (args.length === 1 && ["--version", "-v"].includes(args[0])) {
+    console.log(VERSION);
+    return;
+  }
+  validateArguments(args);
+  if (args[0] === "list") return run(args, root, env);
   await mkdir(await safePath(root, ".coderocket"), { recursive: true });
   const path = await safePath(root, ".coderocket/command.lock");
   const handle = await open(path, "wx").catch(() => {

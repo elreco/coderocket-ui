@@ -1,0 +1,38 @@
+name: Publish npm clients
+
+on:
+  push:
+    tags: ["clients-v*"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-clients
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+      - name: Verify release tag and main ancestry
+        run: |
+          git merge-base --is-ancestor HEAD origin/main
+          node --input-type=module -e 'import {readFileSync} from "node:fs"; const version=process.env.GITHUB_REF_NAME.replace(/^clients-v/, ""); if (!/^\d+\.\d+\.\d+$/.test(version)) throw new Error("Use a stable clients-vX.Y.Z tag"); for (const name of ["cli", "mcp"]) if (JSON.parse(readFileSync(`packages/${name}/package.json`)).version !== version) throw new Error("Tag must match both client versions");'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - name: Publish with npm trusted publishing
+        run: node tooling/publish-clients.mjs

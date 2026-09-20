@@ -11,11 +11,28 @@ The catalogue includes 48 components and 26 blocks. Vue uses Reka UI for accessi
 
 ## Installation
 
+The [MIT-licensed component source](https://github.com/elreco/coderocket-ui) is available without an account. To install your own saved Vue library through the hosted registry, create a connection in the Studio's **Connect** dialog. With Node.js 24 or newer, run these commands from your application folder:
+
+In bash or zsh, paste your connection token at the hidden prompt and press Enter:
+
+```bash
+printf "Connection token: "
+read -rs CODEROCKET_TOKEN
+export CODEROCKET_TOKEN
+printf "\n"
+npx @coderocketapp/cli@latest init YOUR_LIBRARY_ID
+npx @coderocketapp/cli@latest add button dialog
+```
+
+Copy the library ID from **Connect** and keep the token in your terminal environment. The CLI serves Vue source automatically for a Vue library and prints the required runtime dependencies. Install the listed dependencies in your app. Use `npx @coderocketapp/cli@latest list` to find items and `npx @coderocketapp/cli@latest sync` to update installed source after saving Studio changes. Locally edited files are preserved for review.
+
+You can also export a **Vue** library as a ZIP, copy its components and styles into your Vue application, and install its runtime dependencies:
+
 ```sh
 npm install vue@3.5.43 reka-ui@2.10.4 @lucide/vue@1.47.0
 ```
 
-Export a **Vue** library and copy its components and styles into a Vue 3.5 application. Vite with `@vitejs/plugin-vue` and Nuxt are supported toolchains. Tailwind is optional.
+Vue 3.5 applications using Vite with `@vitejs/plugin-vue` or Nuxt are supported. Tailwind is optional. Installed source and styles run locally without a CodeRocket connection.
 
 Import `styles/components.css`, then `styles/blocks.css` when using blocks, and finally `styles/theme.css`. Wrap your app in `ThemeScope` from `components/ui/theme-scope.vue` so portalled overlays inherit your theme.
 
@@ -45,5 +62,7 @@ Advanced Base UI-specific APIs are not interchangeable: imperative trigger handl
 ## AI and saved libraries
 
 Connect the CLI or MCP to a saved Vue library. The connection exposes Vue source, dependencies and Vue-specific design rules automatically. The AI generates the same validated composition model; CodeRocket renders and exports it with the library's framework. Existing React libraries stay React.
+
+The official MCP server uses `npx` with arguments `["-y", "@coderocketapp/mcp@latest"]`. Set `CODEROCKET_LIBRARY` and `CODEROCKET_TOKEN` in your client's environment using the connection from **Connect**. Hosted CLI and MCP access requires an account and a token scoped to the saved library. [Copy the complete setup](/docs/agents).
 
 [Explore Vue components](/docs/vue/components) · [Explore Vue blocks](/docs/vue/blocks) · [Connect a coding agent](/docs/agents)

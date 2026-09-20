@@ -5,29 +5,48 @@ description: Connect your project and give your coding agent the same components
 
 You can work entirely from an exported ZIP. Use a connection when you want your terminal or coding agent to read the latest saved version of a library.
 
+The [MIT-licensed component source](https://github.com/elreco/coderocket-ui) is available without a CodeRocket account. The hosted registry used by the CLI and MCP requires an account, a saved library and a connection token. Installed source runs locally without a connection.
+
 ## Create a connection
 
 1. Save the library in the editor, then open **Connect**.
 2. Name the connection for the machine or agent that will use it.
-3. Choose **Create read-only connection** and copy the token shown once.
+3. Choose **Create connection** and copy the token shown once.
 4. Copy the generated setup commands or MCP configuration into your development environment.
 
 A connection can read only its library. It expires after 90 days and can be revoked from the same dialog. Put its token in your terminal or agent's protected environment; keep it out of source files, prompts and public URLs.
 
 ## Install with the CLI
 
-The **Connect** dialog provides the CLI archive URL and complete commands for your library. Its commands use `npm exec --package <archive URL> -- coderocket …`, so a global installation is unnecessary. The table below abbreviates that prefix; use the full command from **Connect** and replace only its final arguments.
+With **Node.js 24 or newer** installed, run the official npm package from your application folder. Copy your library ID from **Connect** and provide the token in your terminal environment:
 
-| Command                        | Result                                                     |
-| ------------------------------ | ---------------------------------------------------------- |
-| `coderocket init`              | Connect the current project to a saved library             |
-| `coderocket add button dialog` | Install the named components and required shared files     |
-| `coderocket add block-login`   | Install a complete block                                   |
-| `coderocket add --all`         | Install the full catalogue                                 |
-| `coderocket sync`              | Update unchanged local files from the latest saved version |
-| `coderocket import`            | Write a local analysis report for importing project tokens |
+In bash or zsh, paste your connection token at the hidden prompt and press Enter:
+
+```bash
+printf "Connection token: "
+read -rs CODEROCKET_TOKEN
+export CODEROCKET_TOKEN
+printf "\n"
+npx @coderocketapp/cli@latest init YOUR_LIBRARY_ID
+npx @coderocketapp/cli@latest add button dialog
+```
+
+The CLI remembers the library in `.coderocket/manifest.json`; it never writes the token to project files. Keep `CODEROCKET_TOKEN` available for later commands, including in new terminals. You can instead set `CODEROCKET_LIBRARY` and run `npx @coderocketapp/cli@latest init` without a positional ID. No global installation is required.
+
+| Command                                           | Result                                                     |
+| ------------------------------------------------- | ---------------------------------------------------------- |
+| `npx @coderocketapp/cli@latest list`              | List available components and blocks                       |
+| `npx @coderocketapp/cli@latest add button dialog` | Install named components and their required shared files   |
+| `npx @coderocketapp/cli@latest add block-login`   | Install a complete block                                   |
+| `npx @coderocketapp/cli@latest add --all`         | Install the full catalogue                                 |
+| `npx @coderocketapp/cli@latest sync`              | Update installed items from the latest saved version       |
+| `npx @coderocketapp/cli@latest import`            | Write a local analysis report for importing project tokens |
 
 Install the listed runtime dependencies and import the generated styles once. See [export and installation](/docs/export) for React/Next.js, or [Vue and Nuxt setup](/docs/vue). The connection reads the framework from your saved library and serves the matching source and dependencies.
+
+Commit `.coderocket/manifest.json` and `.coderocket/lock.json` with the installed source. The CLI writes integration instructions and agent rules to `.coderocket/README.md` and `.coderocket/AGENTS.md`. The `import` command analyzes local files without uploading them and does not require a token.
+
+`CODEROCKET_SERVER` defaults to `https://ui.coderocket.app`. If you use a different Studio deployment, set its origin in the environment before `init` and keep it set for subsequent commands. **Connect** includes that variable when needed.
 
 ### Your local edits stay yours
 
@@ -39,7 +58,7 @@ Save changes in the editor before syncing. A connection reads saved versions, no
 
 Vue libraries use the CodeRocket CLI or MCP above. The instructions below target React projects.
 
-Open **Connect → Use the shadcn registry** and copy the registry entry into your existing `components.json`. The configuration uses an authorization header from your environment to keep the library private.
+Open **Connect → shadcn registry** and copy the registry entry into your existing `components.json`. The configuration uses an authorization header from your environment to keep the library private.
 
 You can then install a component through your configured registry:
 
@@ -51,7 +70,24 @@ The local-change protection described above belongs to the CodeRocket CLI. When 
 
 ## Connect an agent with MCP
 
-Open **Connect → Connect a coding agent with MCP**. Copy the configuration to a compatible MCP client, storing the token in its protected environment settings.
+Open **Connect → Coding agents · MCP** to copy the configuration for your saved library. Use Node.js 24 or newer and an MCP client that supports local stdio servers:
+
+```json
+{
+  "mcpServers": {
+    "coderocket": {
+      "command": "npx",
+      "args": ["-y", "@coderocketapp/mcp@latest"],
+      "env": {
+        "CODEROCKET_LIBRARY": "YOUR_LIBRARY_ID",
+        "CODEROCKET_TOKEN": "YOUR_CONNECTION_TOKEN"
+      }
+    }
+  }
+}
+```
+
+Replace the placeholders in your client's private configuration and keep it outside version control. If the client has protected secret settings, provide `CODEROCKET_TOKEN` there and remove its entry from the JSON. Restart or reconnect the MCP server after configuration. The token is passed to the server as an environment variable.
 
 The connector gives your agent read access to:
 
@@ -61,6 +97,8 @@ The connector gives your agent read access to:
 - Source files, dependencies and installation paths.
 
 For example, you can ask an agent to “build a settings form using this library's input, select and button components.” The agent has the source and design context it needs to reuse your library. Design changes still happen in the editor, where you review and save them.
+
+The MCP server reads the library; your agent uses its own tools and permissions to edit your application. If the token expires or is revoked, create a new connection for the same library, update the environment and reconnect.
 
 ## Include your design rules
 

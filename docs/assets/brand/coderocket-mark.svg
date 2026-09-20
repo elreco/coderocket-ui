@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="CodeRocket UI">
+  <rect width="96" height="96" rx="24" fill="#f4f9e6" />
+  <g transform="translate(16 16) scale(2)">
+    <path d="M16 3H9L3 9v14l6 6h14l6-6v-7h-6v4l-3 3h-8l-3-3v-8l3-3h4V3Z" fill="#17200b" />
+    <path d="M20 3h9v9h-5V8h-4V3Z" fill="#c4f541" />
+  </g>
+</svg>
