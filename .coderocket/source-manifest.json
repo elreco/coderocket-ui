@@ -58,7 +58,7 @@
     "packages/react/src/index.ts": "5cb0f2316e4017d28719989862d73bcd115c35949d772e86c60ca0bd46048c3f",
     "packages/react/src/navigation-data.test.ts": "a5034b62e0cbb05e717db42262c61a508035bb3ba7c24b1401d1048ebe5ffc7c",
     "packages/react/src/showcase.tsx": "fd745b9ffe5ae94b91c54052ff28cfe1c847372c0b5a492acaa59605cfc8f172",
-    "packages/react/src/styles.css": "6a328e0957f01ea25e77c4e39b198ad73be923f905d34f7f0f00442dff14c0cd",
+    "packages/react/src/styles.css": "901365142a4403e36d1b0a304027afee89b2491feee75bfc3b5144eb4d6f6958",
     "packages/vue/src/blocks.test.ts": "8a26a789b32013663cfa961571e46048d36f853e2702404e22a534c4c7c1a347",
     "packages/vue/src/blocks/action-form.vue": "a777911254a7b3bce08dae5fecb3dda4f21b0eb00cff75e49af860e36279c788",
     "packages/vue/src/blocks/api-keys.vue": "6f3081bdb2486f0f3d9e4000fe82c162680665c7c81c606e0461c3d9b352cd40",
@@ -364,7 +364,7 @@
     "docs/content/vue/components/toggle-group.mdx": "ef2059f704eac0a8f9a2e7a52a4f893b98e934897e2fd63cef21bdf1bd78e304",
     "docs/content/vue/components/toggle.mdx": "35df5e29a740a08d4fbc73a77e378c8708bfe3f0b5825c16a1decc22895ed49c",
     "docs/content/vue/components/tooltip.mdx": "894c79463d30026a04d50ac0c14adacd3161c5f7a2b8aaa5d17fc63d79691a8e",
-    "docs/content/vue/index.mdx": "f5e2b4fcc0a2831e3dacbb90e2f5443fe1993bb86a287dfa4e55976b3780a7aa",
+    "docs/content/vue/index.mdx": "eb3049c798a1ed2c2a8fa28c77b12d8949befc68cdecddb95fe35f9c908fc430",
     "docs/content/vue/meta.json": "71d940394ad01e98fc20342dfb2b439b5b43346a6f01a83186280e60dac8060c"
   }
 }
