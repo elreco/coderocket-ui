@@ -15,6 +15,7 @@ export function Sheet({
   className,
   footer,
   closeLabel = "Close",
+  side = "right",
   ...rootProps
 }: Omit<ComponentProps<typeof Base.Root>, "children"> & {
   trigger?: ReactNode;
@@ -28,6 +29,7 @@ export function Sheet({
   finalFocus?: ComponentProps<typeof Base.Popup>["finalFocus"];
   footer?: ReactNode;
   closeLabel?: string;
+  side?: "top" | "right" | "bottom" | "left";
 }) {
   const container = usePortalContainer();
   return (
@@ -42,10 +44,15 @@ export function Sheet({
         </Base.Trigger>
       )}
       <Base.Portal container={container}>
-        <Base.Backdrop className="cr-backdrop" />
-        <Base.Viewport className="cr-modal-viewport" data-kind="sheet">
+        <Base.Backdrop className="cr-backdrop cr-sheet-backdrop" />
+        <Base.Viewport
+          className="cr-modal-viewport"
+          data-kind="sheet"
+          data-side={side}
+        >
           <Base.Popup
             className={cx("cr-modal cr-sheet", className)}
+            data-side={side}
             initialFocus={initialFocus}
             finalFocus={finalFocus}
           >

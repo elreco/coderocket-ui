@@ -12,6 +12,7 @@ Get this component from a [saved library export](/docs/export) or the [connected
 Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
 
 ```tsx
+import { Button } from './components/ui/button';
 import { EmptyState } from './components/ui/empty-state';
 
 <EmptyState title="No projects yet" description="Create your first project to get started." action={<Button>Create project</Button>}/>

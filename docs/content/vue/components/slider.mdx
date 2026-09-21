@@ -137,6 +137,11 @@ useFormReset(
           v-for="(_, index) in values"
           :key="index"
           class="cr-slider-thumb"
+          :style="{
+            top: orientation === 'horizontal' ? '50%' : undefined,
+            left: orientation === 'vertical' ? '50%' : undefined,
+            translate: orientation === 'horizontal' ? '0 -50%' : '-50% 0',
+          }"
           :aria-label="
             thumbLabels?.[index] ??
             (values.length === 1

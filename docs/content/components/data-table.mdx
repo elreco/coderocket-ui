@@ -12,9 +12,74 @@ Get this component from a [saved library export](/docs/export) or the [connected
 Import `styles/components.css`, then `styles/theme.css` once. Wrap your app in `ThemeScope` from `components/ui/utils` so typography, focus and overlays share the theme. The [installation guide](/docs/export) covers runtime dependencies and React/Next.js setup.
 
 ```tsx
+import { Badge } from './components/ui/badge';
 import { DataTable } from './components/ui/data-table';
 
-<DataTable caption="Projects" columns={[{key:"name",label:"Name"},{key:"status",label:"Status"}]} rows={[{name:"Website",status:"Active"},{name:"Mobile app",status:"Planning"}]}/>
+<DataTable
+  caption="Recent payments"
+  searchPlaceholder="Filter by customer, status or invoice…"
+  pageSize={5}
+  columns={[
+    { key: "id", label: "Invoice" },
+    { key: "status", label: "Status", render: value => (
+      <Badge variant={value === "Paid" ? "success" : value === "Pending" ? "warning" : "secondary"}>{value}</Badge>
+    ) },
+    { key: "customer", label: "Customer" },
+    { key: "amount", label: "Amount", render: value => (
+      <span style={{ fontVariantNumeric: "tabular-nums" }}>{new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(value))}</span>
+    ) },
+  ]}
+  rows={[
+  {
+    "id": "INV-1048",
+    "customer": "olivia.martin@example.com",
+    "status": "Paid",
+    "amount": 129
+  },
+  {
+    "id": "INV-1047",
+    "customer": "jackson.lee@example.com",
+    "status": "Processing",
+    "amount": 249
+  },
+  {
+    "id": "INV-1046",
+    "customer": "sophia.brown@example.com",
+    "status": "Paid",
+    "amount": 89
+  },
+  {
+    "id": "INV-1045",
+    "customer": "noah.williams@example.com",
+    "status": "Pending",
+    "amount": 399
+  },
+  {
+    "id": "INV-1044",
+    "customer": "ava.robinson@example.com",
+    "status": "Paid",
+    "amount": 149
+  },
+  {
+    "id": "INV-1043",
+    "customer": "liam.thompson@example.com",
+    "status": "Refunded",
+    "amount": 79
+  },
+  {
+    "id": "INV-1042",
+    "customer": "emma.davis@example.com",
+    "status": "Paid",
+    "amount": 299
+  },
+  {
+    "id": "INV-1041",
+    "customer": "lucas.wilson@example.com",
+    "status": "Pending",
+    "amount": 199
+  }
+]}
+/>
 ```
 
 ## Loading, custom cells and stable rows
