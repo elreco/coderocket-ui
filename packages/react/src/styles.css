@@ -617,6 +617,8 @@
 .cr-modal-viewport[data-kind="sheet"] {
   place-items: stretch end;
   padding: 0;
+  /* Focus must not scroll this viewport toward the animating offscreen panel. */
+  overflow: clip;
 }
 .cr-modal-viewport[data-kind="sheet"][data-side="left"] {
   place-items: stretch start;
