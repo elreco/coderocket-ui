@@ -30,7 +30,7 @@ export function Dropdown({
 }) {
   const container = usePortalContainer();
   return (
-    <Base.Root {...rootProps}>
+    <Base.Root {...rootProps} disabled={disabled}>
       <Base.Trigger
         render={triggerRender}
         disabled={disabled}
@@ -65,7 +65,7 @@ export function Dropdown({
               <Base.Item
                 key={item.id ?? index}
                 render={
-                  item.href && !item.disabled ? (
+                  item.href && !disabled && !item.disabled ? (
                     <a href={item.href}>{item.label}</a>
                   ) : undefined
                 }
