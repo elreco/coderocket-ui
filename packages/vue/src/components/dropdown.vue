@@ -49,7 +49,7 @@ const expanded = useDisplayModel(
 );
 const container = usePortalContainer();
 function select(item: MenuAction) {
-  if (item.disabled) return;
+  if (props.disabled || item.disabled) return;
   item.onSelect?.();
   emit("select", item);
 }
@@ -90,9 +90,9 @@ function select(item: MenuAction) {
         <DropdownMenuItem
           v-for="(item, index) in items"
           :key="item.id ?? index"
-          :as="item.href && !item.disabled ? 'a' : 'div'"
-          :href="item.disabled ? undefined : item.href"
-          :disabled="item.disabled"
+          :as="item.href && !disabled && !item.disabled ? 'a' : 'div'"
+          :href="disabled || item.disabled ? undefined : item.href"
+          :disabled="disabled || item.disabled"
           :data-destructive="item.destructive || undefined"
           class="cr-menu-item"
           @select="select(item)"

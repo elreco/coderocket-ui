@@ -218,6 +218,26 @@ describe("Vue display controls", () => {
     await nextTick();
     expect(select).toHaveBeenCalledOnce();
   });
+  it("blocks actions when an open dropdown becomes disabled", async () => {
+    const action = vi.fn();
+    const wrapper = render(Dropdown, {
+      props: {
+        open: true,
+        items: [{ label: "Orange", href: "#orange", onSelect: action }],
+      },
+    });
+    await flushPromises();
+
+    await wrapper.setProps({ disabled: true });
+    const item = document.querySelector<HTMLElement>('[role="menuitem"]')!;
+    item.click();
+    await nextTick();
+
+    expect(action).not.toHaveBeenCalled();
+    expect(wrapper.emitted("select")).toBeUndefined();
+    expect(item.getAttribute("aria-disabled")).toBe("true");
+    expect(item.hasAttribute("href")).toBe(false);
+  });
   it("opens context actions from the keyboard and honors controlled open state", async () => {
     const wrapper = render(ContextMenu, {
       props: { items: [{ label: "Copy" }], open: false },
